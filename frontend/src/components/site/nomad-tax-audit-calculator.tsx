@@ -232,19 +232,19 @@ export function NomadTaxAuditCalculator() {
               <div>
                 <span className="opacity-75 block">Eligible Income Exclusion</span>
                 <strong className="text-sm font-semibold">
-                  ${feieResult.eligibleExclusionUsd.toLocaleString()}
+                  ${(feieResult.eligibleExclusionUsd ?? 0).toLocaleString()}
                 </strong>
               </div>
               <div>
                 <span className="opacity-75 block">Est. Federal Tax Savings</span>
                 <strong className="text-sm font-semibold">
-                  ${feieResult.estimatedTaxSavingsUsd.toLocaleString()}
+                  ${(feieResult.estimatedTaxSavingsUsd ?? 0).toLocaleString()}
                 </strong>
               </div>
               <div>
                 <span className="opacity-75 block">Days Needed Abroad</span>
                 <strong className="text-sm font-semibold">
-                  {feieResult.daysNeededForQualificationCount} days
+                  {feieResult.daysNeededForQualificationCount ?? 0} days
                 </strong>
               </div>
             </div>
@@ -332,25 +332,25 @@ export function NomadTaxAuditCalculator() {
               <div>
                 <span className="opacity-75 block">Total Days in 180d Window</span>
                 <strong className="text-sm font-semibold">
-                  {schengenResult.totalDaysInWindow} / 90 days
+                  {schengenResult.totalDaysInWindow ?? 0} / 90 days
                 </strong>
               </div>
               <div>
                 <span className="opacity-75 block">Remaining Quota</span>
                 <strong className="text-sm font-semibold">
-                  {schengenResult.daysRemainingAllowed} days
+                  {schengenResult.daysRemainingAllowed ?? 0} days
                 </strong>
               </div>
               <div>
                 <span className="opacity-75 block">Overstay Risk</span>
                 <strong className="text-sm font-semibold">
-                  {schengenResult.overstayDaysCount} days
+                  {schengenResult.overstayDaysCount ?? 0} days
                 </strong>
               </div>
               <div>
                 <span className="opacity-75 block">Est. Fine / Exposure</span>
                 <strong className="text-sm font-semibold">
-                  €{schengenResult.estimatedFineEur.toLocaleString()}
+                  €{(schengenResult.estimatedFineEur ?? 0).toLocaleString()}
                 </strong>
               </div>
             </div>
