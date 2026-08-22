@@ -4,6 +4,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { supabase, type VisaInfo } from "@/lib/supabase";
 import { NomadVisaScreener } from "@/components/site/nomad-visa-screener";
+import { NomadTaxAuditCalculator } from "@/components/site/nomad-tax-audit-calculator";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -136,6 +137,14 @@ export default async function VisaPage({
           text: "For each country RoamIQ shows typical tourist stay length in days, whether a digital nomad visa is offered, and when available the listed cost and duration from the live visa_info data — not legal advice; always verify with official sources before travel.",
         },
       },
+      {
+        "@type": "Question",
+        name: "Does RoamIQ calculate IRS FEIE eligibility and Schengen 90/180 day limits?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. RoamIQ provides an interactive Nomad Tax & Residency Audit tool that calculates U.S. Foreign Earned Income Exclusion (FEIE 330-day physical presence test), Schengen 90/180-day rolling window stays, U.S. Substantial Presence Test (SPT), and UK Statutory Residence Test (SRT) rules.",
+        },
+      },
     ],
   };
 
@@ -198,6 +207,8 @@ export default async function VisaPage({
         <section className="py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8 space-y-12">
             <NomadVisaScreener initialCountries={countries} />
+
+            <NomadTaxAuditCalculator />
 
             {countries.length === 0 ? (
               <div className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-border py-20 text-center">
