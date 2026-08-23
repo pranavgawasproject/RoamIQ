@@ -44,3 +44,5 @@
 - **Human review**: Confirm whether homepage testimonials are real or residual placeholder content (spam policy).
 - Prefer a real 1200×630 PNG OG image over `/logo.svg` for social previews (requires design asset).
 - Rotate next maintainer run to WeatherTrackerX / ChatApp / Proofly for Track A on-page work if those still lack structured data depth.
+
+- **2026-08-23 (~03:45 UTC)**: Daily SEO/GSC maintainer run (Track A). GSC snapshot (2026-07-23→2026-08-22): homepage **17 clicks / 274 impressions**, avg position ~5.1, CTR ~6.2%; site total **18 clicks / 742 impressions**. Top query `roamiq`. Destinations list still low impressions (indexing lag after prior sitemap resubmit). **Code fix**: absolute OG/Twitter image URLs on homepage + `/destinations` list (`frontend/src/app/page.tsx`, `frontend/src/app/destinations/page.tsx`) so social crawlers resolve previews reliably. Commit: c099254. Flag: Notion GSC remains `siteUnverifiedUser`. Next: monitor destination indexing; rotate Track A to a lower-priority property if OG PNG asset is designed.
