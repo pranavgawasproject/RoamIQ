@@ -121,6 +121,8 @@ export type Listing = {
   capacity?: string | null;
   inclusions?: string | null;
   description?: string | null;
+  contact_phone?: string | null;
+  contact_email?: string | null;
 };
 
 export type Meetup = {
