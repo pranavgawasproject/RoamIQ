@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 
 const perks = [
-  "Free during public beta — no card required",
-  "AI trip planner with unlimited itineraries",
-  "Live cost comparison across 4 cities at once",
-  "Weekly nomad intel drop in your inbox",
+  "Browse destinations & workspaces free — no account needed",
+  "AI trip planner and multi-city cost comparison (beta)",
+  "Verified Wi-Fi speeds and listing details from the database",
+  "Weekly nomad intel in your inbox when you join the list",
 ];
 
 export function CTA() {
@@ -31,7 +31,6 @@ export function CTA() {
 
     if (error) {
       if (error.code === "23505") {
-        // Duplicate email — treat as success from the user's perspective.
         setStatus("success");
       } else {
         setStatus("error");
@@ -54,7 +53,6 @@ export function CTA() {
           transition={{ duration: 0.6 }}
           className="relative isolate overflow-hidden rounded-[2rem] bg-primary px-6 py-14 text-primary-foreground sm:px-14 sm:py-20"
         >
-          {/* Decorative shapes */}
           <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-sunset/30 blur-3xl" />
           <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-emerald/30 blur-3xl" />
           <div
@@ -75,13 +73,13 @@ export function CTA() {
                 Public beta is live
               </div>
               <h2 className="mt-5 font-serif text-4xl font-semibold leading-tight tracking-tight text-balance sm:text-5xl lg:text-6xl">
-                Stop researching.
+                Plan your next move
                 <br />
-                Start roaming.
+                with real data.
               </h2>
               <p className="mt-5 max-w-md text-lg leading-relaxed text-primary-foreground/80">
-                Join the public beta and start planning your next move.
-                It takes two minutes to set up — and one to fall in love.
+                Explore visa rules, cost-of-living, and vetted workspaces for free.
+                Join the list if you want the AI planner and weekly nomad updates — no card required.
               </p>
 
               <ul className="mt-7 grid gap-2 sm:grid-cols-2">
@@ -96,7 +94,6 @@ export function CTA() {
               </ul>
             </div>
 
-            {/* Email form */}
             <form
               onSubmit={handleSubmit}
               className="rounded-2xl border border-primary-foreground/15 bg-primary-foreground/5 p-6 backdrop-blur-md sm:p-7"
@@ -105,7 +102,7 @@ export function CTA() {
                 htmlFor="cta-email"
                 className="text-xs font-medium uppercase tracking-widest text-primary-foreground/70"
               >
-                Get your invite
+                Join the waitlist
               </label>
 
               {status === "success" ? (
@@ -134,7 +131,7 @@ export function CTA() {
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                       <>
-                        Claim my spot
+                        Get updates
                         <ArrowRight className="ml-1.5 h-4 w-4" />
                       </>
                     )}
@@ -148,7 +145,7 @@ export function CTA() {
 
               <div className="mt-5 flex items-center gap-3 border-t border-primary-foreground/15 pt-5">
                 <p className="text-xs text-primary-foreground/70">
-                  Free during public beta — no credit card required.
+                  Free during public beta — no credit card required. Browse without joining.
                 </p>
               </div>
             </form>
