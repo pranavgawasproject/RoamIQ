@@ -9,25 +9,25 @@ import { supabase, type Listing } from "@/lib/supabase";
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Workspaces & stays â Coworking, coliving, workations | RoamIQ",
+  title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
   description:
-    "Browse coworking desks, coliving houses, workations, hostels, cafÃ©s and meeting rooms for digital nomads. Filter by city, type, price and WiâFi speed.",
+    "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads. Filter by city, type, price and Wi-Fi speed.",
   alternates: {
     canonical: `${BASE_URL}/workspaces`,
   },
   openGraph: {
-    title: "Workspaces & stays â Coworking, coliving, workations | RoamIQ",
+    title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
     description:
-      "Browse coworking, coliving, workations and more for digital nomads. Filter by city, type, price and WiâFi.",
+      "Browse coworking, coliving, workations and more for digital nomads. Filter by city, type, price and Wi-Fi.",
     url: `${BASE_URL}/workspaces`,
     siteName: "RoamIQ",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Workspaces & stays â Coworking, coliving, workations | RoamIQ",
+    title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
     description:
-      "Browse coworking, coliving, workations and more for digital nomads. Filter by city, type, price and WiâFi.",
+      "Browse coworking, coliving, workations and more for digital nomads. Filter by city, type, price and Wi-Fi.",
   },
   other: {
     founder: "Pranav Gawas",
@@ -198,8 +198,8 @@ export default async function WorkspacesPage({
               {count.toLocaleString()} workspaces & stays, live from the database.
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Coworking desks, coliving houses, workations, hostels, cafÃ©s and
-              meeting rooms â filter by location, category, and Wi-Fi speed.
+              Coworking desks, coliving houses, workations, hostels, cafes, and
+              meeting rooms — filter by location, category, and Wi-Fi speed.
             </p>
 
             <form className="mt-8 flex flex-wrap gap-3" action="/workspaces">
@@ -207,14 +207,14 @@ export default async function WorkspacesPage({
                 type="text"
                 name="search"
                 defaultValue={params.search ?? ""}
-                placeholder="Search by nameâ¦"
+                placeholder="Search by name..."
                 className="min-w-[200px] flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
               />
               <input
                 type="text"
                 name="city"
                 defaultValue={params.city ?? ""}
-                placeholder="Cityâ¦"
+                placeholder="City..."
                 className="w-40 rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
               />
               <select
