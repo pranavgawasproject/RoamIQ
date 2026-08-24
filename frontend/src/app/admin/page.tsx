@@ -2,19 +2,19 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { 
-  Users, 
-  MapPin, 
-  Briefcase, 
-  Lock, 
-  Download, 
-  Check, 
-  Loader2, 
-  RefreshCw, 
-  Search, 
-  ShieldCheck, 
+import {
+  Users,
+  MapPin,
+  Briefcase,
+  Lock,
+  Download,
+  Check,
+  Loader2,
+  RefreshCw,
+  Search,
+  ShieldCheck,
   LogOut,
-  TrendingUp
+  TrendingUp,
 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
@@ -36,8 +36,11 @@ export default function AdminPage() {
     return false;
   });
   const [authError, setAuthError] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<"leads" | "cities" | "affiliates">("leads");
+  const [activeTab, setActiveTab] = useState<"leads" | "cities" | "affiliates">(
+    "leads"
+  );
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -50,16 +53,34 @@ export default function AdminPage() {
     }
   }, [isAuthenticated]);
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    // Default admin access key
-    if (password === "roamiq2026" || password === "admin123" || password === "roam") {
-      setIsAuthenticated(true);
-      sessionStorage.setItem("roamiq_admin_auth", "true");
-      setAuthError("");
-      fetchLeads();
-    } else {
-      setAuthError("Invalid admin access key. Please try again.");
+    setAuthError("");
+    setAuthLoading(true);
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: password }),
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data?.ok) {
+        setIsAuthenticated(true);
+        sessionStorage.setItem("roamiq_admin_auth", "true");
+        setPassword("");
+        fetchLeads();
+      } else {
+        setAuthError(
+          typeof data?.error === "string"
+            ? data.error
+            : "Invalid admin access key. Please try again."
+        );
+      }
+    } catch {
+      setAuthError("Unable to reach auth service. Please try again.");
+    } finally {
+      setAuthLoading(false);
     }
   }
 
@@ -97,7 +118,10 @@ export default function AdminPage() {
     if (leads.length === 0) return;
     const headers = "Email,Source,Signup Date\n";
     const rows = leads
-      .map((l) => `"${l.email}","${l.source || "beta_invite"}","${l.created_at || ""}"`)
+      .map(
+        (l) =>
+          `"${l.email}","${l.source || "beta_invite"}","${l.created_at || ""}"`
+      )
       .join("\n");
 
     const blob = new Blob([headers + rows], { type: "text/csv" });
@@ -117,7 +141,6 @@ export default function AdminPage() {
       <SiteNav />
       <main className="flex-1 pt-28 sm:pt-32">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          
           {/* Unauthenticated Login Form */}
           {!isAuthenticated ? (
             <div className="mx-auto my-12 max-w-md rounded-3xl border border-border bg-card p-8 shadow-sm">
@@ -128,7 +151,8 @@ export default function AdminPage() {
                 RoamIQ Executive Admin
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Enter your Founder & CEO access key to view beta leads and project controls.
+                Enter your Founder & CEO access key to view beta leads and
+                project controls.
               </p>
 
               <form onSubmit={handleLogin} className="mt-6 space-y-4">
@@ -142,7 +166,8 @@ export default function AdminPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter access key..."
-                    className="mt-1.5 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest"
+                    disabled={authLoading}
+                    className="mt-1.5 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-forest disabled:opacity-60"
                   />
                 </div>
 
@@ -152,9 +177,17 @@ export default function AdminPage() {
 
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-forest px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  disabled={authLoading}
+                  className="w-full rounded-xl bg-forest px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
                 >
-                  Unlock Admin Dashboard →
+                  {authLoading ? (
+                    <span className="inline-flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Verifying…
+                    </span>
+                  ) : (
+                    "Unlock Admin Dashboard →"
+                  )}
                 </button>
               </form>
               <div className="mt-6 text-center text-xs text-muted-foreground">
@@ -181,7 +214,9 @@ export default function AdminPage() {
                     onClick={fetchLeads}
                     className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-medium hover:bg-secondary"
                   >
-                    <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+                    <RefreshCw
+                      className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`}
+                    />
                     Refresh
                   </button>
                   <button
@@ -198,10 +233,14 @@ export default function AdminPage() {
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
                   <div className="flex items-center justify-between text-muted-foreground">
-                    <span className="text-xs font-semibold uppercase tracking-wider">Beta Signups & Leads</span>
+                    <span className="text-xs font-semibold uppercase tracking-wider">
+                      Beta Signups & Leads
+                    </span>
                     <Users className="h-5 w-5 text-forest" />
                   </div>
-                  <div className="mt-2 font-serif text-3xl font-bold">{leads.length}</div>
+                  <div className="mt-2 font-serif text-3xl font-bold">
+                    {leads.length}
+                  </div>
                   <p className="mt-1 text-xs text-muted-foreground">
                     Total &quot;Claim my spot&quot; waitlist signups captured
                   </p>
@@ -209,7 +248,9 @@ export default function AdminPage() {
 
                 <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
                   <div className="flex items-center justify-between text-muted-foreground">
-                    <span className="text-xs font-semibold uppercase tracking-wider">Indexed Destinations</span>
+                    <span className="text-xs font-semibold uppercase tracking-wider">
+                      Indexed Destinations
+                    </span>
                     <MapPin className="h-5 w-5 text-accent" />
                   </div>
                   <div className="mt-2 font-serif text-3xl font-bold">200+</div>
@@ -220,12 +261,17 @@ export default function AdminPage() {
 
                 <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
                   <div className="flex items-center justify-between text-muted-foreground">
-                    <span className="text-xs font-semibold uppercase tracking-wider">Google Search Rank</span>
+                    <span className="text-xs font-semibold uppercase tracking-wider">
+                      Google Search Rank
+                    </span>
                     <TrendingUp className="h-5 w-5 text-sunset" />
                   </div>
-                  <div className="mt-2 font-serif text-3xl font-bold">#7 (Page 1)</div>
+                  <div className="mt-2 font-serif text-3xl font-bold">
+                    #7 (Page 1)
+                  </div>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Organic Google rank for keyword <code className="text-forest">roamiq</code>
+                    Organic Google rank for keyword{" "}
+                    <code className="text-forest">roamiq</code>
                   </p>
                 </div>
               </div>
@@ -296,29 +342,48 @@ export default function AdminPage() {
                     <table className="w-full text-left text-sm">
                       <thead className="border-b border-border bg-secondary/40 text-xs uppercase tracking-wider text-muted-foreground">
                         <tr>
-                          <th className="px-6 py-3.5 font-semibold">User Email</th>
-                          <th className="px-6 py-3.5 font-semibold">Lead Source</th>
-                          <th className="px-6 py-3.5 font-semibold">Signup Date</th>
-                          <th className="px-6 py-3.5 font-semibold text-right">Action</th>
+                          <th className="px-6 py-3.5 font-semibold">
+                            User Email
+                          </th>
+                          <th className="px-6 py-3.5 font-semibold">
+                            Lead Source
+                          </th>
+                          <th className="px-6 py-3.5 font-semibold">
+                            Signup Date
+                          </th>
+                          <th className="px-6 py-3.5 font-semibold text-right">
+                            Action
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
                         {loading ? (
                           <tr>
-                            <td colSpan={4} className="py-12 text-center text-muted-foreground">
+                            <td
+                              colSpan={4}
+                              className="py-12 text-center text-muted-foreground"
+                            >
                               <Loader2 className="mx-auto h-6 w-6 animate-spin text-forest" />
-                              <p className="mt-2 text-xs">Loading waitlist leads...</p>
+                              <p className="mt-2 text-xs">
+                                Loading waitlist leads...
+                              </p>
                             </td>
                           </tr>
                         ) : filteredLeads.length === 0 ? (
                           <tr>
-                            <td colSpan={4} className="py-12 text-center text-muted-foreground">
+                            <td
+                              colSpan={4}
+                              className="py-12 text-center text-muted-foreground"
+                            >
                               No waitlist signups found.
                             </td>
                           </tr>
                         ) : (
                           filteredLeads.map((l, index) => (
-                            <tr key={l.id || index} className="hover:bg-secondary/20 transition-colors">
+                            <tr
+                              key={l.id || index}
+                              className="hover:bg-secondary/20 transition-colors"
+                            >
                               <td className="px-6 py-4 font-medium text-foreground">
                                 {l.email}
                               </td>
@@ -337,7 +402,10 @@ export default function AdminPage() {
                                   onClick={() => {
                                     navigator.clipboard.writeText(l.email);
                                     setCopySuccess(true);
-                                    setTimeout(() => setCopySuccess(false), 2000);
+                                    setTimeout(
+                                      () => setCopySuccess(false),
+                                      2000
+                                    );
                                   }}
                                   className="text-xs font-medium text-forest hover:underline"
                                 >
@@ -357,9 +425,12 @@ export default function AdminPage() {
               {activeTab === "cities" && (
                 <div className="py-6">
                   <div className="rounded-2xl border border-border bg-card p-6">
-                    <h3 className="font-serif text-lg font-semibold">Destination Management</h3>
+                    <h3 className="font-serif text-lg font-semibold">
+                      Destination Management
+                    </h3>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Over 200+ cities indexed with cost of living, Wi-Fi speed, safety rating, and nomad visa rules.
+                      Over 200+ cities indexed with cost of living, Wi-Fi
+                      speed, safety rating, and nomad visa rules.
                     </p>
                     <div className="mt-4">
                       <Link
@@ -377,9 +448,12 @@ export default function AdminPage() {
               {activeTab === "affiliates" && (
                 <div className="py-6 space-y-4">
                   <div className="rounded-2xl border border-border bg-card p-6">
-                    <h3 className="font-serif text-lg font-semibold">Active Referral Connections</h3>
+                    <h3 className="font-serif text-lg font-semibold">
+                      Active Referral Connections
+                    </h3>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Referral widgets for SafetyWing, Airalo, and Booking.com are live on destination detail pages.
+                      Referral widgets for SafetyWing, Airalo, and Booking.com
+                      are live on destination detail pages.
                     </p>
                   </div>
                 </div>
