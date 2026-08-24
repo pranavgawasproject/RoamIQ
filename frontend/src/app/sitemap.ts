@@ -29,6 +29,13 @@ const FALLBACK_CITY_IDS = [
   "prague",
   "taipei",
   "kuala-lumpur",
+  "split",
+  "florianopolis",
+  "florence",
+  "athens",
+  "san-jose",
+  "st-julians",
+  "grand-baie",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

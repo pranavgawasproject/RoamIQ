@@ -31,7 +31,14 @@ INSERT INTO cities (id, name, country, flag, image, continent, overall_score, co
 ('tallinn', 'Tallinn', 'Estonia', '🇪🇪', 'https://images.unsplash.com/photo-15417971875076-8f970d573be6?w=800', 'Europe', 4.3, 3.3, 4.7, 4.6, 3.7, 4.1, 3.6, 4.5, 1800, 110, 7, 'Easy', 'Good', 'Very High', 4.6, 170, 850, 10.00, 2.80, 220, 1.20),
 ('prague', 'Prague', 'Czech Republic', '🇨🇿', 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=800', 'Europe', 4.3, 3.4, 4.2, 4.5, 4.4, 4.7, 4.5, 3.9, 1700, 85, 11, 'Medium', 'Good', 'High', 4.4, 160, 800, 9.00, 2.50, 165, 1.20),
 ('taipei', 'Taipei', 'Taiwan', '🇹🇼', 'https://images.unsplash.com/photo-1470004914212-05527e49370b?w=800', 'Asia', 4.4, 3.5, 4.8, 4.9, 4.2, 4.6, 4.0, 3.8, 1600, 120, 23, 'Medium', 'Good', 'High', 4.6, 150, 750, 5.00, 2.00, 240, 1.00),
-('kuala-lumpur', 'Kuala Lumpur', 'Malaysia', '🇲🇾', 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800', 'Asia', 4.1, 4.2, 4.0, 3.9, 4.1, 3.0, 4.0, 3.2, 1100, 75, 28, 'Easy', 'Moderate', 'Very High', 4.3, 120, 500, 4.00, 1.90, 150, 0.70);
+('kuala-lumpur', 'Kuala Lumpur', 'Malaysia', '🇲🇾', 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800', 'Asia', 4.1, 4.2, 4.0, 3.9, 4.1, 3.0, 4.0, 3.2, 1100, 75, 28, 'Easy', 'Moderate', 'Very High', 4.3, 120, 500, 4.00, 1.90, 150, 0.70),
+('split', 'Split', 'Croatia', '🇭🇷', 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800', 'Europe', 4.3, 3.4, 4.1, 4.6, 4.2, 4.5, 4.0, 4.4, 1800, 85, 18, 'Easy', 'Good', 'High', 4.5, 160, 850, 10.00, 2.60, 150, 1.10),
+('florianopolis', 'Florianópolis', 'Brazil', '🇧🇷', 'https://images.unsplash.com/photo-1516306580123-e6e52b1b7b5f?w=800', 'South America', 4.2, 4.1, 3.5, 3.8, 4.6, 3.8, 4.4, 4.2, 1200, 45, 22, 'Easy', 'Good', 'Moderate', 4.3, 130, 550, 6.50, 1.90, 90, 0.80),
+('florence', 'Florence', 'Italy', '🇮🇹', 'https://images.unsplash.com/photo-1543429776-2782fc8e1acd?w=800', 'Europe', 4.5, 2.9, 4.3, 4.5, 4.8, 4.7, 4.1, 4.1, 2300, 90, 16, 'Medium', 'Good', 'High', 4.6, 190, 1100, 13.00, 1.80, 170, 1.20),
+('athens', 'Athens', 'Greece', '🇬🇷', 'https://images.unsplash.com/photo-1555993539-1732b0258235?w=800', 'Europe', 4.2, 3.6, 3.8, 4.2, 4.5, 4.2, 4.6, 3.7, 1750, 70, 20, 'Easy', 'Good', 'High', 4.3, 150, 800, 9.50, 2.30, 130, 0.90),
+('san-jose', 'San José', 'Costa Rica', '🇨🇷', 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=800', 'North America', 4.1, 3.5, 3.6, 3.6, 4.3, 3.2, 3.8, 4.2, 1600, 50, 22, 'Easy', 'Good', 'High', 4.2, 140, 750, 8.00, 2.20, 100, 1.30),
+('st-julians', 'St. Julian''s', 'Malta', '🇲🇹', 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800', 'Europe', 4.3, 3.1, 4.5, 4.5, 4.2, 4.1, 4.4, 4.0, 2100, 110, 21, 'Easy', 'Good', 'Very High', 4.4, 180, 1000, 12.00, 2.50, 200, 1.00),
+('grand-baie', 'Grand Baie', 'Mauritius', '🇲🇺', 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800', 'Africa', 4.3, 3.8, 3.7, 4.6, 4.1, 3.5, 3.6, 4.6, 1350, 60, 24, 'Easy', 'Good', 'High', 4.5, 140, 650, 7.50, 2.10, 110, 0.90);
 
 -- ── Cost of Living ──
 INSERT INTO cost_of_living (city_id, housing, coworking, food, transport, internet, entertainment, health, visa, misc, tip1, tip2, tip3) VALUES
@@ -54,7 +61,14 @@ INSERT INTO cost_of_living (city_id, housing, coworking, food, transport, intern
 ('taipei', 700, 150, 320, 35, 25, 140, 80, 30, 120, 'Da-an and Xinyi have world-class 24/7 cafes', 'Use YouBike and EasyCard for MRT travel', 'Eat at night markets for under $5 per meal'),
 ('kuala-lumpur', 480, 120, 260, 35, 25, 110, 60, 30, 80, 'KLCC & Bangsar offer modern air-conditioned hubs', 'Use the free GoKL bus lines across downtown', 'Food courts in Megamalls offer great cheap eats'),
 ('mexicocity', 700, 140, 300, 40, 30, 150, 80, 30, 130, 'Roma Norte and Condesa offer vibrant walkable workspace hubs', 'Use Metrobus and Ecobici for quick cheap transit', 'Enjoy street tacos and local fondas for $3-5 meals'),
-('tbilisi', 500, 120, 220, 25, 20, 100, 50, 15, 70, 'Vake and Sololaki feature cozy nomad-friendly work cafes', 'Use the Tbilisi Metro with a Metromani card', 'Register as Individual Entrepreneur for 1% small business tax');
+('tbilisi', 500, 120, 220, 25, 20, 100, 50, 15, 70, 'Vake and Sololaki feature cozy nomad-friendly work cafes', 'Use the Tbilisi Metro with a Metromani card', 'Register as Individual Entrepreneur for 1% small business tax'),
+('split', 850, 160, 380, 35, 25, 150, 90, 40, 80, 'Bačvice and Diocletian Palace area feature seaside cowork hubs', 'Walk or use local Promet Split bus network', '100% income tax exemption for Croatian DNV holders'),
+('florianopolis', 550, 130, 260, 40, 20, 110, 50, 20, 40, 'Lagoa da Conceição offers island nomad hub with fast Wi-Fi', 'Use local buses or Uber for island transport', 'Enjoy local seafood buffets and beachside kiosks'),
+('florence', 1100, 190, 450, 45, 30, 190, 120, 60, 115, 'Santo Spirito neighborhood features quiet laptop cafes', 'Walk or rent a bicycle - historical core is fully pedestrianized', 'Take advantage of Italian DNV flat tax incentive scheme'),
+('athens', 800, 150, 360, 40, 25, 160, 90, 35, 90, 'Koukaki and Pangrati offer affordable vibrant cafe workspaces', 'Use the Athens Metro - fast connection to Piraeus and airport', 'Greece offers 50% income tax reduction for 7 years'),
+('san-jose', 750, 140, 350, 50, 30, 130, 80, 30, 40, 'Escazú and Barrio Escalante feature top culinary and workspace hubs', 'Use Uber or local buses for city travel', 'Costa Rica DNV offers complete exemption from local income tax'),
+('st-julians', 1000, 180, 420, 45, 30, 180, 110, 60, 75, 'Paceville & Spinola Bay offer Mediterranean tech workspace hubs', 'Use Tallinja bus pass for unlimited island travel', 'Malta Nomad Residence Permit offers 10% flat tax rate'),
+('grand-baie', 650, 140, 280, 40, 25, 120, 60, 25, 30, 'Grand Baie & Pereybere feature tropical beachside nomad offices', 'Rent a car or scooter for island freedom', 'Mauritius Premium Visa application is 100% free online');
 
 -- ── Visa Info ──
 INSERT INTO visa_info (country, flag, tourist_days, has_dn_visa, dn_visa_cost, dn_visa_duration, min_income, tax_residency_days, tax_notes, processing_time, required_docs, path_to_residency, tax_exemption_status, application_fee_usd, application_method) VALUES
