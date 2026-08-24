@@ -225,6 +225,12 @@ export default async function WorkspaceDetailPage({
   if (listing.open_hours) {
     localBusinessJsonLd.openingHours = String(listing.open_hours);
   }
+  if (listing.contact_phone) {
+    localBusinessJsonLd.telephone = String(listing.contact_phone);
+  }
+  if (listing.contact_email) {
+    localBusinessJsonLd.email = String(listing.contact_email);
+  }
   if (tags.length > 0 || listing.wifi_speed || listing.download_speed_mbps) {
     localBusinessJsonLd.amenityFeature = [
       ...(listing.wifi_speed
