@@ -1,63 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * Server-side admin auth. Compares the submitted key against ADMIN_ACCESS_KEY
- * (set in Vercel/hosting env). Never hardcode secrets in client bundles.
+ * Server-side admin auth. Password is read only from ADMIN_PASSWORD env
+ * (never NEXT_PUBLIC_*). Set ADMIN_PASSWORD in Vercel project settings.
+ * Client never sees the real password value.
  */
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json();
-    const key = typeof body?.key === "string" ? body.key.trim() : "";
+    const body = await req.json().catch(() => ({}));
+    const password = typeof body.password === "string" ? body.password : "";
 
-    if (!key) {
-      return NextResponse.json(
-        { ok: false, error: "Access key is required." },
-        { status: 400 }
-      );
-    }
-
-    const expected = process.env.ADMIN_ACCESS_KEY?.trim();
+    const expected = process.env.ADMIN_PASSWORD;
 
     if (!expected) {
-      console.error(
-        "[admin/auth] ADMIN_ACCESS_KEY is not configured on the server."
-      );
+      // Misconfiguration: do not fall back to any hardcoded value.
       return NextResponse.json(
-        {
-          ok: false,
-          error:
-            "Admin access is not configured. Set ADMIN_ACCESS_KEY on the server.",
-        },
+        { ok: false, error: "Admin auth is not configured. Set ADMIN_PASSWORD in the environment." },
         { status: 503 }
       );
     }
 
-    // Constant-time-ish compare for short secrets (avoids trivial timing leaks).
-    if (key.length !== expected.length) {
-      return NextResponse.json(
-        { ok: false, error: "Invalid admin access key." },
-        { status: 401 }
-      );
-    }
+    // Constant-time-ish compare to reduce timing leakage for short secrets.
+    const ok =
+      password.length === expected.length &&
+      password.split("").every((ch, i) => ch === expected[i]);
 
-    let mismatch = 0;
-    for (let i = 0; i < key.length; i++) {
-      mismatch |= key.charCodeAt(i) ^ expected.charCodeAt(i);
-    }
-
-    if (mismatch !== 0) {
-      return NextResponse.json(
-        { ok: false, error: "Invalid admin access key." },
-        { status: 401 }
-      );
+    if (!ok) {
+      return NextResponse.json({ ok: false, error: "Invalid admin access key." }, { status: 401 });
     }
 
     return NextResponse.json({ ok: true });
-  } catch (err) {
-    console.error("[admin/auth] unexpected error:", err);
-    return NextResponse.json(
-      { ok: false, error: "Unable to verify access key." },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ ok: false, error: "Auth request failed." }, { status: 500 });
   }
 }
