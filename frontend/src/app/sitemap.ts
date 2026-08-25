@@ -36,6 +36,10 @@ const FALLBACK_CITY_IDS = [
   "san-jose",
   "st-julians",
   "grand-baie",
+  "bansko",
+  "las-palmas",
+  "playa-del-carmen",
+  "fukuoka",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
