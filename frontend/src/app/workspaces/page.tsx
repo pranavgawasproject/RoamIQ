@@ -294,6 +294,26 @@ export default async function WorkspacesPage({
           </div>
         </section>
       </main>
+
+      <section className="border-t border-border bg-secondary/40">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-5 py-10 sm:flex-row sm:items-center sm:px-8">
+          <div>
+            <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">
+              Looking for the right city, not just a desk?
+            </h2>
+            <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground">
+              Join the RoamIQ waitlist for destination picks matched to budget, visa rules, and real Wi-Fi data — no spam, early access only.
+            </p>
+          </div>
+          <Link
+            href="/#waitlist"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            Join the waitlist <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );
@@ -306,6 +326,28 @@ function getCardImage(listing: Listing): string | null {
   if (listing.logo_url) return listing.logo_url;
   return null;
 }
+
+/** Hide scraped noise / thin about snippets on cards so pages stay readable. */
+function usefulAboutSnippet(about: string | null | undefined): string | null {
+  if (!about) return null;
+  const cleaned = about.replace(/\s+/g, " ").trim();
+  if (cleaned.length < 40) return null;
+  const lower = cleaned.toLowerCase();
+  const noise = [
+    "skip to content",
+    "sign in",
+    "official white house",
+    "stock market",
+    "cookie policy",
+    "privacy policy",
+    "all rights reserved",
+    "download the app",
+    "subscribe to newsletter",
+  ];
+  if (noise.some((n) => lower.includes(n))) return null;
+  return cleaned.slice(0, 180);
+}
+
 
 function ListingCard({ listing }: { listing: Listing }) {
   const imageUrl = getCardImage(listing);
@@ -358,11 +400,11 @@ function ListingCard({ listing }: { listing: Listing }) {
             {listing.company_title}
           </p>
         )}
-        {listing.about && (
+        {(() => { const aboutSnippet = usefulAboutSnippet(listing.about); return aboutSnippet ? (
           <p className="mt-1 text-sm text-foreground/70 line-clamp-2">
-            {listing.about}
+            {aboutSnippet}
           </p>
-        )}
+        ) : null; })()}
 
         <div className="mt-2.5 flex items-center gap-1.5 text-sm text-foreground/70">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
