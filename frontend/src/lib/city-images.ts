@@ -138,6 +138,14 @@ export const cityPhotos: Record<string, string> = {
     "https://images.unsplash.com/photo-1541971875076-8f970d573be6?auto=format&fit=crop&w=1200&q=80",
   quito:
     "https://images.unsplash.com/photo-1510097467424-192d713be8b2?auto=format&fit=crop&w=1200&q=80",
+  antigua:
+    "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?auto=format&fit=crop&w=1200&q=80",
+  kyoto:
+    "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80",
+  plovdiv:
+    "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1200&q=80",
+  valletta:
+    "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80",
 };
 
 const gradients: [string, string][] = [
