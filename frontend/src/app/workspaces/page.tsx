@@ -9,14 +9,14 @@ import { supabase, type Listing } from "@/lib/supabase";
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Workspaces & Stays â Coworking, Coliving & Workations | RoamIQ",
+  title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
   description:
     "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads. Filter by city, type, price and Wi-Fi speed.",
   alternates: {
     canonical: `${BASE_URL}/workspaces`,
   },
   openGraph: {
-    title: "Workspaces & Stays â Coworking, Coliving & Workations | RoamIQ",
+    title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
     description:
       "Browse coworking, coliving, workations and more for digital nomads. Filter by city, type, price and Wi-Fi.",
     url: `${BASE_URL}/workspaces`,
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Workspaces & Stays â Coworking, Coliving & Workations | RoamIQ",
+    title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
     description:
       "Browse coworking, coliving, workations and more for digital nomads. Filter by city, type, price and Wi-Fi.",
   },
@@ -203,7 +203,7 @@ export default async function WorkspacesPage({
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
               Coworking desks, coliving houses, workations, hostels, cafes, and
-              meeting rooms â filter by location, category, and Wi-Fi speed.
+              meeting rooms — filter by location, category, and Wi-Fi speed.
             </p>
 
             <form className="mt-8 flex flex-wrap gap-3" action="/workspaces">
@@ -303,10 +303,10 @@ export default async function WorkspacesPage({
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-5 py-10 sm:flex-row sm:items-center sm:px-8">
           <div>
             <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">
-              Found a workspace you like â or still deciding where to go?
+              Found a workspace you like — or still deciding where to go?
             </h2>
             <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              Get destination shortlists matched to your budget, visa window, and verified Wi-Fi speeds. Free to join, no spam â we only email when there is something useful for your next move.
+              Get destination shortlists matched to your budget, visa window, and verified Wi-Fi speeds. Free to join, no spam — we only email when there is something useful for your next move.
             </p>
           </div>
           <Link

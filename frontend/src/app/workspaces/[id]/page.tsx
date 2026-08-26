@@ -65,7 +65,7 @@ export async function generateMetadata({
       .filter(Boolean)
       .join(", ");
 
-    const title = `${listing.company_name}${location ? ` â ${location}` : ""} | RoamIQ Workspaces`;
+    const title = `${listing.company_name}${location ? ` — ${location}` : ""} | RoamIQ Workspaces`;
 
     const aboutSnippet = (listing.about || listing.description || "")
       .replace(/\s+/g, " ")
@@ -79,7 +79,7 @@ export async function generateMetadata({
 
     const description =
       aboutSnippet ||
-      `${listing.company_name}${location ? ` in ${location}` : ""} â coworking and workspace details for digital nomads on RoamIQ.${extras.length ? ` ${extras.join(" Â· ")}.` : ""}`;
+      `${listing.company_name}${location ? ` in ${location}` : ""} — coworking and workspace details for digital nomads on RoamIQ.${extras.length ? ` ${extras.join(" · ")}.` : ""}`;
 
     const url = `${BASE_URL}/workspaces/${listing.id}`;
     const image =
@@ -180,7 +180,7 @@ export default async function WorkspaceDetailPage({
       ? "LodgingBusiness"
       : "LocalBusiness";
 
-  // LocalBusiness from real listing fields only â never invent ratings/prices
+  // LocalBusiness from real listing fields only — never invent ratings/prices
   const localBusinessJsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": schemaType,
@@ -460,8 +460,8 @@ export default async function WorkspaceDetailPage({
                       </div>
                       {(listing.download_speed_mbps || listing.upload_speed_mbps) && (
                         <div className="pl-6 text-xs text-muted-foreground">
-                          â {listing.download_speed_mbps || "â"} Mbps / â {listing.upload_speed_mbps || "â"} Mbps
-                          {listing.latency_ms ? ` Â· ${listing.latency_ms}ms latency` : ""}
+                          ↓ {listing.download_speed_mbps || "—"} Mbps / ↑ {listing.upload_speed_mbps || "—"} Mbps
+                          {listing.latency_ms ? ` · ${listing.latency_ms}ms latency` : ""}
                         </div>
                       )}
                     </div>
@@ -494,12 +494,12 @@ export default async function WorkspaceDetailPage({
                     <div className="mt-4 flex flex-wrap gap-1.5 pt-3 border-t border-border">
                       {listing.has_24_7_access && (
                         <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                          â 24/7 Access
+                          ✓ 24/7 Access
                         </span>
                       )}
                       {listing.has_standing_desks && (
                         <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
-                          â Standing Desks
+                          ✓ Standing Desks
                         </span>
                       )}
                     </div>
