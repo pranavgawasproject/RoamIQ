@@ -2,6 +2,7 @@
 
 ## 📌 Current Project Status
 - **Live Vercel Production URL**: [https://nomads-travel-indol.vercel.app](https://nomads-travel-indol.vercel.app)
+- **2026-08-26 (~03:36 UTC)**: Daily growth/conversion run (Track A). Confirmed about/images + LocalBusiness JSON-LD + admin env auth + price/Wi-Fi empty states already live. **Code**: (1) waitlist CTA on workspace detail sidebar (honest copy, links `/#waitlist`); (2) workspace cards require usable `http(s)` image URLs before rendering (fallback icon otherwise). Commits: `28bfbc2`, `b9ab55f`. Flag: GSC still surfaces query `4g-travel-tool.vercel.app` — do not redirect without canonical review. Branded CTR capped until custom domain is live (human-owned).
 - **Google Search Console Performance** (2026-07-22 → 2026-08-21):
   - Homepage: **17 clicks**, 276 impressions, avg position **~5.2**, CTR ~6.2%
   - Top query: `roamiq` (3 clicks / 114 impressions, pos ~6.4)
