@@ -98,6 +98,16 @@ export const cityPhotos: Record<string, string> = {
     "https://images.unsplash.com/photo-1516482362041-8b87b69ed28d?auto=format&fit=crop&w=1200&q=80",
   penang:
     "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1200&q=80",
+  seoul:
+    "https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&fit=crop&w=1200&q=80",
+  porto:
+    "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1200&q=80",
+  funchal:
+    "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80",
+  "panama-city":
+    "https://images.unsplash.com/photo-1516482362041-8b87b69ed28d?auto=format&fit=crop&w=1200&q=80",
+  panamacity:
+    "https://images.unsplash.com/photo-1516482362041-8b87b69ed28d?auto=format&fit=crop&w=1200&q=80",
 };
 
 const gradients: [string, string][] = [
