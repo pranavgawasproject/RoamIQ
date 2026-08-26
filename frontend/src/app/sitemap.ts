@@ -57,6 +57,10 @@ const FALLBACK_CITY_IDS = [
   "montevideo",
   "tenerife",
   "langkawi",
+  "krakow",
+  "osaka",
+  "puerto-vallarta",
+  "belgrade",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
