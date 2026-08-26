@@ -53,6 +53,10 @@ const FALLBACK_CITY_IDS = [
   "porto",
   "funchal",
   "panama-city",
+  "ho-chi-minh-city",
+  "montevideo",
+  "tenerife",
+  "langkawi",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

@@ -106,7 +106,7 @@ export default function AdminPage() {
     if (leads.length === 0) return;
     const headers = "Email,Source,Signup Date\n";
     const rows = leads
-      .map((l) => `\"${l.email}\",\"${l.source || \"beta_invite\"}\",\"${l.created_at || \"\"}\"`)
+      .map((l) => `"${l.email}","${l.source || "beta_invite"}","${l.created_at || ""}"`)
       .join("\n");
 
     const blob = new Blob([headers + rows], { type: "text/csv" });
