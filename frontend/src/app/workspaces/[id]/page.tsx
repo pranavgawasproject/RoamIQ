@@ -14,6 +14,7 @@ import {
   ExternalLink,
   Phone,
   Mail,
+  ArrowRight,
 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
@@ -64,7 +65,7 @@ export async function generateMetadata({
       .filter(Boolean)
       .join(", ");
 
-    const title = `${listing.company_name}${location ? ` — ${location}` : ""} | RoamIQ Workspaces`;
+    const title = `${listing.company_name}${location ? ` â ${location}` : ""} | RoamIQ Workspaces`;
 
     const aboutSnippet = (listing.about || listing.description || "")
       .replace(/\s+/g, " ")
@@ -78,7 +79,7 @@ export async function generateMetadata({
 
     const description =
       aboutSnippet ||
-      `${listing.company_name}${location ? ` in ${location}` : ""} — coworking and workspace details for digital nomads on RoamIQ.${extras.length ? ` ${extras.join(" · ")}.` : ""}`;
+      `${listing.company_name}${location ? ` in ${location}` : ""} â coworking and workspace details for digital nomads on RoamIQ.${extras.length ? ` ${extras.join(" Â· ")}.` : ""}`;
 
     const url = `${BASE_URL}/workspaces/${listing.id}`;
     const image =
@@ -179,7 +180,7 @@ export default async function WorkspaceDetailPage({
       ? "LodgingBusiness"
       : "LocalBusiness";
 
-  // LocalBusiness from real listing fields only — never invent ratings/prices
+  // LocalBusiness from real listing fields only â never invent ratings/prices
   const localBusinessJsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": schemaType,
@@ -459,8 +460,8 @@ export default async function WorkspaceDetailPage({
                       </div>
                       {(listing.download_speed_mbps || listing.upload_speed_mbps) && (
                         <div className="pl-6 text-xs text-muted-foreground">
-                          ↓ {listing.download_speed_mbps || "—"} Mbps / ↑ {listing.upload_speed_mbps || "—"} Mbps
-                          {listing.latency_ms ? ` · ${listing.latency_ms}ms latency` : ""}
+                          â {listing.download_speed_mbps || "â"} Mbps / â {listing.upload_speed_mbps || "â"} Mbps
+                          {listing.latency_ms ? ` Â· ${listing.latency_ms}ms latency` : ""}
                         </div>
                       )}
                     </div>
@@ -493,12 +494,12 @@ export default async function WorkspaceDetailPage({
                     <div className="mt-4 flex flex-wrap gap-1.5 pt-3 border-t border-border">
                       {listing.has_24_7_access && (
                         <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                          ✓ 24/7 Access
+                          â 24/7 Access
                         </span>
                       )}
                       {listing.has_standing_desks && (
                         <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
-                          ✓ Standing Desks
+                          â Standing Desks
                         </span>
                       )}
                     </div>
@@ -552,6 +553,22 @@ export default async function WorkspaceDetailPage({
                     <Globe className="h-4 w-4" /> View on Google Maps
                   </a>
                 )}
+
+                {/* Conversion: waitlist for alerts — honest, no urgency */}
+                <div className="mt-6 rounded-xl border border-border bg-secondary/40 p-4">
+                  <p className="text-sm font-medium text-foreground">
+                    Want shortlists with verified Wi-Fi and real prices?
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Join the free waitlist. We only email when there is something useful for your trip — no spam.
+                  </p>
+                  <Link
+                    href="/#waitlist"
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-forest px-4 py-2.5 text-sm font-semibold text-white hover:bg-forest/90 transition-colors"
+                  >
+                    Join free waitlist <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
