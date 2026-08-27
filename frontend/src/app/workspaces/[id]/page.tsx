@@ -402,12 +402,21 @@ export default async function WorkspaceDetailPage({
                 </div>
               </div>
 
-              {/* About */}
-              {(listing.about || listing.description) && (
+              {/* About — never invent copy; pending state when both fields empty */}
+              {listing.about || listing.description ? (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">About</h2>
                   <p className="mt-3 whitespace-pre-line leading-relaxed text-foreground/80">
                     {listing.about || listing.description}
+                  </p>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-5">
+                  <h2 className="font-serif text-xl font-semibold">About</h2>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    A written description has not been verified for this listing yet.
+                    Photos, location, and any listed price or Wi-Fi figures above are
+                    from the live database — we do not generate placeholder copy.
                   </p>
                 </div>
               )}
