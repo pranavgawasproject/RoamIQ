@@ -213,6 +213,18 @@ export default async function WorkspaceDetailPage({
       ...(listing.country ? { addressCountry: listing.country } : {}),
     };
   }
+  if (listing.latitude != null && listing.longitude != null) {
+    localBusinessJsonLd.geo = {
+      "@type": "GeoCoordinates",
+      latitude: listing.latitude,
+      longitude: listing.longitude,
+    };
+  }
+  if (listing.google_map) {
+    localBusinessJsonLd.hasMap = listing.google_map;
+  } else if (listing.latitude != null && listing.longitude != null) {
+    localBusinessJsonLd.hasMap = `https://maps.google.com/?q=${listing.latitude},${listing.longitude}`;
+  }
   if (listing.starting_price) {
     localBusinessJsonLd.priceRange = String(listing.starting_price);
   }
