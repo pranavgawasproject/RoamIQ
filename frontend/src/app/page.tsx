@@ -6,6 +6,7 @@ import { DestinationsPreview } from "@/components/site/destinations-preview";
 import { WhyRoamIQ } from "@/components/site/why-roamiq";
 import { CTA } from "@/components/site/cta";
 import { Footer } from "@/components/site/footer";
+import { WaitlistInline } from "@/components/site/waitlist-inline";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -167,6 +168,15 @@ export default function Page() {
       <SiteNav />
       <main className="flex-1">
         <Hero />
+        <section className="border-y border-border bg-secondary/40">
+          <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
+            <WaitlistInline
+              source="homepage_after_hero"
+              heading="Want a shortlist instead of bouncing after the hero?"
+              description="Leave an email here — we send city and workspace picks when they are useful. No extra page, no fabricated urgency."
+            />
+          </div>
+        </section>
         <Features />
         <DestinationsPreview />
         <WhyRoamIQ />
