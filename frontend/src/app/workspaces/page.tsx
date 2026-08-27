@@ -247,6 +247,15 @@ export default async function WorkspacesPage({
                 Search
               </button>
             </form>
+
+            <div className="mt-8 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
+              <WaitlistInline
+                source="workspaces-list-above-fold"
+                heading="Email me workspace picks for this search"
+                description="The list below is long. If you would rather get a shortlist than scroll 24 cards, leave an email — we only write when a city or listed speed matches."
+                compact
+              />
+            </div>
           </div>
         </section>
 
