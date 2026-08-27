@@ -41,6 +41,27 @@ async function getListing(id: string) {
   }
 }
 
+async function getRelatedListings(listing: Listing) {
+  if (!listing.city) return [] as Listing[];
+  try {
+    const { data, error } = await supabase
+      .from("listings")
+      .select(
+        "id, company_name, company_type, city, country, starting_price, wifi_speed, images, logo_url"
+      )
+      .eq("is_public", true)
+      .eq("is_active", true)
+      .eq("city", listing.city)
+      .neq("id", listing.id)
+      .limit(4);
+
+    if (error || !data) return [];
+    return data as Listing[];
+  } catch {
+    return [];
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -133,6 +154,8 @@ export default async function WorkspaceDetailPage({
   const listing = await getListing(id);
 
   if (!listing) notFound();
+
+  const related = await getRelatedListings(listing);
 
   const images: string[] =
     listing.images && listing.images.length > 0
@@ -399,8 +422,16 @@ export default async function WorkspaceDetailPage({
                 <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-foreground/70">
                   <span className="inline-flex items-center gap-1.5">
                     <MapPin className="h-4 w-4" />
-                    {listing.city}
-                    {listing.state ? `, ${listing.state}` : ""}, {listing.country}
+                    {listing.city ? (
+                      <Link
+                        href={`/workspaces?city=${encodeURIComponent(listing.city)}`}
+                        className="hover:text-accent underline-offset-2 hover:underline"
+                      >
+                        {listing.city}
+                      </Link>
+                    ) : null}
+                    {listing.state ? `, ${listing.state}` : ""}
+                    {listing.country ? `, ${listing.country}` : ""}
                   </span>
                   {listing.ratings > 0 && Number(listing.total_reviews) > 0 && (
                     <span className="inline-flex items-center gap-1 font-medium">
@@ -459,6 +490,44 @@ export default async function WorkspaceDetailPage({
                   </p>
                 </div>
               )}
+
+              {related.length > 0 && (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold">
+                    More workspaces in {listing.city}
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Other live listings in the same city — prices and Wi-Fi only when the database has them.
+                  </p>
+                  <ul className="mt-4 divide-y divide-border rounded-2xl border border-border">
+                    {related.map((item) => (
+                      <li key={item.id}>
+                        <Link
+                          href={`/workspaces/${item.id}`}
+                          className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-secondary/50 transition-colors"
+                        >
+                          <div className="min-w-0">
+                            <p className="truncate font-medium">{item.company_name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {item.company_type || "workspace"}
+                              {item.wifi_speed ? ` · ${item.wifi_speed}` : " · Wi-Fi speed pending"}
+                            </p>
+                          </div>
+                          <span className="shrink-0 text-sm text-muted-foreground">
+                            {item.starting_price || "Price not listed yet"}
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    href={`/workspaces?city=${encodeURIComponent(listing.city || "")}`}
+                    className="mt-3 inline-block text-sm font-medium text-accent hover:underline"
+                  >
+                    Browse all in {listing.city}
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Sidebar */}
@@ -492,10 +561,15 @@ export default async function WorkspaceDetailPage({
                       <span>Wi-Fi speed pending</span>
                     </div>
                   )}
-                  {listing.open_hours && (
+                  {listing.open_hours ? (
                     <div className="flex items-center gap-2.5 text-foreground/80">
                       <Clock className="h-4 w-4 text-muted-foreground" />
                       {listing.open_hours}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2.5 text-muted-foreground/80">
+                      <Clock className="h-4 w-4 shrink-0" />
+                      Hours not listed yet
                     </div>
                   )}
                   {listing.capacity && (
@@ -564,9 +638,12 @@ export default async function WorkspaceDetailPage({
                   </a>
                 )}
 
-                {listing.google_map && (
+                {(listing.google_map || (listing.latitude != null && listing.longitude != null)) && (
                   <a
-                    href={listing.google_map}
+                    href={
+                      listing.google_map ||
+                      `https://maps.google.com/?q=${listing.latitude},${listing.longitude}`
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-medium hover:bg-secondary transition-colors"
