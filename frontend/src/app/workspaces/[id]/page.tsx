@@ -47,7 +47,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_type, city, country, starting_price, wifi_speed, images, logo_url"
+        "id, company_name, company_type, city, country, starting_price, wifi_speed, images, logo_url, about"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -500,14 +500,43 @@ export default async function WorkspaceDetailPage({
                     Other live listings in the same city — prices and Wi-Fi only when the database has them.
                   </p>
                   <ul className="mt-4 divide-y divide-border rounded-2xl border border-border">
-                    {related.map((item) => (
+                    {related.map((item) => {
+                      const thumb =
+                        item.images?.find((u) => typeof u === "string" && /^https?:\/\//i.test(u.trim())) ||
+                        (item.logo_url && /^https?:\/\//i.test(item.logo_url.trim()) ? item.logo_url : null);
+                      const snippet = (item.about || "").replace(/\s+/g, " ").trim();
+                      const aboutOk =
+                        snippet.length >= 40 &&
+                        !["skip to content", "sign in", "privacy policy", "cookie policy"].some((n) =>
+                          snippet.toLowerCase().includes(n)
+                        );
+                      return (
                       <li key={item.id}>
                         <Link
                           href={`/workspaces/${item.id}`}
-                          className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-secondary/50 transition-colors"
+                          className="flex items-center gap-3 px-4 py-3 hover:bg-secondary/50 transition-colors"
                         >
-                          <div className="min-w-0">
+                          <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-secondary">
+                            {thumb ? (
+                              <Image
+                                src={thumb.trim()}
+                                alt={item.company_name}
+                                fill
+                                className="object-cover"
+                                sizes="80px"
+                                unoptimized
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center">
+                                <Building2 className="h-5 w-5 text-muted-foreground/50" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
                             <p className="truncate font-medium">{item.company_name}</p>
+                            {aboutOk && (
+                              <p className="mt-0.5 line-clamp-2 text-xs text-foreground/70">{snippet.slice(0, 140)}</p>
+                            )}
                             <p className="text-xs text-muted-foreground">
                               {item.company_type || "workspace"}
                               {item.wifi_speed ? ` · ${item.wifi_speed}` : " · Wi-Fi speed pending"}
@@ -518,7 +547,8 @@ export default async function WorkspaceDetailPage({
                           </span>
                         </Link>
                       </li>
-                    ))}
+                      );
+                    })}
                   </ul>
                   <Link
                     href={`/workspaces?city=${encodeURIComponent(listing.city || "")}`}
