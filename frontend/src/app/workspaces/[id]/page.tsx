@@ -390,7 +390,7 @@ export default async function WorkspaceDetailPage({
                     {listing.city}
                     {listing.state ? `, ${listing.state}` : ""}, {listing.country}
                   </span>
-                  {listing.ratings > 0 && (
+                  {listing.ratings > 0 && Number(listing.total_reviews) > 0 && (
                     <span className="inline-flex items-center gap-1 font-medium">
                       <Star className="h-4 w-4 fill-sunset text-sunset" />
                       {Number(listing.ratings).toFixed(1)}
@@ -457,7 +457,7 @@ export default async function WorkspaceDetailPage({
                     {listing.starting_price}
                   </div>
                 ) : (
-                  <div className="font-serif text-lg text-muted-foreground">Price on request</div>
+                  <div className="font-serif text-lg text-muted-foreground">Price not listed yet</div>
                 )}
 
                 <div className="mt-5 space-y-3 text-sm">

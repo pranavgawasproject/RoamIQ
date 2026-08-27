@@ -445,7 +445,7 @@ function ListingCard({ listing }: { listing: Listing }) {
               </div>
             )}
           </div>
-          {listing.ratings > 0 && (
+          {listing.ratings > 0 && Number(listing.total_reviews) > 0 && (
             <div className="flex items-center gap-1 text-sm font-medium">
               <Star className="h-3.5 w-3.5 fill-sunset text-sunset" />
               {Number(listing.ratings).toFixed(1)}
