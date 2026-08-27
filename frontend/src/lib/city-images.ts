@@ -178,6 +178,18 @@ export const cityPhotos: Record<string, string> = {
     "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=1200&q=80",
   dalat:
     "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=1200&q=80",
+  alicante:
+    "https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=1200&q=80",
+  "chiang-rai":
+    "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1200&q=80",
+  chiangrai:
+    "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1200&q=80",
+  arequipa:
+    "https://images.unsplash.com/photo-1510097467424-192d713be8b2?auto=format&fit=crop&w=1200&q=80",
+  "nha-trang":
+    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=1200&q=80",
+  nhatrang:
+    "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=1200&q=80",
 };
 
 const gradients: [string, string][] = [
