@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Star, MapPin, Wifi, ArrowRight, ArrowLeft, Building2 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
+import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
@@ -299,22 +300,17 @@ export default async function WorkspacesPage({
         </section>
       </main>
 
-      <section className="border-t border-border bg-secondary/40">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-5 py-10 sm:flex-row sm:items-center sm:px-8">
+      <section id="waitlist" className="scroll-mt-28 border-t border-border bg-secondary/40">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-5 py-10 sm:flex-row sm:items-center sm:px-8">
           <div>
             <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">
               Found a workspace you like — or still deciding where to go?
             </h2>
             <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              Get destination shortlists matched to your budget, visa window, and verified Wi-Fi speeds. Free to join, no spam — we only email when there is something useful for your next move.
+              Most people leave this page after browsing. Stay on it: join the free list for destination shortlists matched to budget, visa window, and listed Wi-Fi speeds. No fabricated scarcity — we only email when there is something useful.
             </p>
           </div>
-          <Link
-            href="/#waitlist"
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-          >
-            Join free waitlist <ArrowRight className="h-4 w-4" />
-          </Link>
+          <WaitlistInline source="workspaces_list" compact />
         </div>
       </section>
 
@@ -445,7 +441,7 @@ function ListingCard({ listing }: { listing: Listing }) {
               </div>
             )}
           </div>
-          {listing.ratings > 0 && Number(listing.total_reviews) > 0 && (
+          {listing.ratings > 0 && (
             <div className="flex items-center gap-1 text-sm font-medium">
               <Star className="h-3.5 w-3.5 fill-sunset text-sunset" />
               {Number(listing.ratings).toFixed(1)}

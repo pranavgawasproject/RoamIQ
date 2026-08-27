@@ -14,10 +14,10 @@ import {
   ExternalLink,
   Phone,
   Mail,
-  ArrowRight,
 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
+import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
 
 export const revalidate = 180;
@@ -563,20 +563,13 @@ export default async function WorkspaceDetailPage({
                   </a>
                 )}
 
-                {/* Conversion: waitlist for alerts — honest, no urgency */}
+                {/* Conversion: on-page waitlist — no extra navigation, no fake urgency */}
                 <div className="mt-6 rounded-xl border border-border bg-secondary/40 p-4">
-                  <p className="text-sm font-medium text-foreground">
-                    Want shortlists with verified Wi-Fi and real prices?
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Join the free waitlist. We only email when there is something useful for your trip — no spam.
-                  </p>
-                  <Link
-                    href="/#waitlist"
-                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-forest px-4 py-2.5 text-sm font-semibold text-white hover:bg-forest/90 transition-colors"
-                  >
-                    Join free waitlist <ArrowRight className="h-4 w-4" />
-                  </Link>
+                  <WaitlistInline
+                    source="workspace_detail"
+                    heading="Want shortlists with listed Wi-Fi and real prices?"
+                    description="Join here — no extra page load. We only email when there is something useful for your trip."
+                  />
                 </div>
               </div>
             </div>
