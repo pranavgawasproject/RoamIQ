@@ -73,6 +73,10 @@ const FALLBACK_CITY_IDS = [
   "santo-domingo",
   "andorra-la-vella",
   "bratislava",
+  "cartagena",
+  "palma",
+  "cuenca",
+  "larnaca",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
