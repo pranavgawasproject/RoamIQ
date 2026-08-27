@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
@@ -11,10 +12,12 @@ import {
   Moon,
   Wind,
   Sparkles,
+  Building2,
 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator";
+import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
@@ -134,7 +137,7 @@ export default async function CityDetailPage({
           .maybeSingle(),
         supabase
           .from("listings")
-          .select("id, company_name, company_type, city, country, starting_price, wifi_speed, ratings, total_reviews, images")
+          .select("id, company_name, company_type, city, country, starting_price, wifi_speed, ratings, total_reviews, images, logo_url, about")
           .eq("city", city.name)
           .eq("is_public", true)
           .order("ratings", { ascending: false })
@@ -562,42 +565,76 @@ export default async function CityDetailPage({
                   <Link
                     key={listing.id}
                     href={`/workspaces/${listing.id}`}
-                    className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-5 transition-all hover:border-forest/40 hover:shadow-md"
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-forest/40 hover:shadow-md"
                   >
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-foreground/80">
-                          {listing.company_type}
-                        </span>
-                        {listing.ratings > 0 && (
-                          <span className="text-xs font-medium text-amber-600 flex items-center gap-1">
-                            ★ {Number(listing.ratings).toFixed(1)}
+                    {(() => {
+                      const img = getCardImage(listing);
+                      return img ? (
+                        <div className="relative h-36 w-full bg-secondary">
+                          <Image
+                            src={img}
+                            alt={`${listing.company_name} in ${listing.city}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex h-24 items-center justify-center bg-secondary/60 text-muted-foreground">
+                          <Building2 className="h-8 w-8" />
+                        </div>
+                      );
+                    })()}
+                    <div className="flex flex-1 flex-col justify-between p-5">
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-foreground/80">
+                            {listing.company_type}
                           </span>
+                          {listing.ratings > 0 && (
+                            <span className="text-xs font-medium text-amber-600 flex items-center gap-1">
+                              ★ {Number(listing.ratings).toFixed(1)}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="mt-3 font-serif text-lg font-semibold group-hover:text-forest transition-colors">
+                          {listing.company_name}
+                        </h3>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {listing.city}, {listing.country}
+                        </p>
+                        {usefulAboutSnippet(listing.about) && (
+                          <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-foreground/70">
+                            {usefulAboutSnippet(listing.about)}
+                          </p>
                         )}
                       </div>
-                      <h3 className="mt-3 font-serif text-lg font-semibold group-hover:text-forest transition-colors">
-                        {listing.company_name}
-                      </h3>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {listing.city}, {listing.country}
-                      </p>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-xs">
-                      <span className="font-semibold text-forest">
-                        {listing.starting_price || "Inquire for rates"}
-                      </span>
-                      {listing.wifi_speed && (
-                        <span className="flex items-center gap-1 text-muted-foreground font-medium">
-                          <Wifi className="h-3 w-3 text-forest" /> {listing.wifi_speed}
+                      <div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-xs">
+                        <span className="font-semibold text-forest">
+                          {listing.starting_price || "Price not listed yet"}
                         </span>
-                      )}
+                        {listing.wifi_speed ? (
+                          <span className="flex items-center gap-1 text-muted-foreground font-medium">
+                            <Wifi className="h-3 w-3 text-forest" /> {listing.wifi_speed}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">Wi-Fi speed pending</span>
+                        )}
+                      </div>
                     </div>
                   </Link>
                 ))}
               </div>
             </div>
           )}
+
+          <div className="mt-10 rounded-2xl border border-border bg-secondary/40 p-5 sm:p-6">
+            <WaitlistInline
+              source="destination_detail"
+              heading={`Want a shortlist of workspaces in ${typedCity.name}?`}
+              description="Join here — no extra page. We only email when there is something useful for your next stay."
+            />
+          </div>
 
           {/* Nomad Travel Essentials & Affiliate Recommendations */}
           <div className="mt-16 rounded-3xl border border-border bg-gradient-to-br from-secondary/50 via-card to-card p-6 sm:p-8">
@@ -706,4 +743,39 @@ function InfoBlock({ label, value }: { label: string; value: string }) {
       <div className="mt-0.5 font-medium">{value}</div>
     </div>
   );
+}
+function isUsableImageUrl(url: string | null | undefined): url is string {
+  if (!url || typeof url !== "string") return false;
+  const trimmed = url.trim();
+  if (!trimmed) return false;
+  return /^https?:\/\//i.test(trimmed);
+}
+
+function getCardImage(listing: Listing): string | null {
+  if (listing.images && listing.images.length > 0) {
+    const first = listing.images.find((u) => isUsableImageUrl(u));
+    if (first) return first.trim();
+  }
+  if (isUsableImageUrl(listing.logo_url)) return listing.logo_url.trim();
+  return null;
+}
+
+function usefulAboutSnippet(about: string | null | undefined): string | null {
+  if (!about) return null;
+  const cleaned = about.replace(/\s+/g, " ").trim();
+  if (cleaned.length < 40) return null;
+  const lower = cleaned.toLowerCase();
+  const noise = [
+    "skip to content",
+    "sign in",
+    "official white house",
+    "stock market",
+    "cookie policy",
+    "privacy policy",
+    "all rights reserved",
+    "download the app",
+    "subscribe to newsletter",
+  ];
+  if (noise.some((n) => lower.includes(n))) return null;
+  return cleaned.slice(0, 180);
 }
