@@ -72,12 +72,18 @@ def main():
         ("Guatemala", "🇬🇹", 90, True, "$100", "1 year", "$1,500/mo", 183, "Guatemala Rentista / Remote Worker Visa and CA-4 agreement allow 1-year renewable stays", "2-4 weeks", "ARRAY['Passport','Proof of $1,500/mo income','Clean criminal record']::text[]", "1-year renewable residence permit with permanent residency pathway after 5 years", "0% local income tax on foreign-sourced remote income", 100, "Instituto Guatemalteco de Migración"),
         ("Philippines", "🇵🇭", 30, True, "$150", "1-2 years", "$24,000/yr", 183, "Philippines Digital Nomad Visa and long-stay tourist visa extensions (LSVVE) allow remote stays up to 36 months", "2-4 weeks", "ARRAY['Passport','Proof of $24,000/yr income','Clean criminal record']::text[]", "1-year renewable visa with temporary residence card option", "Exempt on foreign-sourced remote income under 183-day rule", 150, "Bureau of Immigration / Embassy"),
         ("Andorra", "🇦🇩", 90, True, "€250", "1-2 years", "€2,500/mo", 90, "Andorra Passive Residency and Digital Nomad Visa provide 10% maximum tax ceiling and complete tax exemptions for foreign digital professionals", "4-6 weeks", "ARRAY['Passport','Proof of €2,500/mo income','Clean criminal record','Private health insurance']::text[]", "1-year renewable residence permit with permanent tax optimization", "10% max tax cap & zero tax under local thresholds", 250, "Servei d'Immigració d'Andorra"),
-        ("Slovakia", "🇸🇰", 90, True, "€120", "1 year", "€1,800/mo", 183, "Slovakia Freelance & Digital Nomad Residence Permit allows 1-year renewable stays with flat tax rate options for micro-businesses", "3-5 weeks", "ARRAY['Passport','Proof of €1,800/mo remote income','Clean criminal record','Housing proof']::text[]", "1-year renewable residence permit with permanent residency pathway after 5 years", "Flat tax options & non-resident tax exemption under 183 days", 130, "Foreign Police Department / Slovak Embassy")
+        ("Slovakia", "🇸🇰", 90, True, "€120", "1 year", "€1,800/mo", 183, "Slovakia Freelance & Digital Nomad Residence Permit allows 1-year renewable stays with flat tax rate options for micro-businesses", "3-5 weeks", "ARRAY['Passport','Proof of €1,800/mo remote income','Clean criminal record','Housing proof']::text[]", "1-year renewable residence permit with permanent residency pathway after 5 years", "Flat tax options & non-resident tax exemption under 183 days", 130, "Foreign Police Department / Slovak Embassy"),
+        ("Austria", "🇦🇹", 90, True, "€160", "1-2 years", "€3,000/mo", 183, "Red-White-Red Card & Remote Worker Visa option for global talent", "4-8 weeks", "ARRAY['Passport','Proof of €3,000/mo income','Health insurance']::text[]", "Path to EU long-term residency after 5 years", "Austrian tax brackets apply after 183 days", 160, "Austrian Embassy / Federal Ministry"),
+        ("El Salvador", "🇸🇻", 180, True, "$500", "1 year", "$1,460/mo", 183, "Bitcoin & Digital Nomad Residency Scheme permits 1-year stay with 0% tax on foreign income", "2-3 weeks", "ARRAY['Passport','Proof of $1,460/mo remote income','Clean record']::text[]", "1-year renewable residence permit", "0% local income tax on foreign remote income", 500, "Directorate General of Migration")
     ]
 
     visa_sqls = []
     for v in visas:
         country, flag, tourist_days, has_dn, cost, dur, inc, tax_days, notes, ptime, docs, path, tax_ex, fee, method = v
+        notes_esc = notes.replace("'", "''")
+        path_esc = path.replace("'", "''")
+        tax_ex_esc = tax_ex.replace("'", "''")
+        method_esc = method.replace("'", "''")
         update_sql = f"""
         UPDATE public.visa_info SET
           flag = '{flag}',
@@ -87,13 +93,13 @@ def main():
           dn_visa_duration = '{dur}',
           min_income = '{inc}',
           tax_residency_days = {tax_days},
-          tax_notes = '{notes}',
+          tax_notes = '{notes_esc}',
           processing_time = '{ptime}',
           required_docs = {docs},
-          path_to_residency = '{path}',
-          tax_exemption_status = '{tax_ex}',
+          path_to_residency = '{path_esc}',
+          tax_exemption_status = '{tax_ex_esc}',
           application_fee_usd = {fee},
-          application_method = '{method}'
+          application_method = '{method_esc}'
         WHERE country = '{country}';
         """
         visa_sqls.append(update_sql)

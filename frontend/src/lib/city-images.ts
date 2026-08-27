@@ -190,6 +190,14 @@ export const cityPhotos: Record<string, string> = {
     "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=1200&q=80",
   nhatrang:
     "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=1200&q=80",
+  innsbruck:
+    "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80",
+  heraklion:
+    "https://images.unsplash.com/photo-1555993539-1732b0258235?auto=format&fit=crop&w=1200&q=80",
+  merida:
+    "https://images.unsplash.com/photo-1516482362041-8b87b69ed28d?auto=format&fit=crop&w=1200&q=80",
+  phuket:
+    "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1200&q=80",
 };
 
 const gradients: [string, string][] = [
