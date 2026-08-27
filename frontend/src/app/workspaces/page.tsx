@@ -69,7 +69,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about",
+        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about, has_24_7_access, has_standing_desks",
         { count: "exact" }
       )
       .eq("is_public", true)
@@ -122,7 +122,6 @@ export default async function WorkspacesPage({
     return `/workspaces?${qs.toString()}`;
   };
 
-  
   const breadcrumbJsonLd = {
     "@type": "BreadcrumbList",
     itemListElement: [
@@ -268,7 +267,6 @@ export default async function WorkspacesPage({
                   ))}
                 </div>
 
-                {/* Pagination */}
                 <div className="mt-12 flex items-center justify-between">
                   {page > 1 ? (
                     <Link
@@ -300,17 +298,22 @@ export default async function WorkspacesPage({
         </section>
       </main>
 
-      <section id="waitlist" className="scroll-mt-28 border-t border-border bg-secondary/40">
+      <section id="waitlist" className="border-t border-border bg-secondary/40">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-5 py-10 sm:flex-row sm:items-center sm:px-8">
-          <div>
+          <div className="max-w-xl">
             <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">
               Found a workspace you like — or still deciding where to go?
             </h2>
-            <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              Most people leave this page after browsing. Stay on it: join the free list for destination shortlists matched to budget, visa window, and listed Wi-Fi speeds. No fabricated scarcity — we only email when there is something useful.
+            <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+              Leave your email on this page. We send destination shortlists matched to budget, visa window, and listed Wi-Fi speeds. No fabricated urgency, no spam.
             </p>
           </div>
-          <WaitlistInline source="workspaces_list" compact />
+          <WaitlistInline
+            source="workspaces-list"
+            heading="Join the free waitlist"
+            description="Stay on this page — no need to bounce to the homepage form."
+            compact={false}
+          />
         </div>
       </section>
 
@@ -323,7 +326,6 @@ function isUsableImageUrl(url: string | null | undefined): url is string {
   if (!url || typeof url !== "string") return false;
   const trimmed = url.trim();
   if (!trimmed) return false;
-  // Require absolute http(s) so Next/Image and crawlers do not get relative or data junk
   return /^https?:\/\//i.test(trimmed);
 }
 
@@ -357,16 +359,17 @@ function usefulAboutSnippet(about: string | null | undefined): string | null {
   return cleaned.slice(0, 180);
 }
 
-
 function ListingCard({ listing }: { listing: Listing }) {
   const imageUrl = getCardImage(listing);
+  const reviewCount = Number(listing.total_reviews ?? 0);
+  const ratingValue = Number(listing.ratings ?? 0);
+  const showRating = ratingValue > 0 && reviewCount > 0;
 
   return (
     <Link
       href={`/workspaces/${listing.id}`}
       className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-forest/5 hover:-translate-y-0.5"
     >
-      {/* Image */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
         {imageUrl ? (
           <Image
@@ -399,7 +402,6 @@ function ListingCard({ listing }: { listing: Listing }) {
         )}
       </div>
 
-      {/* Content */}
       <div className="flex flex-1 flex-col p-5">
         <h3 className="font-serif text-lg font-semibold tracking-tight line-clamp-1 group-hover:text-accent transition-colors">
           {listing.company_name}
@@ -409,11 +411,14 @@ function ListingCard({ listing }: { listing: Listing }) {
             {listing.company_title}
           </p>
         )}
-        {(() => { const aboutSnippet = usefulAboutSnippet(listing.about); return aboutSnippet ? (
-          <p className="mt-1 text-sm text-foreground/70 line-clamp-2">
-            {aboutSnippet}
-          </p>
-        ) : null; })()}
+        {(() => {
+          const aboutSnippet = usefulAboutSnippet(listing.about);
+          return aboutSnippet ? (
+            <p className="mt-1 text-sm text-foreground/70 line-clamp-2">
+              {aboutSnippet}
+            </p>
+          ) : null;
+        })()}
 
         <div className="mt-2.5 flex items-center gap-1.5 text-sm text-foreground/70">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
@@ -441,14 +446,16 @@ function ListingCard({ listing }: { listing: Listing }) {
               </div>
             )}
           </div>
-          {listing.ratings > 0 && (
+          {showRating ? (
             <div className="flex items-center gap-1 text-sm font-medium">
               <Star className="h-3.5 w-3.5 fill-sunset text-sunset" />
-              {Number(listing.ratings).toFixed(1)}
+              {ratingValue.toFixed(1)}
               <span className="text-xs font-normal text-muted-foreground">
-                ({listing.total_reviews})
+                ({reviewCount})
               </span>
             </div>
+          ) : (
+            <div className="text-xs text-muted-foreground">Reviews pending</div>
           )}
         </div>
       </div>
