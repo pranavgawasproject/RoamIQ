@@ -105,6 +105,10 @@ const FALLBACK_CITY_IDS = [
   "pai",
   "cusco",
   "batumi",
+  "san-cristobal",
+  "poprad",
+  "lake-atitlan",
+  "salento",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
