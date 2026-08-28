@@ -137,7 +137,7 @@ export default async function CityDetailPage({
           .maybeSingle(),
         supabase
           .from("listings")
-          .select("id, company_name, company_type, city, country, starting_price, wifi_speed, ratings, total_reviews, images, logo_url, about")
+          .select("id, company_name, company_type, address, city, country, starting_price, wifi_speed, ratings, total_reviews, images, logo_url, about, website")
           .eq("city", city.name)
           .eq("is_public", true)
           .order("ratings", { ascending: false })
@@ -613,9 +613,13 @@ export default async function CityDetailPage({
                         <h3 className="mt-3 font-serif text-lg font-semibold group-hover:text-forest transition-colors">
                           {listing.company_name}
                         </h3>
-                        <p className="mt-1 text-xs text-muted-foreground">
+                        <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                          {listing.address ? `${listing.address} · ` : ""}
                           {listing.city}, {listing.country}
                         </p>
+                        {listing.website && /^https?:\/\//i.test(listing.website.trim()) && (
+                          <p className="mt-1 text-[11px] text-muted-foreground">Official website listed</p>
+                        )}
                         {usefulAboutSnippet(listing.about) && (
                           <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-foreground/70">
                             {usefulAboutSnippet(listing.about)}
