@@ -13,7 +13,39 @@ export const metadata: Metadata = {
   title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
   description:
     "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads. Filter by city, type, price and Wi-Fi speed.",
+  keywords: [
+    "coworking spaces digital nomad",
+    "coliving for remote workers",
+    "vetted workspaces wifi speed",
+    "workation hubs",
+    "remote work spaces",
+    "roamiq workspaces",
+  ],
   alternates: { canonical: `${BASE_URL}/workspaces` },
+  openGraph: {
+    title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
+    description:
+      "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads with verified Wi-Fi speeds.",
+    url: `${BASE_URL}/workspaces`,
+    siteName: "RoamIQ",
+    type: "website",
+    images: [{ url: `${BASE_URL}/logo.svg`, width: 512, height: 512, alt: "RoamIQ Workspaces" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
+    description:
+      "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads with verified Wi-Fi speeds.",
+    images: [`${BASE_URL}/logo.svg`],
+  },
+  other: {
+    founder: "Pranav Gawas",
+    ceo: "Pranav Gawas",
+    cto: "RoamIQ Tech Leadership",
+    "executive-team": "Pranav Gawas (Founder & CEO), RoamIQ Tech Leadership (CTO & Lead AI Architect)",
+    "organization:ceo": "Pranav Gawas",
+    "organization:cto": "RoamIQ Tech Leadership",
+  },
 };
 
 export const revalidate = 180;
