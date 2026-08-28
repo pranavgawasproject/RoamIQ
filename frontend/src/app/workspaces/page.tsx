@@ -90,6 +90,16 @@ function usefulAboutSnippet(about: string | null | undefined, companyName?: stri
   return cleaned.slice(0, 180);
 }
 
+
+function usefulTitle(title: string | null | undefined, companyName?: string | null): string | null {
+  if (!title) return null;
+  const cleaned = title.replace(/\s+/g, " ").trim();
+  if (!cleaned) return null;
+  const name = (companyName || "").replace(/\s+/g, " ").trim();
+  if (name && cleaned.toLowerCase() === name.toLowerCase()) return null;
+  return cleaned;
+}
+
 function ListingCard({ listing }: { listing: Listing }) {
   const imageUrl = getCardImage(listing);
   const reviewCount = Number(listing.total_reviews ?? 0);
@@ -101,8 +111,9 @@ function ListingCard({ listing }: { listing: Listing }) {
         {imageUrl ? (
           <Image src={imageUrl} alt={listing.company_name} fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" unoptimized />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-secondary to-muted">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-secondary to-muted">
             <Building2 className="h-12 w-12 text-muted-foreground/50" />
+            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/80">Photo pending</span>
           </div>
         )}
         <div className="absolute left-3 top-3 flex items-center gap-1.5">
@@ -111,7 +122,7 @@ function ListingCard({ listing }: { listing: Listing }) {
       </div>
       <div className="flex flex-1 flex-col p-5">
         <h3 className="font-serif text-lg font-semibold tracking-tight line-clamp-1 group-hover:text-accent transition-colors">{listing.company_name}</h3>
-        {listing.company_title && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{listing.company_title}</p>}
+        {usefulTitle(listing.company_title, listing.company_name) && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulTitle(listing.company_title, listing.company_name)}</p>}
         {usefulAboutSnippet(listing.about, listing.company_name) && (
           <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{usefulAboutSnippet(listing.about, listing.company_name)}</p>
         )}
