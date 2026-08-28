@@ -124,9 +124,11 @@ function ListingCard({ listing }: { listing: Listing }) {
   const ratingValue = Number(listing.ratings ?? 0);
   const showRating = ratingValue > 0 && reviewCount > 0;
   const visibleTags = usefulTags(listing.tags);
+  const typeHref = listing.company_type ? `/workspaces?type=${encodeURIComponent(listing.company_type)}` : null;
+  const cityHref = listing.city ? `/workspaces?city=${encodeURIComponent(listing.city)}` : null;
   return (
-    <Link href={`/workspaces/${listing.id}`} className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-forest/5 hover:-translate-y-0.5">
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
+    <article className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-forest/5 hover:-translate-y-0.5">
+      <Link href={`/workspaces/${listing.id}`} className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
         {imageUrl ? (
           <Image src={imageUrl} alt={listing.company_name} fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" unoptimized />
         ) : (
@@ -135,12 +137,18 @@ function ListingCard({ listing }: { listing: Listing }) {
             <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/80">Photo pending</span>
           </div>
         )}
-        <div className="absolute left-3 top-3 flex items-center gap-1.5">
-          <span className="rounded-full bg-card/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground/80 backdrop-blur-sm">{listing.company_type}</span>
-        </div>
-      </div>
+      </Link>
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-serif text-lg font-semibold tracking-tight line-clamp-1 group-hover:text-accent transition-colors">{listing.company_name}</h3>
+        {typeHref && (
+          <div className="mb-2">
+            <Link href={typeHref} className="rounded-full bg-secondary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground/80 hover:bg-accent/15 hover:text-accent">
+              {listing.company_type}
+            </Link>
+          </div>
+        )}
+        <h3 className="font-serif text-lg font-semibold tracking-tight line-clamp-1">
+          <Link href={`/workspaces/${listing.id}`} className="hover:text-accent transition-colors">{listing.company_name}</Link>
+        </h3>
         {usefulTitle(listing.company_title, listing.company_name) && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulTitle(listing.company_title, listing.company_name)}</p>}
         {usefulAboutSnippet(listing.about, listing.company_name) && (
           <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{usefulAboutSnippet(listing.about, listing.company_name)}</p>
@@ -156,7 +164,13 @@ function ListingCard({ listing }: { listing: Listing }) {
         )}
         <div className="mt-2.5 flex items-center gap-1.5 text-sm text-foreground/70">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
-          <span className="line-clamp-1">{listing.city}, {listing.country}</span>
+          {cityHref ? (
+            <Link href={cityHref} className="line-clamp-1 hover:text-accent hover:underline underline-offset-2">
+              {listing.city}{listing.country ? `, ${listing.country}` : ""}
+            </Link>
+          ) : (
+            <span className="line-clamp-1">{listing.city}{listing.country ? `, ${listing.country}` : ""}</span>
+          )}
         </div>
         <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
           <div>
@@ -182,7 +196,7 @@ function ListingCard({ listing }: { listing: Listing }) {
           )}
         </div>
       </div>
-    </Link>
+    </article>
   );
 }
 
@@ -266,6 +280,33 @@ export default async function WorkspacesPage({
               </select>
               <button type="submit" className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Search</button>
             </form>
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Jump to</span>
+              {types.filter((t) => t.value).map((t) => {
+                const active = params.type === t.value;
+                return (
+                  <Link
+                    key={t.value}
+                    href={`/workspaces?type=${encodeURIComponent(t.value)}`}
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${active ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+                  >
+                    {t.label}
+                  </Link>
+                );
+              })}
+              {Array.from(new Set(listings.map((l) => l.city).filter((c): c is string => Boolean(c && c.trim())))).slice(0, 8).map((city) => {
+                const active = (params.city ?? "").toLowerCase() === city.toLowerCase();
+                return (
+                  <Link
+                    key={city}
+                    href={`/workspaces?city=${encodeURIComponent(city)}`}
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${active ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+                  >
+                    {city}
+                  </Link>
+                );
+              })}
+            </div>
             <div className="mt-8 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
               <WaitlistInline source="workspaces-list-above-fold" heading="Email me workspace picks for this search" description="The list below is long. If you would rather get a shortlist than scroll 24 cards, leave an email — we only write when a city or listed speed matches." compact />
             </div>
