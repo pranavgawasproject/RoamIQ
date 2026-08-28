@@ -25,3 +25,137 @@ const supabaseAnonKey = envPointsAtListings && envKey ? envKey : LISTINGS_SUPABA
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: { persistSession: false },
 });
+
+export type City = {
+  id: string;
+  name: string;
+  country: string;
+  flag: string;
+  image: string | null;
+  continent: string | null;
+  overall_score: number;
+  cost_score: number;
+  internet_score: number;
+  safety_score: number;
+  fun_score: number;
+  walkability_score: number;
+  nightlife_score: number;
+  air_score: number;
+  cost_usd: number;
+  internet_mbps: number;
+  avg_temp: number;
+  visa_difficulty: string;
+  air_quality: string;
+  english_proficiency?: string | null;
+  quality_of_life_score?: number | null;
+  coworking_desk_usd?: number | null;
+  one_bed_rent_usd?: number | null;
+  meal_price_usd?: number | null;
+  coffee_price_usd?: number | null;
+  wifi_speed_p90?: number | null;
+  mobile_data_cost_gb?: number | null;
+};
+
+export type CostOfLiving = {
+  id: number;
+  city_id: string;
+  housing: number;
+  coworking: number;
+  food: number;
+  transport: number;
+  internet: number;
+  entertainment: number;
+  health: number;
+  visa: number;
+  misc: number;
+  tip1: string | null;
+  tip2: string | null;
+  tip3: string | null;
+};
+
+export type VisaInfo = {
+  id: number;
+  country: string;
+  flag: string;
+  tourist_days: number;
+  has_dn_visa: boolean;
+  dn_visa_cost: string;
+  dn_visa_duration: string;
+  min_income?: string | null;
+  tax_residency_days?: number | null;
+  tax_notes?: string | null;
+  processing_time?: string | null;
+  required_docs?: string[] | null;
+  path_to_residency?: string | null;
+  tax_exemption_status?: string | null;
+  application_fee_usd?: number | null;
+  application_method?: string | null;
+};
+
+export type Listing = {
+  id: string;
+  company_name: string;
+  company_title: string | null;
+  company_type:
+    | "coworking"
+    | "coliving"
+    | "workation"
+    | "meetingroom"
+    | "privatestay"
+    | "hostel"
+    | "cafe";
+  address: string | null;
+  city: string;
+  state: string;
+  country: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  images: string[] | null;
+  logo_url?: string | null;
+  about: string | null;
+  starting_price: string | null;
+  wifi_speed: string | null;
+  upload_speed_mbps?: number | null;
+  download_speed_mbps?: number | null;
+  latency_ms?: number | null;
+  has_24_7_access?: boolean | null;
+  has_standing_desks?: boolean | null;
+  ratings: number;
+  total_reviews: number;
+  tags: string[] | null;
+  website?: string | null;
+  google_map?: string | null;
+  open_hours?: string | null;
+  capacity?: string | null;
+  inclusions?: string | null;
+  description?: string | null;
+  contact_phone?: string | null;
+  contact_email?: string | null;
+};
+
+export type Meetup = {
+  id: string;
+  title: string;
+  type: string;
+  date: string;
+  time: string;
+  city: string;
+  location: string;
+  attendees: number;
+  max_attendees: number;
+  icon: string;
+};
+
+export type ForumPost = {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  tags: string[] | null;
+  pinned: boolean;
+  likes: number;
+  reply_count: number;
+  created_at: string;
+  best_answer_id?: string | null;
+  city?: string | null;
+};
