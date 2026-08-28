@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, MapPin, Wifi, ArrowRight, ArrowLeft, Building2, Globe } from "lucide-react";
+import { Star, MapPin, Wifi, ArrowRight, ArrowLeft, Building2 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
@@ -59,7 +59,6 @@ async function getListings(params: {
   type?: string;
   city?: string;
   min_wifi?: string;
-  listed_price?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -70,7 +69,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, address, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about, website, has_24_7_access, has_standing_desks",
+        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about, has_24_7_access, has_standing_desks",
         { count: "exact" }
       )
       .eq("is_public", true)
@@ -87,9 +86,6 @@ async function getListings(params: {
     }
     if (params.min_wifi) {
       query = query.not("wifi_speed", "is", null);
-    }
-    if (params.listed_price === "1") {
-      query = query.not("starting_price", "is", null).neq("starting_price", "");
     }
 
     const { data, error, count } = await query
@@ -110,14 +106,7 @@ async function getListings(params: {
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{
-    search?: string;
-    type?: string;
-    city?: string;
-    min_wifi?: string;
-    listed_price?: string;
-    page?: string;
-  }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; min_wifi?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const { listings, count, page } = await getListings(params);
@@ -129,7 +118,6 @@ export default async function WorkspacesPage({
     if (params.type) qs.set("type", params.type);
     if (params.city) qs.set("city", params.city);
     if (params.min_wifi) qs.set("min_wifi", params.min_wifi);
-    if (params.listed_price) qs.set("listed_price", params.listed_price);
     qs.set("page", String(targetPage));
     return `/workspaces?${qs.toString()}`;
   };
@@ -254,14 +242,6 @@ export default async function WorkspacesPage({
                 <option value="">Any Wi-Fi speed</option>
                 <option value="verified">Verified Wi-Fi listed</option>
               </select>
-              <select
-                name="listed_price"
-                defaultValue={params.listed_price ?? ""}
-                className="rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
-              >
-                <option value="">Any price status</option>
-                <option value="1">Has a listed price</option>
-              </select>
               <button
                 type="submit"
                 className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
@@ -293,10 +273,29 @@ export default async function WorkspacesPage({
             ) : (
               <>
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                  {listings.map((l) => (
+                  {listings.slice(0, 6).map((l) => (
                     <ListingCard key={l.id} listing={l} />
                   ))}
                 </div>
+
+                {listings.length > 6 && (
+                  <div className="my-8 rounded-2xl border border-border bg-card/80 p-5 sm:p-6">
+                    <WaitlistInline
+                      source="workspaces-list-mid-grid"
+                      heading="Keep browsing, or get a shortlist instead"
+                      description="Most visits leave this page after a few cards. If you already know the city or Wi-Fi floor you need, leave an email here — we only write when listed data matches. No fabricated scarcity."
+                      compact
+                    />
+                  </div>
+                )}
+
+                {listings.length > 6 && (
+                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {listings.slice(6).map((l) => (
+                      <ListingCard key={l.id} listing={l} />
+                    ))}
+                  </div>
+                )}
 
                 <div className="mt-12 flex items-center justify-between">
                   {page > 1 ? (
@@ -377,9 +376,9 @@ function usefulAboutSnippet(
   if (!about) return null;
   const cleaned = about.replace(/\s+/g, " ").trim();
   if (cleaned.length < 40) return null;
-  const name = (companyName || "").replace(/\s+/g, " ").trim().toLowerCase();
-  if (name && cleaned.toLowerCase() === name) return null;
   const lower = cleaned.toLowerCase();
+  const name = (companyName || "").replace(/\s+/g, " ").trim().toLowerCase();
+  if (name && (lower === name || lower === `${name}.`)) return null;
   const noise = [
     "skip to content",
     "sign in",
@@ -417,11 +416,8 @@ function ListingCard({ listing }: { listing: Listing }) {
             unoptimized
           />
         ) : (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-secondary to-muted">
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-secondary to-muted">
             <Building2 className="h-12 w-12 text-muted-foreground/50" />
-            <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/80">
-              Photo not listed yet
-            </span>
           </div>
         )}
         <div className="absolute left-3 top-3 flex items-center gap-1.5">
@@ -445,9 +441,7 @@ function ListingCard({ listing }: { listing: Listing }) {
         <h3 className="font-serif text-lg font-semibold tracking-tight line-clamp-1 group-hover:text-accent transition-colors">
           {listing.company_name}
         </h3>
-        {listing.company_title &&
-          listing.company_title.replace(/\s+/g, " ").trim().toLowerCase() !==
-            listing.company_name.replace(/\s+/g, " ").trim().toLowerCase() && (
+        {listing.company_title && (
           <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">
             {listing.company_title}
           </p>
@@ -461,18 +455,12 @@ function ListingCard({ listing }: { listing: Listing }) {
           ) : null;
         })()}
 
-        <div className="mt-2.5 flex items-start gap-1.5 text-sm text-foreground/70">
-          <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          <span className="line-clamp-2">
-            {listing.address ? `${listing.address} · ` : ""}
+        <div className="mt-2.5 flex items-center gap-1.5 text-sm text-foreground/70">
+          <MapPin className="h-3.5 w-3.5 shrink-0" />
+          <span className="line-clamp-1">
             {listing.city}, {listing.country}
           </span>
         </div>
-        {isUsableImageUrl(listing.website) && (
-          <div className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground">
-            <Globe className="h-3 w-3" /> Official website listed
-          </div>
-        )}
 
         <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
           <div>
