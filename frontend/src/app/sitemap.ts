@@ -93,6 +93,10 @@ const FALLBACK_CITY_IDS = [
   "tirana",
   "fethiye",
   "jeju",
+  "goa",
+  "hoi-an",
+  "budva",
+  "nicosia",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
