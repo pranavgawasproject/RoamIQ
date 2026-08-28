@@ -214,6 +214,14 @@ export const cityPhotos: Record<string, string> = {
     "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1200&q=80",
   nicosia:
     "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=80",
+  brasov:
+    "https://images.unsplash.com/photo-1541971875076-8f970d573be6?auto=format&fit=crop&w=1200&q=80",
+  sarajevo:
+    "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1200&q=80",
+  pristina:
+    "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1200&q=80",
+  siargao:
+    "https://images.unsplash.com/photo-1518509562904-e7ef99cccc86?auto=format&fit=crop&w=1200&q=80",
 };
 
 const gradients: [string, string][] = [
