@@ -100,11 +100,30 @@ function usefulTitle(title: string | null | undefined, companyName?: string | nu
   return cleaned;
 }
 
+function usefulTags(tags: string[] | null | undefined): string[] {
+  if (!Array.isArray(tags)) return [];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of tags) {
+    if (typeof raw !== "string") continue;
+    const cleaned = raw.replace(/\s+/g, " ").trim();
+    if (cleaned.length < 2 || cleaned.length > 32) continue;
+    const key = cleaned.toLowerCase();
+    if (seen.has(key)) continue;
+    if (/https?:\/\//i.test(cleaned)) continue;
+    seen.add(key);
+    out.push(cleaned);
+    if (out.length >= 4) break;
+  }
+  return out;
+}
+
 function ListingCard({ listing }: { listing: Listing }) {
   const imageUrl = getCardImage(listing);
   const reviewCount = Number(listing.total_reviews ?? 0);
   const ratingValue = Number(listing.ratings ?? 0);
   const showRating = ratingValue > 0 && reviewCount > 0;
+  const visibleTags = usefulTags(listing.tags);
   return (
     <Link href={`/workspaces/${listing.id}`} className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-forest/5 hover:-translate-y-0.5">
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
@@ -125,6 +144,15 @@ function ListingCard({ listing }: { listing: Listing }) {
         {usefulTitle(listing.company_title, listing.company_name) && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulTitle(listing.company_title, listing.company_name)}</p>}
         {usefulAboutSnippet(listing.about, listing.company_name) && (
           <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{usefulAboutSnippet(listing.about, listing.company_name)}</p>
+        )}
+        {visibleTags.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {visibleTags.map((tag) => (
+              <span key={tag} className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-foreground/70">
+                {tag}
+              </span>
+            ))}
+          </div>
         )}
         <div className="mt-2.5 flex items-center gap-1.5 text-sm text-foreground/70">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
@@ -196,6 +224,7 @@ export default async function WorkspacesPage({
         url: `${BASE_URL}/workspaces/${item.id}`,
         ...(imageUrl ? { image: imageUrl } : {}),
         ...(aboutSnippet ? { description: aboutSnippet } : {}),
+        ...(usefulTags(item.tags).length ? { keywords: usefulTags(item.tags).join(", ") } : {}),
       };
     }),
   };
