@@ -222,6 +222,14 @@ export const cityPhotos: Record<string, string> = {
     "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&w=1200&q=80",
   siargao:
     "https://images.unsplash.com/photo-1518509562904-e7ef99cccc86?auto=format&fit=crop&w=1200&q=80",
+  dahab:
+    "https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=1200&q=80",
+  pai:
+    "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1200&q=80",
+  cusco:
+    "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=1200&q=80",
+  batumi:
+    "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1200&q=80",
 };
 
 const gradients: [string, string][] = [
