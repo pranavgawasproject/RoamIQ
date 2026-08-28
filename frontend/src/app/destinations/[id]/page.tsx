@@ -315,6 +315,19 @@ export default async function CityDetailPage({
           </div>
         </section>
 
+        <section className="border-b border-border bg-secondary/30">
+          <div className="mx-auto max-w-7xl px-5 py-6 sm:px-8 sm:py-8">
+            <div className="max-w-xl rounded-2xl border border-border bg-card/90 p-4 sm:p-5">
+              <WaitlistInline
+                source="destination_detail_after_hero"
+                heading={`Get ${typedCity.name} updates without bouncing around`}
+                description="Cost, visa notes, and listed workspaces are already on this page. Leave an email if you want a short follow-up when we add a stay or speed for this city — no extra tab."
+                compact
+              />
+            </div>
+          </div>
+        </section>
+
         <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20">
           <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
             {/* Scores */}
