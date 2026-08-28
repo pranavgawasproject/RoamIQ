@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
-import { supabase } from "@/lib/supabase";
 
 interface Lead {
   id?: string;
@@ -29,12 +28,8 @@ interface Lead {
 
 export default function AdminPage() {
   const [password, setPassword] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    if (typeof window !== "undefined") {
-      return sessionStorage.getItem("roamiq_admin_auth") === "true";
-    }
-    return false;
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [sessionChecked, setSessionChecked] = useState(false);
   const [authError, setAuthError] = useState("");
 
   const [activeTab, setActiveTab] = useState<"leads" | "cities" | "affiliates">("leads");
@@ -42,6 +37,24 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/auth", { method: "GET" });
+        const data = await res.json().catch(() => ({}));
+        if (!cancelled && res.ok && data.ok) {
+          setIsAuthenticated(true);
+        }
+      } finally {
+        if (!cancelled) setSessionChecked(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -61,7 +74,6 @@ export default function AdminPage() {
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
         setIsAuthenticated(true);
-        sessionStorage.setItem("roamiq_admin_auth", "true");
         setPassword("");
         fetchLeads();
       } else {
@@ -72,25 +84,24 @@ export default function AdminPage() {
     }
   }
 
-  function handleLogout() {
+  async function handleLogout() {
+    await fetch("/api/admin/auth", { method: "DELETE" });
     setIsAuthenticated(false);
-    sessionStorage.removeItem("roamiq_admin_auth");
+    setLeads([]);
   }
 
   async function fetchLeads() {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("waitlist_signups")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Failed to fetch waitlist signups:", error);
+      const res = await fetch("/api/admin/leads");
+      if (res.status === 401) {
+        setIsAuthenticated(false);
+        setLeads([]);
+        return;
       }
-
-      if (!error && data) {
-        setLeads(data);
+      const payload = await res.json().catch(() => ({}));
+      if (res.ok && payload.ok && Array.isArray(payload.leads)) {
+        setLeads(payload.leads);
       } else {
         setLeads([]);
       }
@@ -126,7 +137,11 @@ export default function AdminPage() {
       <SiteNav />
       <main className="flex-1 pt-28 sm:pt-32">
         <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          {!isAuthenticated ? (
+          {!sessionChecked ? (
+            <div className="mx-auto my-12 max-w-md rounded-3xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
+              Checking admin session…
+            </div>
+          ) : !isAuthenticated ? (
             <div className="mx-auto my-12 max-w-md rounded-3xl border border-border bg-card p-8 shadow-sm">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-forest/10 text-forest">
                 <Lock className="h-6 w-6" />
