@@ -104,7 +104,7 @@ export default async function ComparePage({
         name: "How does the RoamIQ side-by-side city comparator work?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "RoamIQ calculates real-time side-by-side cost of living breakdowns (rent, coworking, food, transport, internet, health), internet speeds in Mbps, lifestyle scores, and visa eligibility rules for 20+ top nomad destinations worldwide.",
+          text: "RoamIQ calculates real-time side-by-side cost of living breakdowns (rent, coworking, food, transport, internet, health), internet speeds in Mbps, lifestyle scores, and visa eligibility rules for 80+ top nomad destinations worldwide.",
         },
       },
       {
