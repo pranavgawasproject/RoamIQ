@@ -19,6 +19,7 @@ import { Footer } from "@/components/site/footer";
 import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
+import { firstUsableListingImage } from "@/lib/listing-media";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
 
@@ -714,20 +715,8 @@ function InfoBlock({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-function isUsableImageUrl(url: string | null | undefined): url is string {
-  if (!url || typeof url !== "string") return false;
-  const trimmed = url.trim();
-  if (!trimmed) return false;
-  return /^https?:\/\//i.test(trimmed);
-}
-
 function getCardImage(listing: Listing): string | null {
-  if (listing.images && listing.images.length > 0) {
-    const first = listing.images.find((u) => isUsableImageUrl(u));
-    if (first) return first.trim();
-  }
-  if (isUsableImageUrl(listing.logo_url)) return listing.logo_url.trim();
-  return null;
+  return firstUsableListingImage(listing.images, listing.logo_url);
 }
 
 

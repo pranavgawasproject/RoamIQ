@@ -19,6 +19,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
+import { firstUsableListingImage, isUsableImageUrl } from "@/lib/listing-media";
 
 export const revalidate = 180;
 
@@ -157,12 +158,14 @@ export default async function WorkspaceDetailPage({
 
   const related = await getRelatedListings(listing);
 
-  const images: string[] =
-    listing.images && listing.images.length > 0
-      ? listing.images.filter(Boolean)
-      : listing.logo_url
-        ? [listing.logo_url]
-        : [];
+  const images: string[] = Array.from(
+    new Set(
+      [
+        ...(Array.isArray(listing.images) ? listing.images : []),
+        listing.logo_url,
+      ].filter((u): u is string => isUsableImageUrl(u)).map((u) => u.trim())
+    )
+  );
 
   const tags: string[] = Array.isArray(listing.tags) ? listing.tags : [];
 
@@ -501,9 +504,7 @@ export default async function WorkspaceDetailPage({
                   </p>
                   <ul className="mt-4 divide-y divide-border rounded-2xl border border-border">
                     {related.map((item) => {
-                      const thumb =
-                        item.images?.find((u) => typeof u === "string" && /^https?:\/\//i.test(u.trim())) ||
-                        (item.logo_url && /^https?:\/\//i.test(item.logo_url.trim()) ? item.logo_url : null);
+                      const thumb = firstUsableListingImage(item.images, item.logo_url);
                       const snippet = (item.about || "").replace(/\s+/g, " ").trim();
                       const aboutOk =
                         snippet.length >= 40 &&

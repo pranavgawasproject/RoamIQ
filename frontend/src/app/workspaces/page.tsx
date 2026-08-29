@@ -6,6 +6,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
+import { firstUsableListingImage } from "@/lib/listing-media";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -75,7 +76,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, address, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about",
+        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about",
         { count: "planned" }
       )
       .eq("is_public", true)
@@ -97,19 +98,8 @@ async function getListings(params: {
   }
 }
 
-function isUsableImageUrl(url: string | null | undefined): url is string {
-  if (!url || typeof url !== "string") return false;
-  const trimmed = url.trim();
-  return Boolean(trimmed) && /^https?:\/\//i.test(trimmed);
-}
-
 function getCardImage(listing: Listing): string | null {
-  if (listing.images && listing.images.length > 0) {
-    const first = listing.images.find((u) => isUsableImageUrl(u));
-    if (first) return first.trim();
-  }
-  if (isUsableImageUrl(listing.logo_url)) return listing.logo_url.trim();
-  return null;
+  return firstUsableListingImage(listing.images, listing.logo_url);
 }
 
 function usefulAboutSnippet(about: string | null | undefined, companyName?: string | null): string | null {
@@ -124,15 +114,6 @@ function usefulAboutSnippet(about: string | null | undefined, companyName?: stri
   return cleaned.slice(0, 180);
 }
 
-
-function usefulAddress(address: string | null | undefined): string | null {
-  if (!address) return null;
-  const cleaned = address.replace(/\s+/g, " ").trim();
-  if (cleaned.length < 8) return null;
-  const lower = cleaned.toLowerCase();
-  if (["n/a", "na", "none", "unknown", "tbd"].includes(lower)) return null;
-  return cleaned.slice(0, 120);
-}
 
 function usefulTitle(title: string | null | undefined, companyName?: string | null): string | null {
   if (!title) return null;
@@ -194,12 +175,8 @@ function ListingCard({ listing }: { listing: Listing }) {
           <Link href={`/workspaces/${listing.id}`} className="hover:text-accent transition-colors">{listing.company_name}</Link>
         </h3>
         {usefulTitle(listing.company_title, listing.company_name) && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulTitle(listing.company_title, listing.company_name)}</p>}
-        {usefulAboutSnippet(listing.about, listing.company_name) ? (
+        {usefulAboutSnippet(listing.about, listing.company_name) && (
           <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{usefulAboutSnippet(listing.about, listing.company_name)}</p>
-        ) : usefulAddress(listing.address) ? (
-          <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{usefulAddress(listing.address)}</p>
-        ) : (
-          <p className="mt-1 text-sm text-muted-foreground">Description pending</p>
         )}
         {visibleTags.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">
@@ -305,11 +282,9 @@ export default async function WorkspacesPage({
       // Only fields already visible on the card — never invent prices, wifi, or copy.
       if (aboutSnippet) place.description = aboutSnippet;
       if (imageUrl) place.image = imageUrl;
-      const street = usefulAddress(item.address);
-      if (item.city || item.country || street) {
+      if (item.city || item.country) {
         place.address = {
           "@type": "PostalAddress",
-          ...(street ? { streetAddress: street } : {}),
           ...(item.city ? { addressLocality: item.city } : {}),
           ...(item.country ? { addressCountry: item.country } : {}),
         };
