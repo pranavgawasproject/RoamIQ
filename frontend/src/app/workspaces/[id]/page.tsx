@@ -19,7 +19,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, isUsableImageUrl, usefulListingAbout } from "@/lib/listing-media";
+import { firstUsableListingImage, isUsableImageUrl, usefulListingAbout, usefulStartingPrice } from "@/lib/listing-media";
 
 export const revalidate = 180;
 
@@ -92,7 +92,8 @@ export async function generateMetadata({
     const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 140) || "";
 
     const extras: string[] = [];
-    if (listing.starting_price) extras.push(String(listing.starting_price));
+    const listedPrice = usefulStartingPrice(listing.starting_price);
+    if (listedPrice) extras.push(listedPrice);
     if (listing.wifi_speed) extras.push(String(listing.wifi_speed));
     if (listing.company_type) extras.push(String(listing.company_type));
 
@@ -243,8 +244,9 @@ export default async function WorkspaceDetailPage({
   } else if (listing.latitude != null && listing.longitude != null) {
     localBusinessJsonLd.hasMap = `https://maps.google.com/?q=${listing.latitude},${listing.longitude}`;
   }
-  if (listing.starting_price) {
-    localBusinessJsonLd.priceRange = String(listing.starting_price);
+  const listedPriceRange = usefulStartingPrice(listing.starting_price);
+  if (listedPriceRange) {
+    localBusinessJsonLd.priceRange = listedPriceRange;
   }
   if (listing.ratings > 0 && listing.total_reviews > 0) {
     localBusinessJsonLd.aggregateRating = {
@@ -532,7 +534,7 @@ export default async function WorkspaceDetailPage({
                             </p>
                           </div>
                           <span className="shrink-0 text-sm text-muted-foreground">
-                            {item.starting_price || "Price not listed yet"}
+                            {usefulStartingPrice(item.starting_price) || "Price not listed yet"}
                           </span>
                         </Link>
                       </li>
@@ -552,9 +554,9 @@ export default async function WorkspaceDetailPage({
             {/* Sidebar */}
             <div className="space-y-5">
               <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
-                {listing.starting_price ? (
+                {usefulStartingPrice(listing.starting_price) ? (
                   <div className="font-serif text-2xl font-semibold text-forest">
-                    {listing.starting_price}
+                    {usefulStartingPrice(listing.starting_price)}
                   </div>
                 ) : (
                   <div className="font-serif text-lg text-muted-foreground">Price not listed yet</div>
