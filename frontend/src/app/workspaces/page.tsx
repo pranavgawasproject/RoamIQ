@@ -277,11 +277,49 @@ export default async function WorkspacesPage({
     itemListElement: listings.map((item, index) => {
       const imageUrl = getCardImage(item);
       const aboutSnippet = usefulAboutSnippet(item.about, item.company_name);
+      const schemaType =
+        item.company_type === "coworking"
+          ? "CoworkingSpace"
+          : item.company_type === "coliving" || item.company_type === "hostel" || item.company_type === "workation"
+            ? "LodgingBusiness"
+            : "LocalBusiness";
+      const place: Record<string, unknown> = {
+        "@type": schemaType,
+        "@id": `${BASE_URL}/workspaces/${item.id}#place`,
+        name: item.company_name,
+        url: `${BASE_URL}/workspaces/${item.id}`,
+      };
+      // Only fields already visible on the card — never invent prices, wifi, or copy.
+      if (aboutSnippet) place.description = aboutSnippet;
+      if (imageUrl) place.image = imageUrl;
+      if (item.city || item.country) {
+        place.address = {
+          "@type": "PostalAddress",
+          ...(item.city ? { addressLocality: item.city } : {}),
+          ...(item.country ? { addressCountry: item.country } : {}),
+        };
+      }
+      if (item.starting_price) place.priceRange = String(item.starting_price);
+      if (item.wifi_speed) {
+        place.amenityFeature = [
+          { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: item.wifi_speed },
+        ];
+      }
+      const ratingValue = Number(item.ratings);
+      const reviewCount = Number(item.total_reviews);
+      if (ratingValue > 0 && reviewCount > 0) {
+        place.aggregateRating = {
+          "@type": "AggregateRating",
+          ratingValue,
+          reviewCount,
+        };
+      }
       return {
         "@type": "ListItem",
         position: index + 1,
         name: item.company_name,
         url: `${BASE_URL}/workspaces/${item.id}`,
+        item: place,
         ...(imageUrl ? { image: imageUrl } : {}),
         ...(aboutSnippet ? { description: aboutSnippet } : {}),
         ...(usefulTags(item.tags).length ? { keywords: usefulTags(item.tags).join(", ") } : {}),
