@@ -5,6 +5,7 @@ import { Footer } from "@/components/site/footer";
 import { CityCard } from "@/components/site/city-card";
 import { supabase, type City } from "@/lib/supabase";
 import { Compass, ArrowLeftRight } from "lucide-react";
+import { WaitlistInline } from "@/components/site/waitlist-inline";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -222,6 +223,14 @@ export default async function DestinationsPage({
                 Filter
               </button>
             </form>
+            <div className="mt-8 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
+              <WaitlistInline
+                source="destinations-list-after-filters"
+                heading="Want a city shortlist instead of bouncing?"
+                description="This index is a scan. Leave an email if you already know budget or visa window — we only write when a listed city score exists. No fabricated urgency."
+                compact
+              />
+            </div>
           </div>
         </section>
 
