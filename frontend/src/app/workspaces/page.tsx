@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulListingAbout } from "@/lib/listing-media";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -103,15 +103,7 @@ function getCardImage(listing: Listing): string | null {
 }
 
 function usefulAboutSnippet(about: string | null | undefined, companyName?: string | null): string | null {
-  if (!about) return null;
-  const cleaned = about.replace(/\s+/g, " ").trim();
-  if (cleaned.length < 40) return null;
-  const lower = cleaned.toLowerCase();
-  const name = (companyName || "").replace(/\s+/g, " ").trim().toLowerCase();
-  if (name && (lower === name || lower === `${name}.`)) return null;
-  const noise = ["skip to content", "sign in", "official white house", "stock market", "cookie policy", "privacy policy", "all rights reserved", "download the app", "subscribe to newsletter"];
-  if (noise.some((n) => lower.includes(n))) return null;
-  return cleaned.slice(0, 180);
+  return usefulListingAbout(about, companyName, 180);
 }
 
 
