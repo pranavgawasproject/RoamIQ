@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulListingAbout } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulListingAbout, usefulStartingPrice } from "@/lib/listing-media";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -209,8 +209,8 @@ function ListingCard({ listing }: { listing: Listing }) {
         </div>
         <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
           <div>
-            {listing.starting_price ? (
-              <div className="font-serif text-lg font-semibold text-forest">{listing.starting_price}</div>
+            {usefulStartingPrice(listing.starting_price) ? (
+              <div className="font-serif text-lg font-semibold text-forest">{usefulStartingPrice(listing.starting_price)}</div>
             ) : (
               <div className="text-sm text-muted-foreground">Price not listed yet</div>
             )}
@@ -289,7 +289,8 @@ export default async function WorkspacesPage({
           ...(item.country ? { addressCountry: item.country } : {}),
         };
       }
-      if (item.starting_price) place.priceRange = String(item.starting_price);
+      const listedPrice = usefulStartingPrice(item.starting_price);
+      if (listedPrice) place.priceRange = listedPrice;
       if (item.wifi_speed) {
         place.amenityFeature = [
           { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: item.wifi_speed },
