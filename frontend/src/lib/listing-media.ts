@@ -86,3 +86,21 @@ export function usefulListingAbout(
   if (maxLen > 0) return cleaned.slice(0, maxLen);
   return cleaned;
 }
+
+/**
+ * Show a listed price only when it is more than a placeholder.
+ * Values like "$1" / "0" are treated as missing — never invent a replacement.
+ */
+export function usefulStartingPrice(price: string | number | null | undefined): string | null {
+  if (price === null || price === undefined) return null;
+  const cleaned = String(price).replace(/\s+/g, " ").trim();
+  if (!cleaned) return null;
+  const lower = cleaned.toLowerCase();
+  if (["n/a", "na", "tbd", "null", "undefined", "-", "—", "none"].includes(lower)) return null;
+  const numeric = cleaned.replace(/[^0-9.,]/g, "").replace(/,/g, "");
+  if (numeric) {
+    const amount = Number.parseFloat(numeric);
+    if (Number.isFinite(amount) && amount < 2) return null;
+  }
+  return cleaned;
+}
