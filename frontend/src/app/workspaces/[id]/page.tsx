@@ -104,10 +104,7 @@ export async function generateMetadata({
       `${listing.company_name}${location ? ` in ${location}` : ""} — coworking and workspace details for digital nomads on RoamIQ.${extras.length ? ` ${extras.join(" · ")}.` : ""}`;
 
     const url = `${BASE_URL}/workspaces/${listing.id}`;
-    const image =
-      (listing.images && listing.images.length > 0 && listing.images[0]) ||
-      listing.logo_url ||
-      undefined;
+    const image = firstUsableListingImage(listing.images, listing.logo_url) || undefined;
 
     return {
       title,
@@ -171,8 +168,7 @@ export default async function WorkspaceDetailPage({
 
   const locationParts = [listing.city, listing.state, listing.country].filter(Boolean);
   const pageUrl = `${BASE_URL}/workspaces/${listing.id}`;
-  const primaryImage =
-    images[0] || listing.logo_url || undefined;
+  const primaryImage = images[0] || undefined;
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -687,8 +683,8 @@ export default async function WorkspaceDetailPage({
                 <div className="mt-6 rounded-xl border border-border bg-secondary/40 p-4">
                   <WaitlistInline
                     source="workspace_detail"
-                    heading="Want shortlists with listed Wi-Fi and real prices?"
-                    description="Join here — no extra page load. We only email when there is something useful for your trip."
+                    heading="Leaving this listing without a next step?"
+                    description="Most workspace visits end here. Leave an email if you want a shortlist of similar places in this city — only when price or Wi-Fi is actually listed. No extra page, no fabricated urgency."
                   />
                 </div>
               </div>
