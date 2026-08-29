@@ -3,6 +3,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Hero } from "@/components/site/hero";
 import { Features } from "@/components/site/features";
 import { DestinationsPreview } from "@/components/site/destinations-preview";
+import { WorkspacesPreview } from "@/components/site/workspaces-preview";
 import { WhyRoamIQ } from "@/components/site/why-roamiq";
 import { CTA } from "@/components/site/cta";
 import { Footer } from "@/components/site/footer";
@@ -179,6 +180,7 @@ export default function Page() {
         </section>
         <Features />
         <DestinationsPreview />
+        <WorkspacesPreview />
         <WhyRoamIQ />
         <CTA />
       </main>
