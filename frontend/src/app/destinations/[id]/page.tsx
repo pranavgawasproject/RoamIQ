@@ -19,7 +19,7 @@ import { Footer } from "@/components/site/footer";
 import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulStartingPrice } from "@/lib/listing-media";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
 
@@ -805,7 +805,7 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
         </div>
         <div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-xs">
           <span className="font-semibold text-forest">
-            {listing.starting_price || "Price not listed yet"}
+            {usefulStartingPrice(listing.starting_price) || "Price not listed yet"}
           </span>
           {listing.wifi_speed ? (
             <span className="flex items-center gap-1 text-muted-foreground font-medium">
