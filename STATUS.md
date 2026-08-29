@@ -1,3 +1,9 @@
+## 2026-08-29 ~13:26 UTC — valid listing schema + contact pending
+
+Track A: workspace detail JSON-LD used invalid schema.org type `CoworkingSpace`. Now CafeOrCoffeeShop / LodgingBusiness / LocalBusiness from the listed type only. Sidebar always shows Contact with Phone/Email-not-listed-yet (no invented contacts). Accidental 11-byte placeholder commit `bce9e98` was immediately restored. Sitemap not resubmitted.
+
+GSC 2026-07-29→2026-08-27 (nomads-travel-indol): query `4g-travel-tool.vercel.app` 3 clicks / 34 imp / pos ~2.9 — FLAG only, not a GSC property here, no redirect. Branded `roamiq` 2/81 / pos ~6.5. Homepage 9/217 / pos ~5.6. GA4 last 28d: `/` 145 sessions / 79% bounce; `/workspaces` 6 / 83% bounce. Listings `davvpymbybvniexmkgcu`: 8,268 rows; about empty 5,850 (70.8%); price empty 3,637 (44.0%); images empty 0; wifi empty 0; phone 7,802; logo 6,005; email 8,059. Branded CTR capped until custom domain is live.
+
 ## 2026-08-29 ~13:10 UTC — hide scraped about chrome
 
 Track A: many `listings.about` values are government-seal / Wayback / encyclopedia scrape residue (e.g. HQ Millennium Building). Added `usefulListingAbout` in `listing-media.ts` and wired it through `/workspaces` cards, detail About, related cards, meta description, and JSON-LD. No invented copy — junk about falls through to Description pending. Commits: `26e5f8b`, `1f123e6`, `848906f`.
