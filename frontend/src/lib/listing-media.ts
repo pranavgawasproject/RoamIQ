@@ -47,3 +47,42 @@ export function firstUsableListingImage(
   if (isUsableImageUrl(logoUrl)) return logoUrl.trim();
   return null;
 }
+
+const ABOUT_NOISE = [
+  "skip to content",
+  "sign in",
+  "official white house",
+  "official seal of",
+  "official site of",
+  "wayback machine",
+  "stock market",
+  "cookie policy",
+  "privacy policy",
+  "all rights reserved",
+  "download the app",
+  "subscribe to newsletter",
+  "wikipedia",
+  "an article in new york times",
+  "an article in the new york times",
+];
+
+/**
+ * Keep venue-written copy only. Scraped nav chrome, encyclopedia blurbs,
+ * and government-seal pages are not a listing description.
+ * Never invent replacement text — callers should show a pending state.
+ */
+export function usefulListingAbout(
+  about: string | null | undefined,
+  companyName?: string | null,
+  maxLen = 0
+): string | null {
+  if (!about) return null;
+  const cleaned = about.replace(/\s+/g, " ").trim();
+  if (cleaned.length < 40) return null;
+  const lower = cleaned.toLowerCase();
+  const name = (companyName || "").replace(/\s+/g, " ").trim().toLowerCase();
+  if (name && (lower === name || lower === `${name}.`)) return null;
+  if (ABOUT_NOISE.some((n) => lower.includes(n))) return null;
+  if (maxLen > 0) return cleaned.slice(0, maxLen);
+  return cleaned;
+}
