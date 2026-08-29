@@ -1,3 +1,9 @@
+## 2026-08-29 later — listing OG images + waitlist copy
+
+Track A: workspace detail Open Graph / Twitter images now use `firstUsableListingImage` (same junk-host filter as cards). JSON-LD primary image no longer falls back to an unfiltered logo. Workspaces list/detail waitlist headings rewritten for high / and /workspaces bounce — no fabricated stats.
+
+4g-travel-tool.vercel.app: GSC inspect against nomads-travel-indol property returns 403 (URL not in property). Query still appears on this property (3 clicks / 34 impressions). Flag only — no redirect.
+
 # 🧭 RoamIQ (Nomads_Travel) — Project Status & Future Roadmap
 
 ## 📌 Current Project Status
