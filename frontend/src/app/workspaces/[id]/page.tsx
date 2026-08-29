@@ -19,7 +19,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, isUsableImageUrl } from "@/lib/listing-media";
+import { firstUsableListingImage, isUsableImageUrl, usefulListingAbout } from "@/lib/listing-media";
 
 export const revalidate = 180;
 
@@ -89,10 +89,7 @@ export async function generateMetadata({
 
     const title = `${listing.company_name}${location ? ` — ${location}` : ""} | RoamIQ Workspaces`;
 
-    const aboutSnippet = (listing.about || listing.description || "")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 140);
+    const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 140) || "";
 
     const extras: string[] = [];
     if (listing.starting_price) extras.push(String(listing.starting_price));
@@ -208,10 +205,7 @@ export default async function WorkspaceDetailPage({
     "@type": schemaType,
     name: listing.company_name,
     url: pageUrl,
-    description: (listing.about || listing.description || "")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 300) || undefined,
+    description: usefulListingAbout(listing.about || listing.description, listing.company_name, 300) || undefined,
     publisher: {
       "@type": "Organization",
       name: "RoamIQ",
@@ -445,11 +439,11 @@ export default async function WorkspaceDetailPage({
               </div>
 
               {/* About — never invent copy; pending state when both fields empty */}
-              {listing.about || listing.description ? (
+              {usefulListingAbout(listing.about || listing.description, listing.company_name) ? (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">About</h2>
                   <p className="mt-3 whitespace-pre-line leading-relaxed text-foreground/80">
-                    {listing.about || listing.description}
+                    {usefulListingAbout(listing.about || listing.description, listing.company_name)}
                   </p>
                 </div>
               ) : (
@@ -501,12 +495,8 @@ export default async function WorkspaceDetailPage({
                   <ul className="mt-4 divide-y divide-border rounded-2xl border border-border">
                     {related.map((item) => {
                       const thumb = firstUsableListingImage(item.images, item.logo_url);
-                      const snippet = (item.about || "").replace(/\s+/g, " ").trim();
-                      const aboutOk =
-                        snippet.length >= 40 &&
-                        !["skip to content", "sign in", "privacy policy", "cookie policy"].some((n) =>
-                          snippet.toLowerCase().includes(n)
-                        );
+                      const snippet = usefulListingAbout(item.about, item.company_name, 140);
+                      const aboutOk = Boolean(snippet);
                       return (
                       <li key={item.id}>
                         <Link
