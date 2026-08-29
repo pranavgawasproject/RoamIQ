@@ -76,7 +76,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about",
+        "id, company_name, company_title, company_type, city, state, country, address, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about",
         { count: "planned" }
       )
       .eq("is_public", true)
@@ -175,9 +175,17 @@ function ListingCard({ listing }: { listing: Listing }) {
           <Link href={`/workspaces/${listing.id}`} className="hover:text-accent transition-colors">{listing.company_name}</Link>
         </h3>
         {usefulTitle(listing.company_title, listing.company_name) && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulTitle(listing.company_title, listing.company_name)}</p>}
-        {usefulAboutSnippet(listing.about, listing.company_name) && (
-          <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{usefulAboutSnippet(listing.about, listing.company_name)}</p>
-        )}
+        {(() => {
+          const aboutSnippet = usefulAboutSnippet(listing.about, listing.company_name);
+          const addressSnippet = (listing.address || "").replace(/\s+/g, " ").trim();
+          if (aboutSnippet) {
+            return <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{aboutSnippet}</p>;
+          }
+          if (addressSnippet.length >= 8) {
+            return <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{addressSnippet}</p>;
+          }
+          return <p className="mt-1 text-sm text-muted-foreground">Description pending</p>;
+        })()}
         {visibleTags.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {visibleTags.map((tag) => (
@@ -268,10 +276,10 @@ export default async function WorkspacesPage({
       const imageUrl = getCardImage(item);
       const aboutSnippet = usefulAboutSnippet(item.about, item.company_name);
       const schemaType =
-        item.company_type === "coworking"
-          ? "CoworkingSpace"
-          : item.company_type === "coliving" || item.company_type === "hostel" || item.company_type === "workation"
-            ? "LodgingBusiness"
+        item.company_type === "coliving" || item.company_type === "hostel" || item.company_type === "workation"
+          ? "LodgingBusiness"
+          : item.company_type === "cafe"
+            ? "CafeOrCoffeeShop"
             : "LocalBusiness";
       const place: Record<string, unknown> = {
         "@type": schemaType,
