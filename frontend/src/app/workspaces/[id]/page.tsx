@@ -525,7 +525,7 @@ export default async function WorkspaceDetailPage({
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className="truncate font-medium">{item.company_name}</p>
-                            {aboutOk && (
+                            {snippet && (
                               <p className="mt-0.5 line-clamp-2 text-xs text-foreground/70">{snippet.slice(0, 140)}</p>
                             )}
                             <p className="text-xs text-muted-foreground">
