@@ -395,7 +395,7 @@ export default async function WorkspacesPage({
               })}
             </div>
             <div className="mt-8 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
-              <WaitlistInline source="workspaces-list-above-fold" heading="Email me workspace picks for this search" description="The list below is long. If you would rather get a shortlist than scroll 24 cards, leave an email — we only write when a city or listed speed matches." compact />
+              <WaitlistInline source="workspaces-list-above-fold" heading="Get a shortlist for this search instead of bouncing" description="This index is long. If you already know the city or type you need, leave an email — we only write when a listed price or Wi-Fi value matches. No extra page." compact />
             </div>
           </div>
         </section>
@@ -415,7 +415,7 @@ export default async function WorkspacesPage({
                 </div>
                 {listings.length > 6 && (
                   <div className="my-8 rounded-2xl border border-border bg-card/80 p-5 sm:p-6">
-                    <WaitlistInline source="workspaces-list-mid-grid" heading="Keep browsing, or get a shortlist instead" description="Most visits leave this page after a few cards. If you already know the city or Wi-Fi floor you need, leave an email here — we only write when listed data matches. No fabricated scarcity." compact />
+                    <WaitlistInline source="workspaces-list-mid-grid" heading="Still scanning cards? Grab a shortlist" description="If you are about to leave, drop an email here. We send matching workspaces when price or Wi-Fi is listed — we do not invent missing numbers." compact />
                   </div>
                 )}
                 {listings.length > 6 && (
@@ -449,7 +449,7 @@ export default async function WorkspacesPage({
             <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">Found a workspace you like — or still deciding where to go?</h2>
             <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">Leave your email on this page. We send destination shortlists matched to budget, visa window, and listed Wi-Fi speeds. No fabricated urgency, no spam.</p>
           </div>
-          <WaitlistInline source="workspaces-list" heading="Join the free waitlist" description="Stay on this page — no need to bounce to the homepage form." compact={false} />
+          <WaitlistInline source="workspaces-list" heading="Leave with a shortlist, not a blank tab" description="No extra page. We email city and workspace picks only when listed price or Wi-Fi exists. No fabricated urgency." compact={false} />
         </div>
       </section>
       <Footer />
