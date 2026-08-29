@@ -1,3 +1,9 @@
+## 2026-08-29 ~13:10 UTC — hide scraped about chrome
+
+Track A: many `listings.about` values are government-seal / Wayback / encyclopedia scrape residue (e.g. HQ Millennium Building). Added `usefulListingAbout` in `listing-media.ts` and wired it through `/workspaces` cards, detail About, related cards, meta description, and JSON-LD. No invented copy — junk about falls through to Description pending. Commits: `26e5f8b`, `1f123e6`, `848906f`.
+
+GSC 2026-08-01→2026-08-28 (nomads-travel-indol): query `4g-travel-tool.vercel.app` 3 clicks / 28 imp / pos ~3.0 — FLAG only, not a GSC property here (inspect 403), no redirect. Branded `roamiq` 1/63 / pos ~6.3. Homepage 5/178. Top listing pages: Izzy coffee workspace 1/64. GA4 not queried this run (property id not resolved in connected account without extra lookup). Branded CTR capped until custom domain is live. Sitemap not resubmitted.
+
 ## 2026-08-29 evening — description-pending on workspace cards
 - **2026-08-29 (~13:10 UTC)**: Daily growth/conversion run (Track A). Destination pages still bounce at 100% in GA4 while listing photos on those cards omitted `unoptimized` (workspaces list/detail already set it for third-party hosts). **Code**: add `unoptimized` on `/destinations/[id]` listing card images so venue photos actually render instead of Next/Image failing on unknown hosts. No invented about/prices. Flag: GSC query `4g-travel-tool.vercel.app` (3 clicks / 28 imp, pos ~3.0) — inspect on that property is 403 here; do not redirect. Listings DB `davvpymbybvniexmkgcu`: 8,268 public active; about empty 70.8%; images empty 0%; price empty 44.0%; wifi empty 0%; phone 94.4%; logo 72.6%; email 97.5%. Branded CTR capped until custom domain is live. Sitemap not resubmitted.
 
