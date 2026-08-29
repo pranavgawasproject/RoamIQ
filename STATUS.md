@@ -1,3 +1,9 @@
+## 2026-08-29 evening — description-pending on workspace cards
+
+Track A: `/workspaces` cards with no usable `about` now show a real `address` when present, otherwise an honest **Description pending** state (same pattern as Price / Wi-Fi pending). Select includes `address`. ItemList schema drops invalid `CoworkingSpace` (uses LocalBusiness / LodgingBusiness / CafeOrCoffeeShop from visible type only). No invented copy.
+
+GSC 2026-08-01→2026-08-28 (nomads-travel-indol): query `4g-travel-tool.vercel.app` 3 clicks / 28 imp / pos ~3.0 — FLAG only, not a GSC property here, no redirect. Branded `roamiq` 1 click / 63 imp / pos ~6.3. Homepage 5 clicks / 178 imp. `/workspaces` indexed (canonical matches). GA4 not connected in Composio this run. Listings `davvpymbybvniexmkgcu`: 8,268 rows; about empty 5,850 (70.8%); starting_price empty 3,637 (44.0%); address empty 6,479; images empty 0; wifi_speed empty 0; logo empty 6,005; phone empty 7,802; email empty 8,059. Branded CTR capped until custom domain is live. Sitemap not resubmitted.
+
 ## 2026-08-29 later — listing OG images + waitlist copy
 
 Track A: workspace detail Open Graph / Twitter images now use `firstUsableListingImage` (same junk-host filter as cards). JSON-LD primary image no longer falls back to an unfiltered logo. Workspaces list/detail waitlist headings rewritten for high / and /workspaces bounce — no fabricated stats.
