@@ -94,7 +94,8 @@ export async function generateMetadata({
     const extras: string[] = [];
     const listedPrice = usefulStartingPrice(listing.starting_price);
     if (listedPrice) extras.push(listedPrice);
-    if (listing.wifi_speed) extras.push(String(listing.wifi_speed));
+    const listedWifiMeta = usefulWifiSpeed(listing.wifi_speed);
+    if (listedWifiMeta) extras.push(listedWifiMeta);
     if (listing.company_type) extras.push(String(listing.company_type));
 
     const description =
@@ -264,14 +265,15 @@ export default async function WorkspaceDetailPage({
   if (listing.contact_email) {
     localBusinessJsonLd.email = String(listing.contact_email);
   }
-  if (tags.length > 0 || usefulWifiSpeed(listing.wifi_speed) || listing.download_speed_mbps) {
+  const listedWifi = usefulWifiSpeed(listing.wifi_speed);
+  if (tags.length > 0 || listedWifi || listing.download_speed_mbps) {
     localBusinessJsonLd.amenityFeature = [
-      ...(usefulWifiSpeed(listing.wifi_speed)
+      ...(listedWifi
         ? [
             {
               "@type": "LocationFeatureSpecification",
               name: "Wi-Fi Speed",
-              value: usefulWifiSpeed(listing.wifi_speed),
+              value: listedWifi,
             },
           ]
         : []),
