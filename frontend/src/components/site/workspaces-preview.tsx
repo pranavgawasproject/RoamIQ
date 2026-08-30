@@ -3,43 +3,10 @@ import Image from "next/image";
 import { ArrowUpRight, Building2, MapPin, Star, Wifi } from "lucide-react";
 import { supabase, type Listing } from "@/lib/supabase";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
-import { usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
-
-function isUsableImageUrl(url: string | null | undefined): url is string {
-  if (!url || typeof url !== "string") return false;
-  const trimmed = url.trim();
-  return Boolean(trimmed) && /^https?:\/\//i.test(trimmed);
-}
+import { firstUsableListingImage, usefulListingAbout, usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
 
 function getCardImage(listing: Listing): string | null {
-  if (listing.images && listing.images.length > 0) {
-    const first = listing.images.find((u) => isUsableImageUrl(u));
-    if (first) return first.trim();
-  }
-  if (isUsableImageUrl(listing.logo_url)) return listing.logo_url.trim();
-  return null;
-}
-
-function usefulAboutSnippet(about: string | null | undefined, companyName?: string | null): string | null {
-  if (!about) return null;
-  const cleaned = about.replace(/\s+/g, " ").trim();
-  if (cleaned.length < 40) return null;
-  const lower = cleaned.toLowerCase();
-  const name = (companyName || "").replace(/\s+/g, " ").trim().toLowerCase();
-  if (name && (lower === name || lower === `${name}.`)) return null;
-  const noise = [
-    "skip to content",
-    "sign in",
-    "official white house",
-    "stock market",
-    "cookie policy",
-    "privacy policy",
-    "all rights reserved",
-    "download the app",
-    "subscribe to newsletter",
-  ];
-  if (noise.some((n) => lower.includes(n))) return null;
-  return cleaned.slice(0, 160);
+  return firstUsableListingImage(listing.images, listing.logo_url);
 }
 
 export async function WorkspacesPreview() {
@@ -55,7 +22,7 @@ export async function WorkspacesPreview() {
     .limit(4);
 
   const listings = ((data ?? []) as Listing[]).filter(
-    (row) => usefulAboutSnippet(row.about, row.company_name) || getCardImage(row)
+    (row) => usefulListingAbout(row.about, row.company_name, 160) || getCardImage(row)
   );
 
   if (listings.length === 0) return null;
@@ -87,7 +54,7 @@ export async function WorkspacesPreview() {
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {listings.slice(0, 4).map((listing) => {
             const imageUrl = getCardImage(listing);
-            const about = usefulAboutSnippet(listing.about, listing.company_name);
+            const about = usefulListingAbout(listing.about, listing.company_name, 160);
             const reviewCount = Number(listing.total_reviews ?? 0);
             const ratingValue = Number(listing.ratings ?? 0);
             const showRating = ratingValue > 0 && reviewCount > 0;
