@@ -11,6 +11,12 @@ export const metadata: Metadata = {
   title: "Pricing — RoamIQ free Explorer & Nomad plans for digital nomads",
   description:
     "RoamIQ pricing: free Explorer plan to browse destinations and visas, or Nomad plan for trip saving, visa tracking, community posts, and priority AI planning. No credit card to start.",
+  keywords: [
+    "roamiq pricing",
+    "roamiq nomad plan",
+    "digital nomad travel tools pricing",
+    "digital nomad visa tracker cost",
+  ],
   alternates: {
     canonical: `${BASE_URL}/pricing`,
   },

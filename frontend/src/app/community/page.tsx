@@ -7,6 +7,13 @@ export const metadata: Metadata = {
   title: "Nomad Community — Meetups, Forum & Co-working Events | RoamIQ",
   description:
     "Connect with remote workers, digital nomads, and global tech workers. Join city meetups, ask visa/tax questions, and share workspace advice worldwide.",
+  keywords: [
+    "digital nomad community",
+    "digital nomad meetups",
+    "remote work forum",
+    "nomad coworking events",
+    "roamiq community",
+  ],
   alternates: {
     canonical: `${BASE_URL}/community`,
   },

@@ -35,6 +35,15 @@ export async function generateMetadata({
   return {
     title,
     description,
+    keywords: [
+      `${nameA} vs ${nameB}`,
+      `${nameA} vs ${nameB} cost of living`,
+      `${nameA} vs ${nameB} digital nomad`,
+      `${nameA} vs ${nameB} coworking wifi`,
+      "digital nomad city comparison",
+      "workation cost comparator",
+      "roamiq city comparison",
+    ],
     alternates: {
       canonical,
     },

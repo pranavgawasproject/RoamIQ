@@ -12,6 +12,16 @@ export const metadata: Metadata = {
   title: "Visa Intelligence \u2014 Digital nomad & tourist stay rules by country | RoamIQ",
   description:
     "Look up tourist stay limits and digital nomad visa options for 190+ countries. See which destinations offer dedicated remote-work visas, costs, and durations \u2014 before you book.",
+  keywords: [
+    "digital nomad visa",
+    "digital nomad visa requirements",
+    "remote work visas by country",
+    "tourist stay limits for nomads",
+    "Schengen 90 180 rule calculator",
+    "FEIE 330 day physical presence test",
+    "digital nomad tax residency rules",
+    "roamiq visa intelligence",
+  ],
   alternates: {
     canonical: `${BASE_URL}/visa`,
   },

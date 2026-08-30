@@ -108,6 +108,14 @@ export async function generateMetadata({
     return {
       title,
       description,
+      keywords: [
+        listing.company_name,
+        `${listing.company_name} wifi speed`,
+        `${listing.city || "coworking"} space`,
+        `${listing.company_name} ${listing.city || ""}`,
+        "digital nomad workspace",
+        "roamiq workspace listing",
+      ],
       alternates: { canonical: url },
       openGraph: {
         title,

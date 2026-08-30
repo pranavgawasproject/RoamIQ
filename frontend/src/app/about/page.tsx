@@ -12,6 +12,14 @@ export const metadata: Metadata = {
   title: "About RoamIQ — Building the operating system for digital nomads",
   description:
     "Learn why we built RoamIQ: AI-powered visa intelligence, city cost data, workspaces, and community for remote workers living a location-independent life.",
+  keywords: [
+    "about roamiq",
+    "pranav gawas roamiq founder",
+    "digital nomad operating system",
+    "digital nomad travel platform",
+    "roamiq leadership",
+    "roamiq executive team",
+  ],
   alternates: {
     canonical: `${BASE_URL}/about`,
   },
