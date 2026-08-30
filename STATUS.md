@@ -1,3 +1,9 @@
+## 2026-08-30 ~16:15 UTC — treat templated wifi labels as pending
+
+Track A (data integrity + fallback UI): `wifi_speed` is populated on every listing row, but the dominant values are bulk templates (`180 Mbps Free Wi-Fi`, `120 Mbps Nomad Wi-Fi`, `330 Mbps Dedicated Line`, …). Those are not venue-reported measurements. Tightened `usefulWifiSpeed` in `frontend/src/lib/listing-media.ts` so those patterns return null. Existing listing cards/detail/JSON-LD already call the helper, so they now show "Wi-Fi speed pending" and omit amenityFeature instead of publishing fake Mbps. Did not delete or rewrite DB rows. About/images already render; admin auth already env + httpOnly cookie. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-01→2026-08-28 (`https://nomads-travel-indol.vercel.app/`): query-level ~7 clicks / 248 impressions on the top-50 sample; `4g-travel-tool.vercel.app` 3/31 / pos ~3.0 — FLAG only (inspect 403: URL is not this property), no redirect. Branded `roamiq` 1/64 / pos ~6.4. Homepage 5/190 / pos ~5.7. GA4 property `541610896` last 30d: `/` 145 sessions / 79% bounce; `/workspaces` 8 / 87.5%; `/destinations` 9 / 78%. Listings `davvpymbybvniexmkgcu`: 8,268 rows; about empty 70.8%; price empty 44.0%; images column non-null; phone 94.4% empty; logo 72.6%; email 97.5%. Branded CTR capped until the custom domain is live.
+
 ## 2026-08-30 ~13:10 UTC — described-listings filter on /workspaces
 
 Track A (content depth + conversion): about/images already render; ~70% of listings still have empty about, so the default 8,268-row index stays thin. Added `described=1` query + checkbox/chip so visitors can restrict to rows with a non-empty `about` column (no fabricated copy). Empty-filter state now includes the same honest waitlist plus a link to described listings. Sitemap not resubmitted (no new routes). Flag: GSC query `4g-travel-tool.vercel.app` is not a property in this account — inspect 403; no redirect.
