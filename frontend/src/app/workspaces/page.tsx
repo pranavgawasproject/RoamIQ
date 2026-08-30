@@ -86,7 +86,7 @@ async function getListings(params: {
     if (params.city) query = query.ilike("city", `%${params.city}%`);
     if (params.country) query = query.ilike("country", `%${params.country}%`);
     if (params.min_wifi) query = query.not("wifi_speed", "is", null);
-    const { data, error, count } = await query.order("ratings", { ascending: false }).range(from, to);
+    const { data, error, count } = await query.order("about", { ascending: false, nullsFirst: false }).order("ratings", { ascending: false }).range(from, to);
     if (error) {
       console.error(error);
       return { listings: [] as Listing[], count: 0, page };
@@ -291,9 +291,10 @@ export default async function WorkspacesPage({
       }
       const listedPrice = usefulStartingPrice(item.starting_price);
       if (listedPrice) place.priceRange = listedPrice;
-      if (item.wifi_speed) {
+      const listedWifi = usefulWifiSpeed(item.wifi_speed);
+      if (listedWifi) {
         place.amenityFeature = [
-          { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: item.wifi_speed },
+          { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi },
         ];
       }
       const ratingValue = Number(item.ratings);
