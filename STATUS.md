@@ -1,3 +1,9 @@
+## 2026-08-30 ~03:35 UTC — wifi pending helper + empty-filter waitlist
+
+Track A: added `usefulWifiSpeed` so 0 / N/A / pending wifi values render as “Wi-Fi speed pending” (never invented speeds). Wired through `/workspaces` cards + ItemList schema, workspace detail + JSON-LD, destination listing cards, and homepage workspace preview. Destination cards now show “Description pending” when `usefulListingAbout` rejects scrape chrome. Empty `/workspaces` filter results now include an on-page waitlist (`workspaces-list-empty-filters`) instead of a dead-end dashed box.
+
+GSC 2026-08-01→2026-08-28 (nomads-travel-indol): query `4g-travel-tool.vercel.app` 3 clicks / 31 imp / pos ~3.0 — FLAG only, not a GSC property here, no redirect. Branded `roamiq` 1/63 / pos ~6.3. Homepage 5/185 / pos ~5.6. GA4 not queried this run (no active Google Analytics connection). Listings `davvpymbybvniexmkgcu`: 8,268 rows; about empty 5,850 (70.8%); price empty 3,637 (44.0%); images empty 0; wifi empty 0; phone 7,802; logo 6,005; email 8,059. Branded CTR capped until custom domain is live. Sitemap not resubmitted.
+
 ## 2026-08-29 ~13:26 UTC — valid listing schema + contact pending
 
 Track A: workspace detail JSON-LD used invalid schema.org type `CoworkingSpace`. Now CafeOrCoffeeShop / LodgingBusiness / LocalBusiness from the listed type only. Sidebar always shows Contact with Phone/Email-not-listed-yet (no invented contacts). Accidental 11-byte placeholder commit `bce9e98` was immediately restored. Sitemap not resubmitted.
