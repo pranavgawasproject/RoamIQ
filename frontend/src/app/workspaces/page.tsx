@@ -85,7 +85,7 @@ async function getListings(params: {
     if (params.type) query = query.eq("company_type", params.type);
     if (params.city) query = query.ilike("city", `%${params.city}%`);
     if (params.country) query = query.ilike("country", `%${params.country}%`);
-    if (params.min_wifi) query = query.not("wifi_speed", "is", null);
+    if (params.min_wifi) query = query.ilike("wifi_speed", "%Mbps%");
     const { data, error, count } = await query.order("about", { ascending: false, nullsFirst: false }).order("ratings", { ascending: false }).range(from, to);
     if (error) {
       console.error(error);

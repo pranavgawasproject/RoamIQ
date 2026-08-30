@@ -1,3 +1,7 @@
+## 2026-08-30 ~03:40 UTC — treat placeholder Wi-Fi as pending
+
+Track A: wifi_speed is rarely SQL-null but often a non-measurement. Added usefulWifiSpeed in listing-media.ts and wired pending UI + JSON-LD only when a numeric speed exists. min_wifi filter now ilike %Mbps%. Homepage preview uses firstUsableListingImage. No invented speeds. Flag: GSC query 4g-travel-tool.vercel.app 3 clicks / 31 imp / pos ~3.0 — FLAG only, no redirect. Branded roamiq 1/63 / pos ~6.3. Homepage 5/185. /workspaces inspect indexed. GA4 property id not resolvable this run. Branded CTR capped until custom domain is live. Sitemap not resubmitted.
+
 ## 2026-08-30 ~03:40 UTC — richer first page + honest Wi-Fi empty state
 
 Track A: about/images already render on `/workspaces`, destination cards, homepage preview, and workspace detail; admin auth is already env + httpOnly cookie. This run: (1) `usefulWifiSpeed` so `0` / `0 Mbps` show as pending instead of a fake speed; (2) default `/workspaces` sort is `about` nulls-last, then ratings, so described rows hit page 1; (3) homepage preview now uses shared `listing-media` image/about filters (blocks wallpaper/clip-art hosts). No invented copy, prices, or wifi. Sitemap not resubmitted (no new routes).
