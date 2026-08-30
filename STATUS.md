@@ -1,3 +1,7 @@
+## 2026-08-30 ~13:10 UTC — described-listings filter on /workspaces
+
+Track A (content depth + conversion): about/images already render; ~70% of listings still have empty about, so the default 8,268-row index stays thin. Added `described=1` query + checkbox/chip so visitors can restrict to rows with a non-empty `about` column (no fabricated copy). Empty-filter state now includes the same honest waitlist plus a link to described listings. Sitemap not resubmitted (no new routes). Flag: GSC query `4g-travel-tool.vercel.app` is not a property in this account — inspect 403; no redirect.
+
 ## 2026-08-30 ~13:05 UTC — destination pages: next-step CTAs + listing ItemList
 
 Track A (conversion + listing depth): GA4 Aug 1–29 shows `/destinations/chiang-mai`, `/prague`, `/taipei` at 100% bounce (5 / 2 / 2 sessions). About/images already render on destination cards. This run: (1) city listing query now requires `is_active` and sorts `about` nulls-last then ratings so described venues hit the first three cards; (2) ItemList JSON-LD only for the listings actually shown, with description/image only when those fields are visible; (3) hero links to `/workspaces?city=` and `/visa` so the page has an on-site next click. No invented copy, prices, or wifi. Flag: GSC query `4g-travel-tool.vercel.app` 3 clicks / 31 imp / pos ~3.0 — FLAG only, no redirect. Branded CTR capped until the custom domain is live. Sitemap not resubmitted (no new routes).

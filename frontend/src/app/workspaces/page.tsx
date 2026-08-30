@@ -67,6 +67,7 @@ async function getListings(params: {
   city?: string;
   country?: string;
   min_wifi?: string;
+  described?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -86,6 +87,9 @@ async function getListings(params: {
     if (params.city) query = query.ilike("city", `%${params.city}%`);
     if (params.country) query = query.ilike("country", `%${params.country}%`);
     if (params.min_wifi) query = query.ilike("wifi_speed", "%Mbps%");
+    if (params.described === "1") {
+      query = query.not("about", "is", null).neq("about", "");
+    }
     const { data, error, count } = await query.order("about", { ascending: false, nullsFirst: false }).order("ratings", { ascending: false }).range(from, to);
     if (error) {
       console.error(error);
@@ -238,7 +242,7 @@ function ListingCard({ listing }: { listing: Listing }) {
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const { listings, count, page } = await getListings(params);
@@ -250,6 +254,7 @@ export default async function WorkspacesPage({
     if (params.city) qs.set("city", params.city);
     if (params.country) qs.set("country", params.country);
     if (params.min_wifi) qs.set("min_wifi", params.min_wifi);
+    if (params.described === "1") qs.set("described", "1");
     qs.set("page", String(targetPage));
     return `/workspaces?${qs.toString()}`;
   };
@@ -355,10 +360,20 @@ export default async function WorkspacesPage({
                 <option value="">Any Wi-Fi speed</option>
                 <option value="verified">Verified Wi-Fi listed</option>
               </select>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="described" value="1" defaultChecked={params.described === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has description
+              </label>
               <button type="submit" className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Search</button>
             </form>
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Jump to</span>
+              <Link
+                href={params.described === "1" ? "/workspaces" : "/workspaces?described=1"}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.described === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has description
+              </Link>
               {types.filter((t) => t.value).map((t) => {
                 const active = params.type === t.value;
                 return (
@@ -404,9 +419,20 @@ export default async function WorkspacesPage({
         <section className="py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             {listings.length === 0 ? (
-              <div className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-border py-20 text-center">
+              <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-border px-6 py-16 text-center">
                 <Building2 className="h-8 w-8 text-muted-foreground" />
-                <p className="text-muted-foreground">No listings match those filters. Try a different city or type.</p>
+                <p className="text-muted-foreground">No listings match those filters. Try a different city or type, or drop the description filter.</p>
+                <Link href="/workspaces?described=1" className="text-sm font-medium text-accent hover:underline">
+                  Browse listings that already have a written description
+                </Link>
+                <div className="mt-2 w-full max-w-md text-left">
+                  <WaitlistInline
+                    source="workspaces-list-empty"
+                    heading="Want this search when a match exists?"
+                    description="Leave an email if you want a shortlist once a listing in this city or type has a written description. We do not invent missing copy."
+                    compact
+                  />
+                </div>
               </div>
             ) : (
               <>
