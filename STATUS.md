@@ -1,3 +1,9 @@
+## 2026-08-30 ~13:10 UTC — listing photo gallery is actually usable
+
+Track A: extra `images[]` on `/workspaces/[id]` rendered as a dead thumbnail strip (hero never changed). Added `WorkspaceGallery` so visitors can switch among venue photos already in the DB, expose those same URLs in JSON-LD `image` when more than one is visible, and sort related city listings about-nulls-last. No invented photos. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-01→2026-08-29 (`https://nomads-travel-indol.vercel.app/`): query `4g-travel-tool.vercel.app` 3 clicks / 31 imp / pos ~3.0 — FLAG only, inspect 403 (URL not in this property), no redirect. Branded `roamiq` 1/63 / pos ~6.3. Homepage 5/185 / pos ~5.6. Other clicks on listing URLs. GA4 not queried this run (no GA4 toolkit in connected Composio). Listings `davvpymbybvniexmkgcu`: 8,268 rows; about empty 5,850 (70.8%); price empty 3,637 (44.0%); phone 7,802; logo 6,005; email 8,059; images/wifi columns populated. Branded CTR capped until the custom domain is live.
+
 ## 2026-08-30 ~04:15 UTC — compact waitlist now shows conversion copy
 
 Track A (conversion): `/workspaces` bounce is 87.5% (GA4 Aug 1–29, 8 sessions). The list page already placed waitlist modules above the fold and mid-grid, but `WaitlistInline` dropped `heading`/`description` whenever `compact` was true — visitors only saw a bare email field. Compact now renders the same copy as the full module (no fabricated stats or urgency). About/images/price/wifi pending states and env-based admin auth were already shipped. Sitemap not resubmitted (no new routes).
