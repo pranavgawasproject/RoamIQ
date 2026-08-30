@@ -291,10 +291,9 @@ export default async function WorkspacesPage({
       }
       const listedPrice = usefulStartingPrice(item.starting_price);
       if (listedPrice) place.priceRange = listedPrice;
-      const listedWifi = usefulWifiSpeed(item.wifi_speed);
-      if (listedWifi) {
+      if (item.wifi_speed) {
         place.amenityFeature = [
-          { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi },
+          { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: item.wifi_speed },
         ];
       }
       const ratingValue = Number(item.ratings);
@@ -404,17 +403,9 @@ export default async function WorkspacesPage({
         <section className="py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             {listings.length === 0 ? (
-              <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-border px-6 py-16 text-center">
+              <div className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-border py-20 text-center">
                 <Building2 className="h-8 w-8 text-muted-foreground" />
                 <p className="text-muted-foreground">No listings match those filters. Try a different city or type.</p>
-                <div className="mt-2 w-full max-w-md text-left">
-                  <WaitlistInline
-                    source="workspaces-list-empty-filters"
-                    heading="No matches on this filter — want a shortlist instead?"
-                    description="Leave an email if you already know the city or type. We only write when a listed price or Wi-Fi value exists. No extra page."
-                    compact={false}
-                  />
-                </div>
               </div>
             ) : (
               <>
