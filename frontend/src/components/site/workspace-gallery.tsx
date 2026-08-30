@@ -55,7 +55,6 @@ export function WorkspaceGallery({
             <button
               key={`${src}-${i}`}
               type="button"
-              role="listitem"
               onClick={() => setActive(i)}
               aria-label={`Show photo ${i + 1} of ${alt}`}
               aria-pressed={active === i}

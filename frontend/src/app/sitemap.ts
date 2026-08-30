@@ -133,6 +133,10 @@ const FALLBACK_CITY_IDS = [
   "san-sebastian",
   "inverness",
   "guanajuato",
+  "nantes",
+  "coimbra",
+  "bologna",
+  "ghent",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
