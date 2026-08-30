@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulListingAbout, usefulStartingPrice } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulListingAbout, usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -214,8 +214,8 @@ function ListingCard({ listing }: { listing: Listing }) {
             ) : (
               <div className="text-sm text-muted-foreground">Price not listed yet</div>
             )}
-            {listing.wifi_speed ? (
-              <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"><Wifi className="h-3 w-3" /> {listing.wifi_speed}</div>
+            {usefulWifiSpeed(listing.wifi_speed) ? (
+              <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"><Wifi className="h-3 w-3" /> {usefulWifiSpeed(listing.wifi_speed)}</div>
             ) : (
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground/70"><Wifi className="h-3 w-3" /> Wi-Fi speed pending</div>
             )}
@@ -291,9 +291,10 @@ export default async function WorkspacesPage({
       }
       const listedPrice = usefulStartingPrice(item.starting_price);
       if (listedPrice) place.priceRange = listedPrice;
-      if (item.wifi_speed) {
+      const listedWifi = usefulWifiSpeed(item.wifi_speed);
+      if (listedWifi) {
         place.amenityFeature = [
-          { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: item.wifi_speed },
+          { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi },
         ];
       }
       const ratingValue = Number(item.ratings);
@@ -403,9 +404,17 @@ export default async function WorkspacesPage({
         <section className="py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             {listings.length === 0 ? (
-              <div className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-border py-20 text-center">
+              <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-border px-6 py-16 text-center">
                 <Building2 className="h-8 w-8 text-muted-foreground" />
                 <p className="text-muted-foreground">No listings match those filters. Try a different city or type.</p>
+                <div className="mt-2 w-full max-w-md text-left">
+                  <WaitlistInline
+                    source="workspaces-list-empty-filters"
+                    heading="No matches on this filter — want a shortlist instead?"
+                    description="Leave an email if you already know the city or type. We only write when a listed price or Wi-Fi value exists. No extra page."
+                    compact={false}
+                  />
+                </div>
               </div>
             ) : (
               <>

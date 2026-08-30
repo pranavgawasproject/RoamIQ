@@ -19,7 +19,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, isUsableImageUrl, usefulListingAbout, usefulStartingPrice } from "@/lib/listing-media";
+import { firstUsableListingImage, isUsableImageUrl, usefulListingAbout, usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
 
 export const revalidate = 180;
 
@@ -264,14 +264,14 @@ export default async function WorkspaceDetailPage({
   if (listing.contact_email) {
     localBusinessJsonLd.email = String(listing.contact_email);
   }
-  if (tags.length > 0 || listing.wifi_speed || listing.download_speed_mbps) {
+  if (tags.length > 0 || usefulWifiSpeed(listing.wifi_speed) || listing.download_speed_mbps) {
     localBusinessJsonLd.amenityFeature = [
-      ...(listing.wifi_speed
+      ...(usefulWifiSpeed(listing.wifi_speed)
         ? [
             {
               "@type": "LocationFeatureSpecification",
               name: "Wi-Fi Speed",
-              value: listing.wifi_speed,
+              value: usefulWifiSpeed(listing.wifi_speed),
             },
           ]
         : []),
@@ -530,7 +530,7 @@ export default async function WorkspaceDetailPage({
                             )}
                             <p className="text-xs text-muted-foreground">
                               {item.company_type || "workspace"}
-                              {item.wifi_speed ? ` · ${item.wifi_speed}` : " · Wi-Fi speed pending"}
+                              {usefulWifiSpeed(item.wifi_speed) ? ` · ${usefulWifiSpeed(item.wifi_speed)}` : " · Wi-Fi speed pending"}
                             </p>
                           </div>
                           <span className="shrink-0 text-sm text-muted-foreground">
@@ -563,11 +563,11 @@ export default async function WorkspaceDetailPage({
                 )}
 
                 <div className="mt-5 space-y-3 text-sm">
-                  {listing.wifi_speed ? (
+                  {usefulWifiSpeed(listing.wifi_speed) ? (
                     <div className="flex flex-col gap-1 text-foreground/80">
                       <div className="flex items-center gap-2.5">
                         <Wifi className="h-4 w-4 text-forest shrink-0" />
-                        <span className="font-semibold">{listing.wifi_speed}</span>
+                        <span className="font-semibold">{usefulWifiSpeed(listing.wifi_speed)}</span>
                       </div>
                       {(listing.download_speed_mbps || listing.upload_speed_mbps) && (
                         <div className="pl-6 text-xs text-muted-foreground">

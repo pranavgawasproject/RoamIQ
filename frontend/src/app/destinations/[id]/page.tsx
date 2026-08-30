@@ -19,7 +19,7 @@ import { Footer } from "@/components/site/footer";
 import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulStartingPrice } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulListingAbout, usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
 
@@ -740,7 +740,7 @@ function usefulTags(tags: string[] | null | undefined): string[] {
 
 function DestinationListingCard({ listing }: { listing: Listing }) {
   const img = getCardImage(listing);
-  const about = usefulAboutSnippet(listing.about);
+  const about = usefulListingAbout(listing.about, listing.company_name, 220);
   const visibleTags = usefulTags(listing.tags);
   return (
     <Link
@@ -788,10 +788,12 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
           {listing.website && /^https?:\/\//i.test(listing.website.trim()) && (
             <p className="mt-1 text-[11px] text-muted-foreground">Official website listed</p>
           )}
-          {about && (
+          {about ? (
             <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-foreground/70">
               {about}
             </p>
+          ) : (
+            <p className="mt-2 text-xs text-muted-foreground">Description pending</p>
           )}
           {visibleTags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -807,9 +809,9 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
           <span className="font-semibold text-forest">
             {usefulStartingPrice(listing.starting_price) || "Price not listed yet"}
           </span>
-          {listing.wifi_speed ? (
+          {usefulWifiSpeed(listing.wifi_speed) ? (
             <span className="flex items-center gap-1 text-muted-foreground font-medium">
-              <Wifi className="h-3 w-3 text-forest" /> {listing.wifi_speed}
+              <Wifi className="h-3 w-3 text-forest" /> {usefulWifiSpeed(listing.wifi_speed)}
             </span>
           ) : (
             <span className="text-muted-foreground">Wi-Fi speed pending</span>
@@ -818,24 +820,4 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
       </div>
     </Link>
   );
-}
-
-function usefulAboutSnippet(about: string | null | undefined): string | null {
-  if (!about) return null;
-  const cleaned = about.replace(/\s+/g, " ").trim();
-  if (cleaned.length < 40) return null;
-  const lower = cleaned.toLowerCase();
-  const noise = [
-    "skip to content",
-    "sign in",
-    "official white house",
-    "stock market",
-    "cookie policy",
-    "privacy policy",
-    "all rights reserved",
-    "download the app",
-    "subscribe to newsletter",
-  ];
-  if (noise.some((n) => lower.includes(n))) return null;
-  return cleaned.slice(0, 180);
 }

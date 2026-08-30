@@ -3,7 +3,7 @@ import Image from "next/image";
 import { ArrowUpRight, Building2, MapPin, Star, Wifi } from "lucide-react";
 import { supabase, type Listing } from "@/lib/supabase";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
-import { usefulStartingPrice } from "@/lib/listing-media";
+import { usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
 
 function isUsableImageUrl(url: string | null | undefined): url is string {
   if (!url || typeof url !== "string") return false;
@@ -143,7 +143,7 @@ export async function WorkspacesPreview() {
                       </div>
                       <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground">
                         <Wifi className="h-3 w-3" />
-                        {listing.wifi_speed || "Wi-Fi speed pending"}
+                        {usefulWifiSpeed(listing.wifi_speed) || "Wi-Fi speed pending"}
                       </div>
                     </div>
                     {showRating ? (
