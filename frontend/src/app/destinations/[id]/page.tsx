@@ -740,7 +740,7 @@ function usefulTags(tags: string[] | null | undefined): string[] {
 
 function DestinationListingCard({ listing }: { listing: Listing }) {
   const img = getCardImage(listing);
-  const about = usefulListingAbout(listing.about, listing.company_name, 220);
+  const about = usefulListingAbout(listing.about, listing.company_name, 180);
   const visibleTags = usefulTags(listing.tags);
   return (
     <Link
@@ -788,12 +788,10 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
           {listing.website && /^https?:\/\//i.test(listing.website.trim()) && (
             <p className="mt-1 text-[11px] text-muted-foreground">Official website listed</p>
           )}
-          {about ? (
+          {about && (
             <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-foreground/70">
               {about}
             </p>
-          ) : (
-            <p className="mt-2 text-xs text-muted-foreground">Description pending</p>
           )}
           {visibleTags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
