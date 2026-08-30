@@ -1,3 +1,9 @@
+## 2026-08-30 ~04:15 UTC — compact waitlist now shows conversion copy
+
+Track A (conversion): `/workspaces` bounce is 87.5% (GA4 Aug 1–29, 8 sessions). The list page already placed waitlist modules above the fold and mid-grid, but `WaitlistInline` dropped `heading`/`description` whenever `compact` was true — visitors only saw a bare email field. Compact now renders the same copy as the full module (no fabricated stats or urgency). About/images/price/wifi pending states and env-based admin auth were already shipped. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-01→2026-08-28 (`https://nomads-travel-indol.vercel.app/`): query `4g-travel-tool.vercel.app` 3 clicks / 31 imp / pos ~3.0 — FLAG only, no redirect. Branded `roamiq` 1/63 / pos ~6.3. Homepage 5/185 / pos ~5.6. `/workspaces` inspect: Submitted and indexed, canonical matches. GA4 property `541610896`: `/` 145 sessions / 79% bounce; `/workspaces` 8 / 87.5%; `/destinations` 9 / 78%. Branded CTR capped until the custom domain is live.
+
 ## 2026-08-30 ~03:40 UTC — treat placeholder Wi-Fi as pending
 
 Track A: wifi_speed is rarely SQL-null but often a non-measurement. Added usefulWifiSpeed in listing-media.ts and wired pending UI + JSON-LD only when a numeric speed exists. min_wifi filter now ilike %Mbps%. Homepage preview uses firstUsableListingImage. No invented speeds. Flag: GSC query 4g-travel-tool.vercel.app 3 clicks / 31 imp / pos ~3.0 — FLAG only, no redirect. Branded roamiq 1/63 / pos ~6.3. Homepage 5/185. /workspaces inspect indexed. GA4 property id not resolvable this run. Branded CTR capped until custom domain is live. Sitemap not resubmitted.
