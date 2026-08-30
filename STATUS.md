@@ -1,8 +1,8 @@
-## 2026-08-30 ~13:10 UTC — listing photo gallery is actually usable
+## 2026-08-30 ~13:05 UTC — destination pages: next-step CTAs + listing ItemList
 
-Track A: extra `images[]` on `/workspaces/[id]` rendered as a dead thumbnail strip (hero never changed). Added `WorkspaceGallery` so visitors can switch among venue photos already in the DB, expose those same URLs in JSON-LD `image` when more than one is visible, and sort related city listings about-nulls-last. No invented photos. Sitemap not resubmitted (no new routes).
+Track A (conversion + listing depth): GA4 Aug 1–29 shows `/destinations/chiang-mai`, `/prague`, `/taipei` at 100% bounce (5 / 2 / 2 sessions). About/images already render on destination cards. This run: (1) city listing query now requires `is_active` and sorts `about` nulls-last then ratings so described venues hit the first three cards; (2) ItemList JSON-LD only for the listings actually shown, with description/image only when those fields are visible; (3) hero links to `/workspaces?city=` and `/visa` so the page has an on-site next click. No invented copy, prices, or wifi. Flag: GSC query `4g-travel-tool.vercel.app` 3 clicks / 31 imp / pos ~3.0 — FLAG only, no redirect. Branded CTR capped until the custom domain is live. Sitemap not resubmitted (no new routes).
 
-GSC 2026-08-01→2026-08-29 (`https://nomads-travel-indol.vercel.app/`): query `4g-travel-tool.vercel.app` 3 clicks / 31 imp / pos ~3.0 — FLAG only, inspect 403 (URL not in this property), no redirect. Branded `roamiq` 1/63 / pos ~6.3. Homepage 5/185 / pos ~5.6. Other clicks on listing URLs. GA4 not queried this run (no GA4 toolkit in connected Composio). Listings `davvpymbybvniexmkgcu`: 8,268 rows; about empty 5,850 (70.8%); price empty 3,637 (44.0%); phone 7,802; logo 6,005; email 8,059; images/wifi columns populated. Branded CTR capped until the custom domain is live.
+GSC 2026-08-01→2026-08-28 (`https://nomads-travel-indol.vercel.app/`): homepage 5/185 / pos ~5.6; branded `roamiq` 1/63 / pos ~6.3. GA4 property `541610896`: `/` 145 sessions / 79% bounce; `/workspaces` 8 / 87.5%; `/destinations` 9 / 78%. Listings `davvpymbybvniexmkgcu` prior snapshot: 8,268 rows; about empty 5,850; price empty 3,637. Connected Composio read-only query on that ref was 403 this run.
 
 ## 2026-08-30 ~04:15 UTC — compact waitlist now shows conversion copy
 
