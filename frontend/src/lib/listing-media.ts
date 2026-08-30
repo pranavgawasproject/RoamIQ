@@ -104,3 +104,30 @@ export function usefulStartingPrice(price: string | number | null | undefined): 
   }
   return cleaned;
 }
+
+/**
+ * Show a Wi-Fi speed only when it is a real listed value.
+ * Placeholders like "0 Mbps", "N/A", or "pending" stay hidden.
+ * Never invent a replacement speed.
+ */
+export function usefulWifiSpeed(speed: string | number | null | undefined): string | null {
+  if (speed === null || speed === undefined) return null;
+  const cleaned = String(speed).replace(/\s+/g, " ").trim();
+  if (!cleaned) return null;
+  const lower = cleaned.toLowerCase();
+  if (
+    ["n/a", "na", "tbd", "null", "undefined", "-", "—", "none", "unknown", "pending", "wifi speed pending"].includes(
+      lower
+    )
+  ) {
+    return null;
+  }
+  const numeric = cleaned.replace(/[^0-9.,]/g, "").replace(/,/g, "");
+  if (numeric) {
+    const amount = Number.parseFloat(numeric);
+    if (Number.isFinite(amount) && amount <= 0) return null;
+  } else if (!/[a-z]/i.test(cleaned)) {
+    return null;
+  }
+  return cleaned;
+}
