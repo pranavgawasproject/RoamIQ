@@ -125,6 +125,10 @@ const FALLBACK_CITY_IDS = [
   "bishkek",
   "valparaiso",
   "zadar",
+  "auckland",
+  "granada",
+  "bregenz",
+  "wellington",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
