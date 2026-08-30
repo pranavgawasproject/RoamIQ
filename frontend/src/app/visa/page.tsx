@@ -1,1 +1,321 @@
-see file
+import type { Metadata } from "next";
+import { Globe2, CheckCircle2, XCircle } from "lucide-react";
+import { SiteNav } from "@/components/site/nav";
+import { Footer } from "@/components/site/footer";
+import { WaitlistInline } from "@/components/site/waitlist-inline";
+import { supabase, type VisaInfo } from "@/lib/supabase";
+import { NomadVisaScreener } from "@/components/site/nomad-visa-screener";
+import { NomadTaxAuditCalculator } from "@/components/site/nomad-tax-audit-calculator";
+
+const BASE_URL = "https://nomads-travel-indol.vercel.app";
+
+export const metadata: Metadata = {
+  title: "Visa Intelligence \u2014 Digital nomad & tourist stay rules by country | RoamIQ",
+  description:
+    "Look up tourist stay limits and digital nomad visa options for 190+ countries. See which destinations offer dedicated remote-work visas, costs, and durations \u2014 before you book.",
+  keywords: [
+    "digital nomad visa",
+    "digital nomad visa requirements",
+    "remote work visas by country",
+    "tourist stay limits for nomads",
+    "Schengen 90 180 rule calculator",
+    "FEIE 330 day physical presence test",
+    "digital nomad tax residency rules",
+    "roamiq visa intelligence",
+  ],
+  alternates: {
+    canonical: `${BASE_URL}/visa`,
+  },
+  openGraph: {
+    title: "Visa Intelligence \u2014 Digital nomad & tourist stay rules | RoamIQ",
+    description:
+      "Tourist stay limits and digital nomad visa options for 190+ countries. Know costs, durations, and which places offer dedicated nomad visas.",
+    url: `${BASE_URL}/visa`,
+    siteName: "RoamIQ",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Visa Intelligence — Digital nomad & tourist stay rules | RoamIQ",
+    description:
+      "Tourist stay limits and digital nomad visa options for 190+ countries. Know costs, durations, and which places offer dedicated nomad visas.",
+  },
+  other: {
+    founder: "Pranav Gawas",
+    ceo: "Pranav Gawas",
+    cto: "RoamIQ Tech Leadership",
+    "executive-team": "Pranav Gawas (Founder & CEO), RoamIQ Tech Leadership (CTO & Lead AI Architect)",
+    "organization:ceo": "Pranav Gawas",
+    "organization:cto": "RoamIQ Tech Leadership",
+  },
+};
+
+export const revalidate = 300;
+
+async function getVisaInfo(params: { search?: string; dn_only?: string }) {
+  try {
+    let query = supabase.from("visa_info").select("*").order("country");
+    if (params.search) {
+      query = query.ilike("country", `%${params.search}%`);
+    }
+    if (params.dn_only === "true") {
+      query = query.eq("has_dn_visa", true);
+    }
+    const { data, error } = await query;
+    if (error) {
+      console.error(error);
+      return [];
+    }
+    return data as VisaInfo[];
+  } catch (error) {
+    console.error("Error in getVisaInfo:", error);
+    return [];
+  }
+}
+
+export default async function VisaPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string; dn_only?: string }>;
+}) {
+  const params = await searchParams;
+  const countries = await getVisaInfo(params);
+  const withDnVisa = countries.filter((c) => c.has_dn_visa).length;
+
+  const breadcrumbJsonLd = {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: BASE_URL },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Visa Intelligence",
+        item: `${BASE_URL}/visa`,
+      },
+    ],
+  };
+
+  // CollectionPage + ItemList from live visa_info rows (no fabricated entries)
+  const itemListJsonLd = {
+    "@type": "ItemList",
+    name: "Digital nomad and tourist visa rules by country on RoamIQ",
+    numberOfItems: countries.length,
+    itemListElement: countries.slice(0, 50).map((c, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: c.country,
+      description: c.has_dn_visa
+        ? `Tourist stay ${c.tourist_days} days; digital nomad visa available (${c.dn_visa_duration || "duration varies"}${c.dn_visa_cost ? `, ${c.dn_visa_cost}` : ""})`
+        : `Tourist stay ${c.tourist_days} days; no dedicated digital nomad visa listed`,
+    })),
+  };
+
+  const collectionJsonLd = {
+    "@type": "CollectionPage",
+    name: "Visa Intelligence | RoamIQ",
+    description:
+      "Tourist stay limits and digital nomad visa options by country for remote workers and digital nomads.",
+    url: `${BASE_URL}/visa`,
+    isPartOf: { "@type": "WebSite", name: "RoamIQ", url: BASE_URL },
+    mainEntity: itemListJsonLd,
+  };
+
+  // FAQ answers only from live counts and page purpose — no fabricated fees or rules
+  const faqJsonLd = {
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "How many countries does RoamIQ cover for visa rules?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `RoamIQ lists tourist stay limits and digital nomad visa flags for ${countries.length} countries in this view${params.search ? ` matching \"${params.search}\"` : ""}.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How many of those countries offer a dedicated digital nomad visa?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `Of the countries shown, ${withDnVisa} currently have a dedicated digital nomad (remote-work) visa marked as available in RoamIQ's database.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: "What visa information does RoamIQ show for each country?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "For each country RoamIQ shows typical tourist stay length in days, whether a digital nomad visa is offered, and when available the listed cost and duration from the live visa_info data — not legal advice; always verify with official sources before travel.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Does RoamIQ calculate IRS FEIE eligibility and Schengen 90/180 day limits?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. RoamIQ provides an interactive Nomad Tax & Residency Audit tool that calculates U.S. Foreign Earned Income Exclusion (FEIE 330-day physical presence test), Schengen 90/180-day rolling window stays, U.S. Substantial Presence Test (SPT), and UK Statutory Residence Test (SRT) rules.",
+        },
+      },
+    ],
+  };
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [breadcrumbJsonLd, collectionJsonLd, faqJsonLd],
+  };
+
+  return (
+    <div className="flex min-h-screen flex-col bg-background">
+      <SiteNav />
+      <main className="flex-1 pt-28 sm:pt-32">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd),
+          }}
+        />
+
+        <section className="border-b border-border bg-secondary/40 py-14 sm:py-20">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+            <div className="text-sm font-medium uppercase tracking-widest text-accent">
+              Visa intelligence
+            </div>
+            <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+              Know before you fly.
+            </h1>
+            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              Tourist stay limits and digital nomad visa options for{" "}
+              {countries.length} countries \u2014 {withDnVisa} of them now offer a
+              dedicated nomad visa.
+            </p>
+
+            <form className="mt-8 flex flex-wrap gap-3" action="/visa">
+              <input
+                type="text"
+                name="search"
+                defaultValue={params.search ?? ""}
+                placeholder="Search a country…"
+                className="w-full max-w-sm rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+              />
+              <select
+                name="dn_only"
+                defaultValue={params.dn_only ?? "false"}
+                className="rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+              >
+                <option value="false">All Countries</option>
+                <option value="true">Digital Nomad Visa Offered Only</option>
+              </select>
+              <button
+                type="submit"
+                className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+              >
+                Search
+              </button>
+            </form>
+            <div className="mt-8 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
+              <WaitlistInline
+                source="visa-list-above-fold"
+                heading="Want a visa shortlist for the countries you are comparing?"
+                description="Destination pages send people here, and most visits end on this table. Leave an email — we only write when a listed stay limit or nomad-visa flag matches. No extra page, no fabricated urgency."
+                compact
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="py-14 sm:py-20">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 space-y-12">
+            <NomadVisaScreener initialCountries={countries} />
+
+            <NomadTaxAuditCalculator />
+
+            {countries.length === 0 ? (
+              <div className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-border py-20 text-center">
+                <Globe2 className="h-8 w-8 text-muted-foreground" />
+                <p className="text-muted-foreground">No countries match that search.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-3xl border border-border bg-card">
+                <table className="w-full text-left text-sm">
+                  <thead className="border-b border-border bg-secondary/50 text-xs uppercase tracking-wider text-muted-foreground">
+                    <tr>
+                      <th className="px-5 py-4 font-medium">Country</th>
+                      <th className="px-5 py-4 font-medium">Tourist stay</th>
+                      <th className="px-5 py-4 font-medium">Nomad visa</th>
+                      <th className="px-5 py-4 font-medium">Cost</th>
+                      <th className="px-5 py-4 font-medium">Duration</th>
+                      <th className="px-5 py-4 font-medium">Min. Income</th>
+                      <th className="px-5 py-4 font-medium">Processing Time</th>
+                      <th className="px-5 py-4 font-medium">Application Method</th>
+                      <th className="px-5 py-4 font-medium">Tax Residency</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {countries.map((c) => (
+                      <tr key={c.id} className="transition-colors hover:bg-secondary/30">
+                        <td className="px-5 py-4 font-serif text-base font-semibold">
+                          {c.flag} {c.country}
+                        </td>
+                        <td className="px-5 py-4 text-foreground/80">
+                          {c.tourist_days} days
+                        </td>
+                        <td className="px-5 py-4">
+                          {c.has_dn_visa ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-forest/10 px-2.5 py-1 text-xs font-semibold text-forest">
+                              <CheckCircle2 className="h-3.5 w-3.5" /> Available
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                              <XCircle className="h-3.5 w-3.5" /> Not offered
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4 text-foreground/80">
+                          {c.has_dn_visa ? c.dn_visa_cost : "—"}
+                        </td>
+                        <td className="px-5 py-4 text-foreground/80">
+                          {c.has_dn_visa ? c.dn_visa_duration : "—"}
+                        </td>
+                        <td className="px-5 py-4 text-foreground/80">
+                          {c.has_dn_visa ? (c.min_income || "Varies") : "—"}
+                        </td>
+                        <td className="px-5 py-4 text-xs text-muted-foreground">
+                          {c.has_dn_visa ? (c.processing_time || "2-4 weeks") : "Instant"}
+                        </td>
+                        <td className="px-5 py-4 text-xs text-muted-foreground">
+                          {c.has_dn_visa ? (c.application_method || "Online Portal") : "Visa-Free / Entry"}
+                        </td>
+                        <td className="px-5 py-4 text-xs text-muted-foreground">
+                          {c.tax_residency_days ? `${c.tax_residency_days}d rule` : "183d rule"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
+      <section id="waitlist" className="border-t border-border bg-secondary/40">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-5 py-10 sm:flex-row sm:items-center sm:px-8">
+          <div className="max-w-xl">
+            <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">
+              Still deciding which visa window fits a workation?
+            </h2>
+            <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+              Leave your email on this page. We send country shortlists from the live visa table — stay limits and nomad-visa flags only when they are listed. Not legal advice.
+            </p>
+          </div>
+          <WaitlistInline
+            source="visa-list"
+            heading="Leave with a country shortlist, not a blank tab"
+            description="No extra page. We email listed stay limits and nomad-visa flags only. No fabricated urgency."
+            compact={false}
+          />
+        </div>
+      </section>
+      <Footer />
+    </div>
+  );
+}
