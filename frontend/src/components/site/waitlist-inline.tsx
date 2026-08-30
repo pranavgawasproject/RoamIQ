@@ -47,23 +47,25 @@ export function WaitlistInline({
   }
 
   return (
-    <div className={compact ? "" : "w-full max-w-md"}>
-      {!compact && heading ? (
-        <p className="text-sm font-medium text-foreground">{heading}</p>
+    <div className={compact ? "w-full" : "w-full max-w-md"}>
+      {heading ? (
+        <p className={compact ? "text-sm font-semibold text-foreground" : "text-sm font-medium text-foreground"}>
+          {heading}
+        </p>
       ) : null}
-      {!compact && description ? (
+      {description ? (
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{description}</p>
       ) : null}
 
       {status === "success" ? (
-        <div className={`${compact ? "" : "mt-3"} flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground`}>
+        <div className="mt-3 flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground">
           <Check className="h-4 w-4 shrink-0 text-forest" />
-          You're on the list. We'll email only when it is useful.
+          You&apos;re on the list. We&apos;ll email only when it is useful.
         </div>
       ) : (
         <form
           onSubmit={handleSubmit}
-          className={`${compact ? "flex w-full flex-col gap-2 sm:flex-row sm:items-center" : "mt-3 flex flex-col gap-2 sm:flex-row"}`}
+          className="mt-3 flex w-full flex-col gap-2 sm:flex-row sm:items-center"
         >
           <label htmlFor={`waitlist-email-${source}`} className="sr-only">
             Email address
