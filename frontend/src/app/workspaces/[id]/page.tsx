@@ -20,6 +20,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
 import { firstUsableListingImage, isUsableImageUrl, usefulListingAbout, usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
+import { WorkspaceGallery } from "@/components/site/workspace-gallery";
 
 export const revalidate = 180;
 
@@ -54,6 +55,7 @@ async function getRelatedListings(listing: Listing) {
       .eq("is_active", true)
       .eq("city", listing.city)
       .neq("id", listing.id)
+      .order("about", { ascending: false, nullsFirst: false })
       .limit(4);
 
     if (error || !data) return [];
@@ -230,7 +232,8 @@ export default async function WorkspaceDetailPage({
     },
   };
   if (listing.company_type) localBusinessJsonLd.additionalType = String(listing.company_type);
-  if (primaryImage) localBusinessJsonLd.image = primaryImage;
+  if (images.length > 1) localBusinessJsonLd.image = images;
+  else if (primaryImage) localBusinessJsonLd.image = primaryImage;
   if (listing.website) localBusinessJsonLd.sameAs = [listing.website];
   if (listing.address || locationParts.length) {
     localBusinessJsonLd.address = {
@@ -367,47 +370,11 @@ export default async function WorkspaceDetailPage({
         {/* Hero image */}
         <section className="mt-6">
           <div className="mx-auto max-w-6xl px-5 sm:px-8">
-            <div className="relative aspect-[21/9] w-full overflow-hidden rounded-3xl bg-secondary">
-              {images[0] ? (
-                <Image
-                  src={images[0]}
-                  alt={listing.company_name}
-                  fill
-                  className="object-cover"
-                  sizes="100vw"
-                  priority
-                  unoptimized
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-secondary to-muted">
-                  <Building2 className="h-20 w-20 text-muted-foreground/40" />
-                </div>
-              )}
-              <span className="absolute left-4 top-4 rounded-full bg-card/90 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider backdrop-blur-sm">
-                {listing.company_type}
-              </span>
-            </div>
-
-            {/* Thumbnail strip */}
-            {images.length > 1 && (
-              <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-                {images.slice(0, 6).map((src, i) => (
-                  <div
-                    key={i}
-                    className="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-border"
-                  >
-                    <Image
-                      src={src}
-                      alt={`${listing.company_name} ${i + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="96px"
-                      unoptimized
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+            <WorkspaceGallery
+              images={images}
+              alt={listing.company_name}
+              typeLabel={listing.company_type}
+            />
           </div>
         </section>
 
