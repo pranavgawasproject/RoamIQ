@@ -105,10 +105,15 @@ export function usefulStartingPrice(price: string | number | null | undefined): 
   return cleaned;
 }
 
+/** Mass-generated wifi labels that are not venue-reported measurements. */
+const TEMPLATED_WIFI =
+  /^\d+(\.\d+)?\s*mbps\s+(free wi-?fi|nomad wi-?fi|dedicated line|high-speed wi-?fi)$/i;
+
 /**
  * Show a listed Wi-Fi speed only when it includes a real measurement.
- * "Free Wi-Fi", "0 Mbps", "N/A", or empty strings are treated as missing.
- * Never invent a replacement speed.
+ * "Free Wi-Fi", "0 Mbps", "N/A", empty strings, and bulk template labels
+ * (e.g. "180 Mbps Free Wi-Fi" repeated across thousands of rows) are treated
+ * as missing. Never invent a replacement speed.
  */
 export function usefulWifiSpeed(speed: string | number | null | undefined): string | null {
   if (speed === null || speed === undefined) return null;
@@ -117,6 +122,7 @@ export function usefulWifiSpeed(speed: string | number | null | undefined): stri
   const lower = cleaned.toLowerCase();
   if (["n/a", "na", "tbd", "null", "undefined", "-", "—", "none", "pending", "unknown"].includes(lower)) return null;
   if (/^(free\s*)?(wi-?fi|internet|wlan)$/i.test(cleaned)) return null;
+  if (TEMPLATED_WIFI.test(cleaned)) return null;
   const numeric = cleaned.replace(/[^0-9.,]/g, "").replace(/,/g, "");
   if (!numeric) return null;
   const amount = Number.parseFloat(numeric);
