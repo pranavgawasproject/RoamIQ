@@ -106,21 +106,20 @@ export function usefulStartingPrice(price: string | number | null | undefined): 
 }
 
 /**
- * Show a Wi-Fi speed only when it is more than a zero/placeholder.
- * Never invent Mbps — callers should show "Wi-Fi speed pending".
+ * Show a listed Wi-Fi speed only when it includes a real measurement.
+ * "Free Wi-Fi", "0 Mbps", "N/A", or empty strings are treated as missing.
+ * Never invent a replacement speed.
  */
 export function usefulWifiSpeed(speed: string | number | null | undefined): string | null {
   if (speed === null || speed === undefined) return null;
   const cleaned = String(speed).replace(/\s+/g, " ").trim();
   if (!cleaned) return null;
   const lower = cleaned.toLowerCase();
-  if (["n/a", "na", "tbd", "null", "undefined", "-", "—", "none", "0", "0mbps", "0 mbps"].includes(lower)) {
-    return null;
-  }
+  if (["n/a", "na", "tbd", "null", "undefined", "-", "—", "none", "pending", "unknown"].includes(lower)) return null;
+  if (/^(free\s*)?(wi-?fi|internet|wlan)$/i.test(cleaned)) return null;
   const numeric = cleaned.replace(/[^0-9.,]/g, "").replace(/,/g, "");
-  if (numeric) {
-    const amount = Number.parseFloat(numeric);
-    if (Number.isFinite(amount) && amount <= 0) return null;
-  }
+  if (!numeric) return null;
+  const amount = Number.parseFloat(numeric);
+  if (!Number.isFinite(amount) || amount < 1) return null;
   return cleaned;
 }
