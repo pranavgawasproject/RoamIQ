@@ -3,10 +3,19 @@ import Image from "next/image";
 import { ArrowUpRight, Building2, MapPin, Star, Wifi } from "lucide-react";
 import { supabase, type Listing } from "@/lib/supabase";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
-import { firstUsableListingImage, usefulListingAbout, usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
+import {
+  firstUsableListingImage,
+  usefulListingAbout,
+  usefulStartingPrice,
+  usefulWifiSpeed,
+} from "@/lib/listing-media";
 
 function getCardImage(listing: Listing): string | null {
   return firstUsableListingImage(listing.images, listing.logo_url);
+}
+
+function usefulAboutSnippet(about: string | null | undefined, companyName?: string | null): string | null {
+  return usefulListingAbout(about, companyName, 160);
 }
 
 export async function WorkspacesPreview() {
@@ -22,7 +31,7 @@ export async function WorkspacesPreview() {
     .limit(4);
 
   const listings = ((data ?? []) as Listing[]).filter(
-    (row) => usefulListingAbout(row.about, row.company_name, 160) || getCardImage(row)
+    (row) => usefulAboutSnippet(row.about, row.company_name) || getCardImage(row)
   );
 
   if (listings.length === 0) return null;
@@ -54,10 +63,11 @@ export async function WorkspacesPreview() {
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {listings.slice(0, 4).map((listing) => {
             const imageUrl = getCardImage(listing);
-            const about = usefulListingAbout(listing.about, listing.company_name, 160);
+            const about = usefulAboutSnippet(listing.about, listing.company_name);
             const reviewCount = Number(listing.total_reviews ?? 0);
             const ratingValue = Number(listing.ratings ?? 0);
             const showRating = ratingValue > 0 && reviewCount > 0;
+            const listedWifi = usefulWifiSpeed(listing.wifi_speed);
             return (
               <article
                 key={listing.id}
@@ -110,7 +120,7 @@ export async function WorkspacesPreview() {
                       </div>
                       <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground">
                         <Wifi className="h-3 w-3" />
-                        {usefulWifiSpeed(listing.wifi_speed) || "Wi-Fi speed pending"}
+                        {listedWifi || "Wi-Fi speed pending"}
                       </div>
                     </div>
                     {showRating ? (
