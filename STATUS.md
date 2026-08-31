@@ -1,3 +1,9 @@
+## 2026-08-31 ~03:38 UTC — restore /workspaces after placeholder overwrite
+
+Track A (data integrity): concurrent daily agents replaced `frontend/src/app/workspaces/page.tsx` with an 11-byte `PLACEHOLDER` (`1e14608`), which would 500/blank the live index. Restored the last good 517-line page from `674e034` (priced=1 + described=1 filters, about/images cards, waitlist modules, ItemList JSON-LD). Did not invent prices or copy. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-01→2026-08-30 (`https://nomads-travel-indol.vercel.app/`): homepage 5 clicks / 190 imp / pos ~5.7; branded `roamiq` 1/64 / pos ~6.4; query `4g-travel-tool.vercel.app` 3/31 / pos ~3.0 — FLAG only (inspect 403: URL is not this property), no redirect. Listing pages drew the other 4 clicks (e.g. `/workspaces/e4300da9-…` 1/109). GA4 property `541610896` prior snapshot: `/` 145 sessions / 79% bounce; `/workspaces` 8 / 87.5%. Listings `davvpymbybvniexmkgcu`: 8,268 public+active; about empty 70.8%; price empty 44.0%; phone 94.4%; logo 72.6%; email 97.5%. Branded CTR capped until the custom domain is live.
+
 ## 2026-08-31 ~03:40 UTC — priced filter + stop treating templated Mbps as verified Wi-Fi
 
 Track A (data integrity + fallback UX): about/images already render; pending price/Wi-Fi copy already exists on cards. The `/workspaces` "Verified Wi-Fi listed" filter still matched every templated `NNN Mbps Free/Nomad/Dedicated` row, so the index looked complete when it was not. Tightened the query to exclude those bulk labels (same patterns as `usefulWifiSpeed`). Added `priced=1` checkbox/chip so visitors can hide rows with empty/$0/$1 starting_price instead of scanning thin cards. Waitlist above the fold now names the observed /workspaces bounce (GA4 last 30d: 8 sessions, 87.5% bounce) without fake urgency. Admin auth already env + cookie. Sitemap not resubmitted (query params only).
