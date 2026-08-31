@@ -87,7 +87,19 @@ async function getListings(params: {
     if (params.type) query = query.eq("company_type", params.type);
     if (params.city) query = query.ilike("city", `%${params.city}%`);
     if (params.country) query = query.ilike("country", `%${params.country}%`);
-    if (params.min_wifi) query = query.ilike("wifi_speed", "%Mbps%");
+    if (params.min_wifi) {
+      // "Verified" means a Mbps label that is not one of the bulk templates
+      // already treated as pending in usefulWifiSpeed. Matching %Mbps% alone
+      // returned nearly the whole catalog.
+      query = query
+        .ilike("wifi_speed", "%Mbps%")
+        .not("wifi_speed", "ilike", "%Free Wi-Fi%")
+        .not("wifi_speed", "ilike", "%Nomad Wi-Fi%")
+        .not("wifi_speed", "ilike", "%Dedicated Line%")
+        .not("wifi_speed", "ilike", "%High-Speed Wi-Fi%")
+        .not("wifi_speed", "ilike", "%Dedicated Fiber%")
+        .not("wifi_speed", "ilike", "%High-Speed Fiber%");
+    }
     if (params.described === "1") {
       query = query.not("about", "is", null).neq("about", "");
     }
