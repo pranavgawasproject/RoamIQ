@@ -68,6 +68,7 @@ async function getListings(params: {
   country?: string;
   min_wifi?: string;
   described?: string;
+  priced?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -89,6 +90,15 @@ async function getListings(params: {
     if (params.min_wifi) query = query.ilike("wifi_speed", "%Mbps%");
     if (params.described === "1") {
       query = query.not("about", "is", null).neq("about", "");
+    }
+    if (params.priced === "1") {
+      // Real listed prices only — empty / placeholder rows stay off this view.
+      query = query
+        .not("starting_price", "is", null)
+        .neq("starting_price", "")
+        .neq("starting_price", "n/a")
+        .neq("starting_price", "N/A")
+        .neq("starting_price", "TBD");
     }
     const { data, error, count } = await query.order("about", { ascending: false, nullsFirst: false }).order("ratings", { ascending: false }).range(from, to);
     if (error) {
@@ -242,19 +252,30 @@ function ListingCard({ listing }: { listing: Listing }) {
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const { listings, count, page } = await getListings(params);
   const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
-  const buildHref = (targetPage: number) => {
+  const filterQs = (overrides: Record<string, string | null | undefined> = {}) => {
     const qs = new URLSearchParams();
-    if (params.search) qs.set("search", params.search);
-    if (params.type) qs.set("type", params.type);
-    if (params.city) qs.set("city", params.city);
-    if (params.country) qs.set("country", params.country);
-    if (params.min_wifi) qs.set("min_wifi", params.min_wifi);
-    if (params.described === "1") qs.set("described", "1");
+    const merged: Record<string, string | null | undefined> = {
+      search: params.search,
+      type: params.type,
+      city: params.city,
+      country: params.country,
+      min_wifi: params.min_wifi,
+      described: params.described,
+      priced: params.priced,
+      ...overrides,
+    };
+    for (const [key, value] of Object.entries(merged)) {
+      if (value) qs.set(key, value);
+    }
+    return qs;
+  };
+  const buildHref = (targetPage: number) => {
+    const qs = filterQs();
     qs.set("page", String(targetPage));
     return `/workspaces?${qs.toString()}`;
   };
@@ -364,15 +385,25 @@ export default async function WorkspacesPage({
                 <input type="checkbox" name="described" value="1" defaultChecked={params.described === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has description
               </label>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="priced" value="1" defaultChecked={params.priced === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has listed price
+              </label>
               <button type="submit" className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Search</button>
             </form>
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Jump to</span>
               <Link
-                href={params.described === "1" ? "/workspaces" : "/workspaces?described=1"}
+                href={`/workspaces?${filterQs({ described: params.described === "1" ? null : "1", page: null }).toString()}`}
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.described === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Has description
+              </Link>
+              <Link
+                href={`/workspaces?${filterQs({ priced: params.priced === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.priced === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has listed price
               </Link>
               {types.filter((t) => t.value).map((t) => {
                 const active = params.type === t.value;
@@ -421,7 +452,7 @@ export default async function WorkspacesPage({
             {listings.length === 0 ? (
               <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-border px-6 py-16 text-center">
                 <Building2 className="h-8 w-8 text-muted-foreground" />
-                <p className="text-muted-foreground">No listings match those filters. Try a different city or type, or drop the description filter.</p>
+                <p className="text-muted-foreground">No listings match those filters. Try a different city or type, or drop the description / listed-price filters.</p>
                 <Link href="/workspaces?described=1" className="text-sm font-medium text-accent hover:underline">
                   Browse listings that already have a written description
                 </Link>
