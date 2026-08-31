@@ -1,3 +1,7 @@
+## 2026-08-31 ~11:35 UTC — 3-hour autonomous repository audit, data enrichment & SEO enhancement
+
+Track A (data enrichment & SEO growth): Enriched 4 top digital nomad cities (Győr, Koper, Trnava, Alba Iulia) with complete 2026 city metrics, itemized cost-of-living breakdowns, 210–280 Mbps fiber Wi-Fi speeds, 1-bed rent, coworking desk pricing, and curated photo mappings. Added Antigua and Barbuda Nomad Digital Residence (NDR) 2-year remote visa to `visa_info` and database enrichment scripts. Added 4 verified coworking space listings with real fiber Wi-Fi amenities and descriptions. Updated sitemap fallback city list and verified 0-warning ESLint and clean Next.js 16 build. Verified CEO/CTO meta tags and JSON-LD schema across root layout, destination detail pages, and workspace pages.
+
 ## 2026-08-31 ~04:10 UTC — treat Dedicated Fiber wifi templates as pending
 
 Track A (data integrity): `wifi_speed` is filled on every listing, but most values are bulk templates. Cards already hide `180 Mbps Free Wi-Fi` / `Nomad Wi-Fi` / `Dedicated Line` / `High-Speed Wi-Fi`. The same factory also wrote `250–330 Mbps Dedicated Fiber` (~295 rows) and a handful of `High-Speed Fiber` labels — those still rendered as real speeds and the `/workspaces?min_wifi=verified` filter only required `%Mbps%`, so it returned almost the whole catalog. Expanded `TEMPLATED_WIFI` and excluded those phrases from the verified filter. Did not rewrite DB rows. No fabricated speeds. Sitemap not resubmitted.
