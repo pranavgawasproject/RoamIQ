@@ -100,7 +100,7 @@ async function getListings(params: {
         .neq("starting_price", "N/A")
         .neq("starting_price", "TBD");
     }
-    const { data, error, count } = await query.order("about", { ascending: false, nullsFirst: false }).order("ratings", { ascending: false }).range(from, to);
+    const { data, error, count } = await query.order("ratings", { ascending: false, nullsFirst: false }).range(from, to);
     if (error) {
       console.error(error);
       return { listings: [] as Listing[], count: 0, page };
