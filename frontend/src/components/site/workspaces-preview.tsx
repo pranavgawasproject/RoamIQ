@@ -26,13 +26,12 @@ export async function WorkspacesPreview() {
     )
     .eq("is_public", true)
     .eq("is_active", true)
-    .not("about", "is", null)
-    .order("ratings", { ascending: false })
-    .limit(4);
+    .order("ratings", { ascending: false, nullsFirst: false })
+    .limit(24);
 
-  const listings = ((data ?? []) as Listing[]).filter(
-    (row) => usefulAboutSnippet(row.about, row.company_name) || getCardImage(row)
-  );
+  const listings = ((data ?? []) as Listing[])
+    .filter((row) => usefulAboutSnippet(row.about, row.company_name) || getCardImage(row))
+    .slice(0, 4);
 
   if (listings.length === 0) return null;
 
@@ -48,20 +47,36 @@ export async function WorkspacesPreview() {
               Workspaces with a real description or photo — not a thin card.
             </h2>
             <p className="mt-4 text-muted-foreground leading-relaxed">
-              Homepage traffic rarely reaches /workspaces. These four rows are public listings that already have an about snippet or a usable image in the database. Missing prices stay labeled pending.
+              Homepage traffic rarely reaches /workspaces. These four rows are public listings that already have an about snippet or a usable image in the database. Missing descriptions, prices, and Wi-Fi stay labeled pending.
             </p>
           </div>
-          <Link
-            href="/workspaces"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-forest hover:gap-2.5 hover:text-forest/80"
-          >
-            Browse all workspaces
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
+          <div className="flex flex-col items-start gap-2 sm:items-end">
+            <Link
+              href="/workspaces"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-forest hover:gap-2.5 hover:text-forest/80"
+            >
+              Browse all workspaces
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/workspaces?described=1"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-forest"
+            >
+              Only listings with a description
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
+            <Link
+              href="/workspaces?priced=1"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-forest"
+            >
+              Only listings with a listed price
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
 
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {listings.slice(0, 4).map((listing) => {
+          {listings.map((listing) => {
             const imageUrl = getCardImage(listing);
             const about = usefulAboutSnippet(listing.about, listing.company_name);
             const reviewCount = Number(listing.total_reviews ?? 0);
@@ -106,7 +121,11 @@ export async function WorkspacesPreview() {
                       {listing.company_name}
                     </Link>
                   </h3>
-                  {about && <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{about}</p>}
+                  {about ? (
+                    <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{about}</p>
+                  ) : (
+                    <p className="mt-1 text-sm text-muted-foreground">Description pending</p>
+                  )}
                   <div className="mt-2 flex items-center gap-1.5 text-xs text-foreground/70">
                     <MapPin className="h-3 w-3 shrink-0" />
                     <span className="line-clamp-1">
