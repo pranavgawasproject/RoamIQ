@@ -1,3 +1,9 @@
+## 2026-08-31 ~03:40 UTC — priced filter + stop treating templated Mbps as verified Wi-Fi
+
+Track A (data integrity + fallback UX): about/images already render; pending price/Wi-Fi copy already exists on cards. The `/workspaces` "Verified Wi-Fi listed" filter still matched every templated `NNN Mbps Free/Nomad/Dedicated` row, so the index looked complete when it was not. Tightened the query to exclude those bulk labels (same patterns as `usefulWifiSpeed`). Added `priced=1` checkbox/chip so visitors can hide rows with empty/$0/$1 starting_price instead of scanning thin cards. Waitlist above the fold now names the observed /workspaces bounce (GA4 last 30d: 8 sessions, 87.5% bounce) without fake urgency. Admin auth already env + cookie. Sitemap not resubmitted (query params only).
+
+GSC 2026-08-01→2026-08-30 (`https://nomads-travel-indol.vercel.app/`): homepage 5 clicks / 190 impressions / pos ~5.7; branded `roamiq` 1/64 / pos ~6.4; `4g-travel-tool.vercel.app` 3/31 / pos ~3.0 — FLAG only (inspect 403: URL is not this property), no redirect. GA4 `541610896` last 30d: `/` 148 sessions / 80% bounce; `/workspaces` 8 / 87.5%; `/destinations` 10 / 80%. Branded CTR capped until the custom domain is live.
+
 ## 2026-08-31 ~03:40 UTC — listed-price filter on /workspaces
 
 Track A (content depth + conversion): about/images already render; admin auth is env + httpOnly cookie; templated wifi already falls back to pending. 3,637 / 8,268 public+active rows still have empty `starting_price`. Added `priced=1` checkbox + chip so visitors can hide those thin cards instead of seeing "Price not listed yet" on every other result. Did not invent prices. Filter state is preserved across pagination and the description chip. Sitemap not resubmitted (no new routes).
