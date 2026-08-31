@@ -127,7 +127,7 @@ export function usefulStartingPrice(price: string | number | null | undefined): 
 
 /** Mass-generated wifi labels that are not venue-reported measurements. */
 const TEMPLATED_WIFI =
-  /^\d+(\.\d+)?\s*mbps\s+(free wi-?fi|nomad wi-?fi|dedicated line|high-speed wi-?fi)$/i;
+  /^\d+(\.\d+)?\s*mbps\s+(free wi-?fi|nomad wi-?fi|dedicated line|high-speed wi-?fi|dedicated fiber|high-speed fiber)$/i;
 
 /**
  * Show a listed Wi-Fi speed only when it includes a real measurement.
