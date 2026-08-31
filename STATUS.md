@@ -1,3 +1,9 @@
+## 2026-08-31 ~03:40 UTC — listed-price filter on /workspaces
+
+Track A (content depth + conversion): about/images already render; admin auth is env + httpOnly cookie; templated wifi already falls back to pending. 3,637 / 8,268 public+active rows still have empty `starting_price`. Added `priced=1` checkbox + chip so visitors can hide those thin cards instead of seeing "Price not listed yet" on every other result. Did not invent prices. Filter state is preserved across pagination and the description chip. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-01→2026-08-29 (`https://nomads-travel-indol.vercel.app/`): homepage 5 clicks / 190 imp / pos ~5.7; branded `roamiq` 1/64 / pos ~6.4; query `4g-travel-tool.vercel.app` 3/31 / pos ~3.0 — FLAG only (inspect 403: URL is not this property), no redirect. Top listing pages include `/workspaces/e4300da9-…` 0 clicks / 109 imp. GA4 not connected this run. Listings `davvpymbybvniexmkgcu`: 8,268 public+active; about empty 5,850 (70.8%); price empty 3,637 (44.0%); wifi empty 0 (templates still present, UI-hidden); images nonempty 8,268; phone empty 7,802; logo empty 6,005; email empty 8,059. Branded CTR capped until the custom domain is live.
+
 ## 2026-08-30 ~16:15 UTC — treat templated wifi labels as pending
 
 Track A (data integrity + fallback UI): `wifi_speed` is populated on every listing row, but the dominant values are bulk templates (`180 Mbps Free Wi-Fi`, `120 Mbps Nomad Wi-Fi`, `330 Mbps Dedicated Line`, …). Those are not venue-reported measurements. Tightened `usefulWifiSpeed` in `frontend/src/lib/listing-media.ts` so those patterns return null. Existing listing cards/detail/JSON-LD already call the helper, so they now show "Wi-Fi speed pending" and omit amenityFeature instead of publishing fake Mbps. Did not delete or rewrite DB rows. About/images already render; admin auth already env + httpOnly cookie. Sitemap not resubmitted (no new routes).
