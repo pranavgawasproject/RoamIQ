@@ -151,8 +151,7 @@ export default async function CityDetailPage({
           .eq("city", city.name)
           .eq("is_public", true)
           .eq("is_active", true)
-          .order("about", { ascending: false, nullsFirst: false })
-          .order("ratings", { ascending: false })
+          .order("ratings", { ascending: false, nullsFirst: false })
           .limit(6),
       ]);
       visa = visaRes.data;
@@ -837,10 +836,12 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
           {listing.website && /^https?:\/\//i.test(listing.website.trim()) && (
             <p className="mt-1 text-[11px] text-muted-foreground">Official website listed</p>
           )}
-          {about && (
+          {about ? (
             <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-foreground/70">
               {about}
             </p>
+          ) : (
+            <p className="mt-2 text-xs text-muted-foreground">Description pending</p>
           )}
           {visibleTags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
