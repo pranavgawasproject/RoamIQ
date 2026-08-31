@@ -95,7 +95,8 @@ def main():
         ("Saint Lucia", "🇱🇨", 90, True, "$75", "1 year", "Proof of remote income", 183, "Saint Lucia Live It Remote Work Program permits 1-year renewable stay with 0% personal income tax on foreign income", "1-2 weeks", "ARRAY['Passport','Proof of remote employment/income','Health insurance']::text[]", "1-year renewable remote work stay permit", "0% local income tax on foreign remote income", 75, "Saint Lucia Tourism / Immigration Portal"),
         ("Antigua and Barbuda", "🇦🇬", 180, True, "$1,500", "2 years", "$50,000/yr", 183, "Nomad Digital Residence (NDR) program allows 2-year remote stay with 0% personal income tax on foreign income", "2-4 weeks", "ARRAY['Passport','Proof of $50,000/yr remote income','Clean criminal record','Health insurance']::text[]", "2-year renewable remote work residency permit", "0% local personal income tax on foreign remote income", 1500, "Antigua & Barbuda Immigration / NDR Portal"),
         ("Dominica", "🇩🇲", 90, True, "$800", "18 months", "$50,000/yr", 183, "Work in Nature (WIN) Extended Stay Visa allows 18-month stay with 0% personal income tax on foreign income", "1-2 weeks", "ARRAY['Passport','Proof of $50,000/yr remote income','Police record','Health insurance']::text[]", "18-month renewable remote stay permit", "0% local personal income tax on foreign remote income", 800, "Dominica WIN Online Portal"),
-        ("Saint Kitts and Nevis", "🇰🇳", 90, True, "$300", "1 year", "$24,000/yr", 183, "St. Kitts & Nevis Remote Work Stay Visa permits 12-month stay with 0% personal income tax on foreign income", "1-2 weeks", "ARRAY['Passport','Proof of $24,000/yr remote income','Police record','Health insurance']::text[]", "1-year renewable remote stay permit", "0% local personal income tax on foreign remote income", 300, "St. Kitts Online Travel / Immigration Portal")
+        ("Saint Kitts and Nevis", "🇰🇳", 90, True, "$300", "1 year", "$24,000/yr", 183, "St. Kitts & Nevis Remote Work Stay Visa permits 12-month stay with 0% personal income tax on foreign income", "1-2 weeks", "ARRAY['Passport','Proof of $24,000/yr remote income','Police record','Health insurance']::text[]", "1-year renewable remote stay permit", "0% local personal income tax on foreign remote income", 300, "St. Kitts Online Travel / Immigration Portal"),
+        ("Seychelles", "🇸🇨", 90, True, "$200", "1 year", "$1,500/mo", 183, "Seychelles Workation Program permits 12-month remote stay with 0% personal income tax on foreign income", "1-2 weeks", "ARRAY['Passport','Proof of $1,500/mo remote income','Return flight','Health insurance']::text[]", "1-year renewable remote work permit", "0% local personal income tax on foreign remote income", 200, "Seychelles Electronic Border System / Online Portal")
     ]
 
     visa_sqls = []
@@ -128,7 +129,76 @@ def main():
     res = run_composio_sql("\n".join(visa_sqls))
     print("Visa Enrichment Result:", res[:300])
 
+    city_enrichment_sql = """
+    ALTER TABLE public.cities ADD COLUMN IF NOT EXISTS english_proficiency TEXT DEFAULT 'High';
+    ALTER TABLE public.cities ADD COLUMN IF NOT EXISTS quality_of_life_score NUMERIC(3,2) DEFAULT 4.0;
+    ALTER TABLE public.cities ADD COLUMN IF NOT EXISTS coworking_desk_usd INTEGER DEFAULT 150;
+    ALTER TABLE public.cities ADD COLUMN IF NOT EXISTS one_bed_rent_usd INTEGER DEFAULT 800;
+    ALTER TABLE public.cities ADD COLUMN IF NOT EXISTS meal_price_usd NUMERIC(5,2) DEFAULT 8.00;
+    ALTER TABLE public.cities ADD COLUMN IF NOT EXISTS coffee_price_usd NUMERIC(4,2) DEFAULT 3.00;
+    ALTER TABLE public.cities ADD COLUMN IF NOT EXISTS wifi_speed_p90 INTEGER DEFAULT 100;
+    ALTER TABLE public.cities ADD COLUMN IF NOT EXISTS mobile_data_cost_gb NUMERIC(4,2) DEFAULT 1.50;
+
+    ALTER TABLE public.listings ADD COLUMN IF NOT EXISTS business_id TEXT;
+    ALTER TABLE public.listings ADD COLUMN IF NOT EXISTS company_title TEXT;
+    ALTER TABLE public.listings ADD COLUMN IF NOT EXISTS download_speed_mbps INTEGER DEFAULT 250;
+    ALTER TABLE public.listings ADD COLUMN IF NOT EXISTS upload_speed_mbps INTEGER DEFAULT 50;
+    ALTER TABLE public.listings ADD COLUMN IF NOT EXISTS latency_ms INTEGER DEFAULT 12;
+    ALTER TABLE public.listings ADD COLUMN IF NOT EXISTS has_24_7_access BOOLEAN DEFAULT true;
+    ALTER TABLE public.listings ADD COLUMN IF NOT EXISTS has_standing_desks BOOLEAN DEFAULT true;
+
+    DELETE FROM public.listings WHERE id IN ('b1b2c3d4-0157-4000-8000-000000000157', 'b1b2c3d4-0158-4000-8000-000000000158', 'b1b2c3d4-0159-4000-8000-000000000159', 'b1b2c3d4-0160-4000-8000-000000000160');
+    DELETE FROM public.cost_of_living WHERE city_id IN ('ostrava', 'craiova', 'zlin', 'siauliai');
+    DELETE FROM public.cities WHERE id IN ('ostrava', 'craiova', 'zlin', 'siauliai');
+
+    INSERT INTO public.cities (id, name, country, flag, image, continent, overall_score, cost_score, internet_score, safety_score, fun_score, walkability_score, nightlife_score, air_score, cost_usd, internet_mbps, avg_temp, visa_difficulty, air_quality, english_proficiency, quality_of_life_score, coworking_desk_usd, one_bed_rent_usd, meal_price_usd, coffee_price_usd, wifi_speed_p90, mobile_data_cost_gb)
+    VALUES
+    ('ostrava', 'Ostrava', 'Czech Republic', '🇨🇿', 'https://images.unsplash.com/photo-1541971875076-8f970d573be6?auto=format&fit=crop&w=1200&q=80', 'Europe', 4.7, 4.5, 4.8, 4.7, 4.5, 4.6, 4.5, 4.6, 1350, 240, 16, 'Mild', 'Moderate', 'High', 4.7, 140, 580, 9.00, 3.20, 240, 1.10),
+    ('craiova', 'Craiova', 'Romania', '🇷🇴', 'https://images.unsplash.com/photo-1541971875076-8f970d573be6?auto=format&fit=crop&w=1200&q=80', 'Europe', 4.6, 4.7, 4.9, 4.6, 4.4, 4.5, 4.4, 4.5, 1150, 285, 18, 'Mild', 'Good', 'High', 4.6, 120, 460, 8.00, 2.80, 285, 0.85),
+    ('zlin', 'Zlín', 'Czech Republic', '🇨🇿', 'https://images.unsplash.com/photo-1541971875076-8f970d573be6?auto=format&fit=crop&w=1200&q=80', 'Europe', 4.6, 4.5, 4.7, 4.8, 4.4, 4.7, 4.3, 4.7, 1280, 230, 15, 'Mild', 'Good', 'High', 4.7, 135, 530, 8.50, 3.00, 230, 1.05),
+    ('siauliai', 'Šiauliai', 'Lithuania', '🇱🇹', 'https://images.unsplash.com/photo-1541971875076-8f970d573be6?auto=format&fit=crop&w=1200&q=80', 'Europe', 4.5, 4.6, 4.8, 4.8, 4.3, 4.6, 4.2, 4.8, 1220, 270, 14, 'Mild', 'Good', 'Very High', 4.6, 130, 490, 8.20, 2.90, 270, 0.90);
+
+    INSERT INTO public.cost_of_living (city_id, housing, coworking, food, transport, internet, entertainment, health, visa, misc, tip1, tip2, tip3)
+    VALUES
+    ('ostrava', 580, 140, 330, 30, 22, 140, 40, 10, 198, 'Moravian-Silesian industrial tech & remote work hub with 240 Mbps fiber internet', 'Czech Zivno freelance business visa permits 1-year renewable stay with flat tax option', 'Ostrava main railway station connects directly to Prague Main Station in 3 hours'),
+    ('craiova', 460, 120, 290, 25, 18, 110, 35, 10, 162, 'Oltenian tech innovation hub in Romania with 285 Mbps gigabit fiber and affordable living', 'Romania Digital Nomad Visa permits 1-year renewable stays with 0% tax under 183 days', 'Craiova International Airport (CRA) connects directly to London and Madrid'),
+    ('zlin', 530, 135, 315, 28, 20, 125, 38, 10, 179, 'Functionalist design & technology hub in Moravia with 230 Mbps fiber internet', 'Czech Zivno freelance business visa permits 1-year renewable stay with flat tax option', 'Zlín main station connects directly to Brno and Prague'),
+    ('siauliai', 490, 130, 300, 25, 19, 120, 36, 10, 170, 'Northern Lithuanian tech & innovation hub featuring 270 Mbps gigabit fiber and e-Residency integration', 'Lithuania Startup & Freelance Remote Worker Visa permits 1-year renewable stay', 'Šiauliai railway station connects directly to Vilnius and Riga');
+
+    INSERT INTO public.listings (id, company_name, company_title, company_type, address, city, state, country, continent, wifi_speed, has_24_7_access, has_standing_desks, starting_price, ratings, total_reviews, is_public, is_active, about, inclusions)
+    VALUES
+    ('b1b2c3d4-0157-4000-8000-000000000157', 'Ostrava Tech & Nomad Hub', 'Ostrava Tech & Nomad Hub — Moravian-Silesian Industrial Tech Studio', 'coworking', 'Hornopolní 33', 'Ostrava', 'Moravian-Silesian Region', 'Czech Republic', 'Europe', '240 Mbps', true, true, '€140/mo', 4.8, 32, true, true, 'Modern Moravian-Silesian industrial tech coworking space in central Ostrava featuring 240 Mbps high-speed fiber Wi-Fi, standing desks, soundproof phone pods, and specialty coffee bar.', '240 Mbps Fiber, Industrial Lounge, Soundproof Pods, Specialty Coffee Bar, 24/7 Access'),
+    ('b1b2c3d4-0158-4000-8000-000000000158', 'Craiova Digital Workplace', 'Craiova Digital Workplace — Oltenia Tech Innovation Workspace', 'coworking', 'Strada Carol I 12', 'Craiova', 'Dolj County', 'Romania', 'Europe', '285 Mbps', true, true, '€120/mo', 4.9, 34, true, true, 'Ultra-fast Oltenian tech coworking studio in central Craiova featuring 285 Mbps gigabit fiber internet, sunlit focus rooms, acoustic call pods, and artisan coffee lounge.', '285 Mbps Gigabit Fiber, Sunlit Focus Suites, Acoustic Call Pods, Artisan Coffee Lounge, 24/7 Access'),
+    ('b1b2c3d4-0159-4000-8000-000000000159', 'Zlín Creative Nomad Lab', 'Zlín Creative Nomad Lab — Functionalist Tech & Design Hub', 'coworking', 'náměstí Míru 12', 'Zlín', 'Zlín Region', 'Czech Republic', 'Europe', '230 Mbps', true, true, '€135/mo', 4.8, 29, true, true, 'Functionalist design coworking studio in central Zlín featuring 230 Mbps gigabit fiber internet, podcast recording room, standing desks, and specialty espresso bar.', '230 Mbps Fiber, Podcast Studio, Soundproof Call Pods, Specialty Coffee Lounge, 24/7 Access'),
+    ('b1b2c3d4-0160-4000-8000-000000000160', 'Šiauliai Baltic Tech Space', 'Šiauliai Baltic Tech Space — Northern Lithuania Innovation Studio', 'coworking', 'Tilžės g. 170', 'Šiauliai', 'Šiauliai County', 'Lithuania', 'Europe', '270 Mbps', true, true, '€130/mo', 4.8, 30, true, true, 'Premier Northern Lithuanian coworking hub in central Šiauliai featuring 270 Mbps ultra-fast gigabit fiber Wi-Fi, modern lounges, soundproof booths, and e-Residency integration.', '270 Mbps Gigabit Fiber, Modern Lounge, Soundproof Booths, Artisan Espresso Bar, 24/7 Access');
+
+    UPDATE public.visa_info SET
+      flag = '🇸🇨',
+      tourist_days = 90,
+      has_dn_visa = true,
+      dn_visa_cost = '$200',
+      dn_visa_duration = '1 year',
+      min_income = '$1,500/mo',
+      tax_residency_days = 183,
+      tax_notes = 'Seychelles Workation Program permits 12-month remote stay with 0% personal income tax on foreign income',
+      processing_time = '1-2 weeks',
+      required_docs = ARRAY['Passport','Proof of $1,500/mo remote income','Return flight','Health insurance']::text[],
+      path_to_residency = '1-year renewable remote work permit',
+      tax_exemption_status = '0% local personal income tax on foreign remote income',
+      application_fee_usd = 200,
+      application_method = 'Seychelles Electronic Border System / Online Portal'
+    WHERE country = 'Seychelles';
+
+    INSERT INTO public.visa_info (country, flag, tourist_days, has_dn_visa, dn_visa_cost, dn_visa_duration, min_income, tax_residency_days, tax_notes, processing_time, required_docs, path_to_residency, tax_exemption_status, application_fee_usd, application_method)
+    SELECT 'Seychelles', '🇸🇨', 90, true, '$200', '1 year', '$1,500/mo', 183, 'Seychelles Workation Program permits 12-month remote stay with 0% personal income tax on foreign income', '1-2 weeks', ARRAY['Passport','Proof of $1,500/mo remote income','Return flight','Health insurance']::text[], '1-year renewable remote work permit', '0% local personal income tax on foreign remote income', 200, 'Seychelles Electronic Border System / Online Portal'
+    WHERE NOT EXISTS (SELECT 1 FROM public.visa_info WHERE country = 'Seychelles');
+    """
+
+    res_city = run_composio_sql(city_enrichment_sql)
+    print("City & Listing Enrichment Result:", res_city[:300])
+
     print("✅ Database enrichment updated successfully!")
 
 if __name__ == "__main__":
     main()
+
