@@ -101,7 +101,7 @@ export function usefulListingAbout(
   if (ABOUT_NOISE.some((n) => lower.includes(n))) return null;
   const emailHits = lower.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/g) || [];
   if (emailHits.length >= 2) return null;
-  if (/\d{1,3}(,\d{3})+\s+views/i.test(cleaned)) return null;
+  if (/\b\d{1,3}(,\d{3})+\s+views\b/i.test(cleaned)) return null;
   if (/ranked\s+#\d+/i.test(cleaned)) return null;
   if (maxLen > 0) return cleaned.slice(0, maxLen);
   return cleaned;
