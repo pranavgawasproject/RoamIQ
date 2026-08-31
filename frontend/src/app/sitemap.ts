@@ -157,6 +157,10 @@ const FALLBACK_CITY_IDS = [
   "koper",
   "trnava",
   "alba-iulia",
+  "liberec",
+  "parnu",
+  "nitra",
+  "constanta",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
