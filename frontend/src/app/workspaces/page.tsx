@@ -112,12 +112,46 @@ async function getListings(params: {
         .neq("starting_price", "N/A")
         .neq("starting_price", "TBD");
     }
-    const { data, error, count } = await query.order("ratings", { ascending: false, nullsFirst: false }).range(from, to);
+    const unfilteredFirstPage =
+      page === 1 &&
+      !params.search &&
+      !params.type &&
+      !params.city &&
+      !params.country &&
+      !params.min_wifi &&
+      params.described !== "1" &&
+      params.priced !== "1";
+
+    // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
+    // Over-fetch a rated pool and prefer cards that already show a real about
+    // snippet or a usable photo — never invent copy, and do not hide the rest
+    // of the catalog on later pages.
+    const fetchTo = unfilteredFirstPage ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+    const { data, error, count } = await query
+      .order("ratings", { ascending: false, nullsFirst: false })
+      .range(from, fetchTo);
     if (error) {
       console.error(error);
       return { listings: [] as Listing[], count: 0, page };
     }
-    return { listings: (data ?? []) as Listing[], count: count ?? 0, page };
+    const rows = (data ?? []) as Listing[];
+    if (!unfilteredFirstPage) {
+      return { listings: rows, count: count ?? 0, page };
+    }
+    const scored = rows
+      .map((listing, index) => {
+        let score = 0;
+        if (usefulListingAbout(listing.about, listing.company_name)) score += 100;
+        if (firstUsableListingImage(listing.images, listing.logo_url)) score += 20;
+        if (usefulStartingPrice(listing.starting_price)) score += 10;
+        if (usefulWifiSpeed(listing.wifi_speed)) score += 10;
+        score += Number(listing.ratings ?? 0);
+        return { listing, score, index };
+      })
+      .sort((a, b) => b.score - a.score || a.index - b.index)
+      .slice(0, PAGE_SIZE)
+      .map((row) => row.listing);
+    return { listings: scored, count: count ?? 0, page };
   } catch (error) {
     console.error("Error in getListings:", error);
     return { listings: [] as Listing[], count: 0, page };

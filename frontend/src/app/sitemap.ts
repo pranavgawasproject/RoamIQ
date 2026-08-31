@@ -1,5 +1,10 @@
 import { MetadataRoute } from "next";
 import { supabase } from "@/lib/supabase";
+import {
+  firstUsableListingImage,
+  usefulListingAbout,
+  usefulWifiSpeed,
+} from "@/lib/listing-media";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -208,23 +213,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  // Include only high-quality workspace listing detail pages
-  // Thin-content guard: must have public status, active, non-empty about/description, and verified wifi_speed
+  // Include only listing URLs that already render visible depth on the page.
+  // Same helpers as the UI: reject scrape-junk about, wallpaper photos, and
+  // templated Mbps labels. Cap so crawl budget stays on destinations + static routes.
   let workspaceEntries: MetadataRoute.Sitemap = [];
   try {
     const { data: listings } = await supabase
       .from("listings")
-      .select("id, about, description, wifi_speed")
+      .select("id, company_name, about, description, wifi_speed, images, logo_url, ratings")
       .eq("is_public", true)
       .eq("is_active", true)
-      .not("wifi_speed", "is", null);
+      .not("about", "is", null)
+      .order("ratings", { ascending: false, nullsFirst: false })
+      .limit(200);
 
     if (listings && listings.length > 0) {
-      const verifiedListings = listings.filter(
-        (l) => (l.about || l.description) && l.wifi_speed
-      );
-      // Cap at 20 strongest listings so crawl budget stays on destinations + static routes
-      workspaceEntries = verifiedListings.slice(0, 20).map((l) => ({
+      const verifiedListings = listings.filter((l) => {
+        const about = usefulListingAbout(l.about || l.description, l.company_name);
+        const photo = firstUsableListingImage(l.images, l.logo_url);
+        const wifi = usefulWifiSpeed(l.wifi_speed);
+        return Boolean(about && photo && wifi);
+      });
+      workspaceEntries = verifiedListings.slice(0, 40).map((l) => ({
         url: `${BASE_URL}/workspaces/${l.id}`,
         lastModified: new Date(),
         changeFrequency: "weekly" as const,
