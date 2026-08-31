@@ -1,3 +1,9 @@
+## 2026-08-31 ~13:20 UTC — destination listings: ratings sort + pending description
+
+Track A (data integrity + conversion): `/destinations/[id]` still ranked city workspace cards by raw `about` length (same scrape-promotion bug already removed from `/workspaces` related cards). Sort those six cards by `ratings` (nulls last). Empty/junk about now shows **Description pending** instead of a blank line. No fabricated copy, prices, or wifi. About/images already render on list + detail; admin auth already env + httpOnly cookie. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-01→2026-08-29 (`https://nomads-travel-indol.vercel.app/`): homepage 5 clicks / 194 imp / pos ~5.6. Query `4g-travel-tool.vercel.app` 3/33 / pos ~2.9 — FLAG only; that host is not a GSC property on this account; no redirect. Branded `roamiq` 1/64 / pos ~6.4. Listing clicks: Izzy coffee, NGB Living, Athens coliving. GA4 property `541610896` last 30d: `/` 147 sessions bounce 79%; `/workspaces` 8 / 87.5%; `/destinations` 9 / 78%; `/destinations/chiang-mai` 5 / 100%. Listings `davvpymbybvniexmkgcu`: 8,268 rows; about empty 5,850 (70.8%); price empty 3,637 (44.0%); images empty 0; phone 7,802; logo 6,005; email 8,059. Branded CTR capped until the custom domain is live.
+
 ## 2026-08-31 ~13:05 UTC — related workspaces: ratings sort + pending description
 
 Track A (data integrity + conversion): `/workspaces/[id]` "More workspaces in {city}" still ordered by raw `about` length, which is the same scrape-promotion bug the index already dropped. Sort related rows by `ratings` (nulls last). Related cards now use the unused `aboutOk` flag so junk/empty about shows **Description pending** instead of a blank line. Accidental 11-byte placeholder commit `ce8fe80` was immediately restored in `20d80ce`. No fabricated copy, prices, or wifi. About/images already render on list + detail; admin auth already env + httpOnly cookie. Sitemap not resubmitted (no new routes).
