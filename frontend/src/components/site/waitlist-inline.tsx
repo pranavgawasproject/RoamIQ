@@ -9,13 +9,27 @@ type WaitlistInlineProps = {
   heading?: string;
   description?: string;
   compact?: boolean;
+  /** Optional search intent stored on the signup row via `source` (no schema change). */
+  context?: Record<string, string | null | undefined>;
 };
+
+function encodeWaitlistSource(source: string, context?: Record<string, string | null | undefined>) {
+  if (!context) return source;
+  const parts: string[] = [];
+  for (const [key, raw] of Object.entries(context)) {
+    const value = (raw ?? "").replace(/\s+/g, " ").trim();
+    if (!value) continue;
+    parts.push(`${key}=${value.slice(0, 48)}`);
+  }
+  return parts.length ? `${source}|${parts.join("|")}` : source;
+}
 
 export function WaitlistInline({
   source,
   heading = "Get workspace shortlists in your inbox",
   description = "Free to join. No spam — we only email when there is something useful for your next move.",
   compact = false,
+  context,
 }: WaitlistInlineProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -30,7 +44,7 @@ export function WaitlistInline({
 
     const { error } = await supabase
       .from("waitlist_signups")
-      .insert({ email: email.trim().toLowerCase(), source });
+      .insert({ email: email.trim().toLowerCase(), source: encodeWaitlistSource(source, context) });
 
     if (error) {
       if (error.code === "23505") {
