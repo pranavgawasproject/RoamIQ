@@ -42,10 +42,10 @@ const columns = [
 ];
 
 const socials = [
-  { icon: Twitter, href: "#", label: "Twitter / X" },
+  { icon: Twitter, href: "https://x.com/pranavgawas", label: "Twitter / X" },
   { icon: Instagram, href: "#", label: "Instagram" },
   { icon: Youtube, href: "#", label: "YouTube" },
-  { icon: Github, href: "#", label: "GitHub" },
+  { icon: Github, href: "https://github.com/Pranavgawas", label: "GitHub" },
 ];
 
 export function Footer() {
