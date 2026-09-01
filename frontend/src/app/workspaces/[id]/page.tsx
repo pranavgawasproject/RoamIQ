@@ -277,7 +277,9 @@ export default async function WorkspaceDetailPage({
     localBusinessJsonLd.email = String(listing.contact_email);
   }
   const listedWifi = usefulWifiSpeed(listing.wifi_speed);
-  if (tags.length > 0 || listedWifi || listing.download_speed_mbps) {
+  // download/upload/latency columns are populated on every row (bulk templates).
+  // Only emit them when wifi_speed itself passed usefulWifiSpeed — same gate as the visible sidebar.
+  if (tags.length > 0 || listedWifi) {
     localBusinessJsonLd.amenityFeature = [
       ...(listedWifi
         ? [
@@ -288,7 +290,7 @@ export default async function WorkspaceDetailPage({
             },
           ]
         : []),
-      ...(listing.download_speed_mbps
+      ...(listedWifi && listing.download_speed_mbps
         ? [
             {
               "@type": "LocationFeatureSpecification",
@@ -297,7 +299,7 @@ export default async function WorkspaceDetailPage({
             },
           ]
         : []),
-      ...(listing.upload_speed_mbps
+      ...(listedWifi && listing.upload_speed_mbps
         ? [
             {
               "@type": "LocationFeatureSpecification",
@@ -306,7 +308,7 @@ export default async function WorkspaceDetailPage({
             },
           ]
         : []),
-      ...(listing.latency_ms
+      ...(listedWifi && listing.latency_ms
         ? [
             {
               "@type": "LocationFeatureSpecification",
@@ -375,25 +377,6 @@ export default async function WorkspaceDetailPage({
               alt={listing.company_name}
               typeLabel={listing.company_type}
             />
-          </div>
-        </section>
-
-        {/* Conversion: listing-page landings bounce after the gallery (GSC clicks land here).
-            Sidebar waitlist is below the fold on mobile — surface one module before the long body. */}
-        <section className="mt-6">
-          <div className="mx-auto max-w-6xl px-5 sm:px-8">
-            <div className="max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
-              <WaitlistInline
-                source="workspace_detail_after_gallery"
-                heading={
-                  listing.city
-                    ? `Want similar places in ${listing.city} without hunting the rest of the catalog?`
-                    : "Want similar places without hunting the rest of the catalog?"
-                }
-                description="This page is a single listing. Leave an email if you want a shortlist of other listed workspaces in the same city — only when a price or Wi-Fi value is actually on the listing. No extra page, no fabricated urgency."
-                compact
-              />
-            </div>
           </div>
         </section>
 
