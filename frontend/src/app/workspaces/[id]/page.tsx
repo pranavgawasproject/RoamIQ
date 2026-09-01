@@ -378,6 +378,25 @@ export default async function WorkspaceDetailPage({
           </div>
         </section>
 
+        {/* Conversion: listing-page landings bounce after the gallery (GSC clicks land here).
+            Sidebar waitlist is below the fold on mobile — surface one module before the long body. */}
+        <section className="mt-6">
+          <div className="mx-auto max-w-6xl px-5 sm:px-8">
+            <div className="max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
+              <WaitlistInline
+                source="workspace_detail_after_gallery"
+                heading={
+                  listing.city
+                    ? `Want similar places in ${listing.city} without hunting the rest of the catalog?`
+                    : "Want similar places without hunting the rest of the catalog?"
+                }
+                description="This page is a single listing. Leave an email if you want a shortlist of other listed workspaces in the same city — only when a price or Wi-Fi value is actually on the listing. No extra page, no fabricated urgency."
+                compact
+              />
+            </div>
+          </div>
+        </section>
+
         {/* Content */}
         <section className="py-10 sm:py-14">
           <div className="mx-auto grid max-w-6xl gap-10 px-5 sm:px-8 lg:grid-cols-3">
