@@ -78,7 +78,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, address, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about",
+        "id, company_name, company_title, company_type, city, state, country, address, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about, description",
         { count: "planned" }
       )
       .eq("is_public", true)
@@ -101,7 +101,9 @@ async function getListings(params: {
         .not("wifi_speed", "ilike", "%High-Speed Fiber%");
     }
     if (params.described === "1") {
-      query = query.not("about", "is", null).neq("about", "");
+      // Prefer rows with a usable about *or* description — both are rendered
+      // as the card snippet. PostgREST or() keeps this a single request.
+      query = query.or("about.neq.,description.neq.");
     }
     if (params.priced === "1") {
       // Real listed prices only — empty / placeholder rows stay off this view.
@@ -141,7 +143,7 @@ async function getListings(params: {
     const scored = rows
       .map((listing, index) => {
         let score = 0;
-        if (usefulListingAbout(listing.about, listing.company_name)) score += 100;
+        if (usefulListingAbout(listing.about || listing.description, listing.company_name)) score += 100;
         if (firstUsableListingImage(listing.images, listing.logo_url)) score += 20;
         if (usefulStartingPrice(listing.starting_price)) score += 10;
         if (usefulWifiSpeed(listing.wifi_speed)) score += 10;
@@ -214,6 +216,17 @@ function ListingCard({ listing }: { listing: Listing }) {
             <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/80">Photo pending</span>
           </div>
         )}
+        {(() => {
+          const photoCount = Array.isArray(listing.images)
+            ? listing.images.filter((u) => typeof u === "string" && u.trim().length > 8).length
+            : 0;
+          if (!imageUrl || photoCount < 2) return null;
+          return (
+            <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium text-foreground/80">
+              {photoCount} photos
+            </span>
+          );
+        })()}
       </Link>
       <div className="flex flex-1 flex-col p-5">
         {typeHref && (
@@ -228,7 +241,7 @@ function ListingCard({ listing }: { listing: Listing }) {
         </h3>
         {usefulTitle(listing.company_title, listing.company_name) && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulTitle(listing.company_title, listing.company_name)}</p>}
         {(() => {
-          const aboutSnippet = usefulAboutSnippet(listing.about, listing.company_name);
+          const aboutSnippet = usefulAboutSnippet(listing.about || listing.description, listing.company_name);
           const addressSnippet = (listing.address || "").replace(/\s+/g, " ").trim();
           if (aboutSnippet) {
             return <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{aboutSnippet}</p>;
