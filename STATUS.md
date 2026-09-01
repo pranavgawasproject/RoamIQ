@@ -1,3 +1,12 @@
+## 2026-09-01 daily growth run (Track A) — description fallback on /workspaces
+
+- Gap fixed: workspaces index now selects and renders `description` when `about` is empty, includes either field in the Has description filter, and shows a photo-count badge when 2+ stored images exist. No invented copy/prices/Wi-Fi.
+- Commit: https://github.com/pranavgawasproject/RoamIQ/commit/e3adbcf4ca649330e1f027849b83cb6c9d2a423f
+- GSC 2026-08-01→08-31 (nomads-travel-indol.vercel.app): `roamiq` 1 click / 64 impr / pos ~6.4 / CTR 1.6%. Top click query `4g-travel-tool.vercel.app` 3/33 pos ~2.9 — FLAG only, no redirect. Sitemap 48 submitted / 0 indexed (pending).
+- GA4 541610896 Aug 2026: `/` 150 sess bounce 79%; `/workspaces` 9 sess bounce 89%; `/destinations` 9 sess bounce 78%.
+- Connected Supabase `uogdeyumztfbwxctilxi` has no public listings table; null-rates not recomputed here.
+- Branded CTR remains capped until custom domain is live (human-owned).
+
 ## 2026-09-01 ~03:40 UTC — stop publishing templated download/upload Mbps in listing JSON-LD
 
 Track A (data integrity + schema): about/images already render; price/wifi pending UI already exists; admin auth already env + httpOnly cookie; listing JSON-LD already emits LocalBusiness/Cafe/Lodging from visible fields. `download_speed_mbps` and `upload_speed_mbps` are filled on all 8,272 listing rows (bulk templates), so detail-page `amenityFeature` was emitting fake Download/Upload Speed on every workspace even when the sidebar correctly showed "Wi-Fi speed pending". Gated those schema values on `usefulWifiSpeed` — same rule as the visible UI. Did not rewrite DB rows. No fabricated speeds. Sitemap not resubmitted (no new routes).
