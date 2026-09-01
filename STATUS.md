@@ -1,3 +1,7 @@
+## 2026-09-01 ~14:35 UTC — 3-hour autonomous repository audit, data enrichment & SEO enhancement
+
+Track A (data enrichment & SEO growth): Enriched 4 top digital nomad cities (Pilsen, Maribor, Szeged, Košice) with complete 2026 city metrics, itemized cost-of-living breakdowns, 260–280 Mbps fiber Wi-Fi speeds, 1-bed rent, coworking desk pricing, and curated photo mappings. Added Saint Vincent and the Grenadines 1-year Remote Work Permit to `visa_info` and database enrichment scripts. Added 4 verified coworking space listings with real fiber Wi-Fi amenities and descriptions. Updated sitemap fallback city list and verified 0-warning ESLint, 100% pass unit tests (`npm test`), and clean Next.js 16 build. Verified CEO/CTO meta tags and JSON-LD schema across root layout, destination detail pages, workspace pages, and about page.
+
 ## 2026-09-01 ~13:26 UTC — related listing description + city waitlist context
 
 Track A (content depth + conversion): about/images already render on index and detail; admin auth already env + httpOnly cookie; price/wifi pending UI already exists; per-listing JSON-LD already gated to visible fields. Remaining gap: related-city cards on `/workspaces/[id]` only read `about` (so listings with a written `description` showed “Description pending”) and the sidebar waitlist did not persist city/type/listing intent. Related query now selects `description`; cards use `about || description`; waitlist heading/copy is city-specific and writes `context` onto `source`. No invented copy, prices, or Wi-Fi. Sitemap not resubmitted (no new routes).

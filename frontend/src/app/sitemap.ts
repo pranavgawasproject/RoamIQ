@@ -181,6 +181,8 @@ const FALLBACK_CITY_IDS = [
   "antigua",
   "bahamas",
   "cape-verde",
+  "saint-vincent",
+  "st-vincent",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
