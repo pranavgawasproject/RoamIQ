@@ -49,7 +49,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_type, city, country, starting_price, wifi_speed, images, logo_url, about, ratings"
+        "id, company_name, company_type, city, country, starting_price, wifi_speed, images, logo_url, about, description, ratings"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -451,7 +451,7 @@ export default async function WorkspaceDetailPage({
                   <ul className="mt-4 divide-y divide-border rounded-2xl border border-border">
                     {related.map((item) => {
                       const thumb = firstUsableListingImage(item.images, item.logo_url);
-                      const snippet = usefulListingAbout(item.about, item.company_name, 140);
+                      const snippet = usefulListingAbout(item.about || item.description, item.company_name, 140);
                       const aboutOk = Boolean(snippet);
                       return (
                       <li key={item.id}>
@@ -633,8 +633,21 @@ export default async function WorkspaceDetailPage({
                 <div className="mt-6 rounded-xl border border-border bg-secondary/40 p-4">
                   <WaitlistInline
                     source="workspace_detail"
-                    heading="Leaving this listing without a next step?"
-                    description="Most workspace visits end here. Leave an email if you want a shortlist of similar places in this city — only when price or Wi-Fi is actually listed. No extra page, no fabricated urgency."
+                    heading={
+                      listing.city
+                        ? `Want similar workspaces in ${listing.city}?`
+                        : "Want similar workspaces after this listing?"
+                    }
+                    description={
+                      listing.city
+                        ? `This page is a common last stop. Leave an email for other live listings in ${listing.city} when a listed price or Wi-Fi value exists. No extra page, no fabricated urgency.`
+                        : "This page is a common last stop. Leave an email for similar live listings when a listed price or Wi-Fi value exists. No extra page, no fabricated urgency."
+                    }
+                    context={{
+                      city: listing.city,
+                      type: listing.company_type,
+                      listing: listing.company_name,
+                    }}
                   />
                 </div>
               </div>
