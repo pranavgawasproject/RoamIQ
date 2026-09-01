@@ -530,15 +530,17 @@ export default async function CityDetailPage({
                   />
                   <InfoBlock
                     label="English Proficiency"
-                    value={typedCity.english_proficiency || "High"}
+                    value={typedCity.english_proficiency || "Data pending"}
                   />
                   <InfoBlock
                     label="Quality of Life Score"
-                    value={typedCity.quality_of_life_score ? `${Number(typedCity.quality_of_life_score).toFixed(1)} / 5` : "4.2 / 5"}
+                    value={typedCity.quality_of_life_score ? `${Number(typedCity.quality_of_life_score).toFixed(1)} / 5` : "Data pending"}
                   />
                   <InfoBlock
                     label="Walkability Rating"
-                    value={`${Number(typedCity.walkability_score ?? 4).toFixed(1)} / 5`}
+                    value={typedCity.walkability_score != null
+                      ? `${Number(typedCity.walkability_score).toFixed(1)} / 5`
+                      : "Data pending"}
                   />
                 </div>
               </div>
