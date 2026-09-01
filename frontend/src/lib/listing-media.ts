@@ -149,3 +149,13 @@ export function usefulWifiSpeed(speed: string | number | null | undefined): stri
   if (!Number.isFinite(amount) || amount < 1) return null;
   return cleaned;
 }
+
+/**
+ * download_speed_mbps / upload_speed_mbps / latency_ms are filled on every
+ * listings row by the same bulk factory as templated wifi_speed labels.
+ * They are not venue-reported measurements. Always return null so callers
+ * show a pending state instead of publishing invented split speeds.
+ */
+export function usefulDirectionalMbps(_value: string | number | null | undefined): null {
+  return null;
+}

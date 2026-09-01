@@ -290,33 +290,6 @@ export default async function WorkspaceDetailPage({
             },
           ]
         : []),
-      ...(listedWifi && listing.download_speed_mbps
-        ? [
-            {
-              "@type": "LocationFeatureSpecification",
-              name: "Download Speed",
-              value: `${listing.download_speed_mbps} Mbps`,
-            },
-          ]
-        : []),
-      ...(listedWifi && listing.upload_speed_mbps
-        ? [
-            {
-              "@type": "LocationFeatureSpecification",
-              name: "Upload Speed",
-              value: `${listing.upload_speed_mbps} Mbps`,
-            },
-          ]
-        : []),
-      ...(listedWifi && listing.latency_ms
-        ? [
-            {
-              "@type": "LocationFeatureSpecification",
-              name: "Wi-Fi Latency",
-              value: `${listing.latency_ms} ms`,
-            },
-          ]
-        : []),
       ...(listing.has_24_7_access
         ? [
             {
@@ -550,12 +523,6 @@ export default async function WorkspaceDetailPage({
                         <Wifi className="h-4 w-4 text-forest shrink-0" />
                         <span className="font-semibold">{usefulWifiSpeed(listing.wifi_speed)}</span>
                       </div>
-                      {(listing.download_speed_mbps || listing.upload_speed_mbps) && (
-                        <div className="pl-6 text-xs text-muted-foreground">
-                          ↓ {listing.download_speed_mbps || "—"} Mbps / ↑ {listing.upload_speed_mbps || "—"} Mbps
-                          {listing.latency_ms ? ` · ${listing.latency_ms}ms latency` : ""}
-                        </div>
-                      )}
                     </div>
                   ) : (
                     <div className="flex items-center gap-2.5 text-muted-foreground/80">
