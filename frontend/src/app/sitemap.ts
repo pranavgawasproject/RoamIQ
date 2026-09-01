@@ -174,6 +174,13 @@ const FALLBACK_CITY_IDS = [
   "craiova",
   "zlin",
   "siauliai",
+  "seychelles",
+  "st-kitts-nevis",
+  "dominica",
+  "saint-lucia",
+  "antigua",
+  "bahamas",
+  "cape-verde",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
