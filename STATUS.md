@@ -1,3 +1,9 @@
+## 2026-09-01 ~13:26 UTC — related listing description + city waitlist context
+
+Track A (content depth + conversion): about/images already render on index and detail; admin auth already env + httpOnly cookie; price/wifi pending UI already exists; per-listing JSON-LD already gated to visible fields. Remaining gap: related-city cards on `/workspaces/[id]` only read `about` (so listings with a written `description` showed “Description pending”) and the sidebar waitlist did not persist city/type/listing intent. Related query now selects `description`; cards use `about || description`; waitlist heading/copy is city-specific and writes `context` onto `source`. No invented copy, prices, or Wi-Fi. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-01→2026-08-30 (`https://nomads-travel-indol.vercel.app/`): homepage 5 clicks / 194 imp / pos ~5.6. Query `4g-travel-tool.vercel.app` 3/33 / pos ~2.9 — FLAG only; inspect 403 (URL is not this property); no redirect. `roamiq` 1/64 / pos ~6.4 / CTR 1.6%. Listing clicks: NGB Living, Izzy coffee, Athens coliving. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-01 ~13:10 UTC — hide bulk download/upload Mbps on listing detail
 
 Track A (data integrity): `wifi_speed` templates were already filtered, but `download_speed_mbps` / `upload_speed_mbps` / `latency_ms` are filled on **every** listings row (8,272/8,272; 6,590 also carry templated wifi labels). Detail sidebar still printed split Mbps and JSON-LD still emitted Download/Upload/Latency amenityFeatures whenever `usefulWifiSpeed` passed. Removed those numeric fields from the visible sidebar and from LocalBusiness schema. Did not rewrite DB rows. No fabricated speeds. About/images already render; admin auth already env + httpOnly cookie. Sitemap not resubmitted (no new routes).
