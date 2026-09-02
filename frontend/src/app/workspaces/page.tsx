@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
     description:
-      "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads with verified Wi-Fi speeds.",
+      "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads. Price and Wi-Fi appear only when the listing has a real value.",
     url: `${BASE_URL}/workspaces`,
     siteName: "RoamIQ",
     type: "website",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
     description:
-      "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads with verified Wi-Fi speeds.",
+      "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads. Price and Wi-Fi appear only when the listing has a real value.",
     images: [`${BASE_URL}/logo.svg`],
   },
   other: {
@@ -338,15 +338,6 @@ export default async function WorkspacesPage({
     qs.set("page", String(targetPage));
     return `/workspaces?${qs.toString()}`;
   };
-  const waitlistContext = {
-    search: params.search,
-    type: params.type,
-    city: params.city,
-    country: params.country,
-    wifi: params.min_wifi,
-    described: params.described,
-    priced: params.priced,
-  };
   const breadcrumbJsonLd = {
     "@type": "BreadcrumbList",
     itemListElement: [
@@ -511,7 +502,7 @@ export default async function WorkspacesPage({
               })}
             </div>
             <div className="mt-8 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
-              <WaitlistInline source="workspaces-list-above-fold" heading="Get a shortlist for this search instead of bouncing" description="This index is a common last stop. If you already picked a city or type, leave an email — we only write when a listed price or Wi-Fi value matches. No extra page." compact context={waitlistContext} />
+              <WaitlistInline source="workspaces-list-above-fold" heading="Get a shortlist for this search instead of bouncing" description="This index is long. If you already know the city or type you need, leave an email — we only write when a listed price or Wi-Fi value matches. No extra page." compact />
             </div>
           </div>
         </section>
@@ -530,7 +521,6 @@ export default async function WorkspacesPage({
                     heading="Want this search when a match exists?"
                     description="Leave an email if you want a shortlist once a listing in this city or type has a written description. We do not invent missing copy."
                     compact
-                    context={waitlistContext}
                   />
                 </div>
               </div>
@@ -543,7 +533,7 @@ export default async function WorkspacesPage({
                 </div>
                 {listings.length > 6 && (
                   <div className="my-8 rounded-2xl border border-border bg-card/80 p-5 sm:p-6">
-                    <WaitlistInline source="workspaces-list-mid-grid" heading="Still scanning cards? Grab a shortlist" description="If you are about to leave, drop an email here. We send matching workspaces when price or Wi-Fi is listed — we do not invent missing numbers." compact context={waitlistContext} />
+                    <WaitlistInline source="workspaces-list-mid-grid" heading="Still scanning cards? Grab a shortlist" description="If you are about to leave, drop an email here. We send matching workspaces when price or Wi-Fi is listed — we do not invent missing numbers." compact />
                   </div>
                 )}
                 {listings.length > 6 && (
@@ -577,7 +567,7 @@ export default async function WorkspacesPage({
             <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">Found a workspace you like — or still deciding where to go?</h2>
             <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">Leave your email on this page. We send destination shortlists matched to budget, visa window, and listed Wi-Fi speeds. No fabricated urgency, no spam.</p>
           </div>
-          <WaitlistInline source="workspaces-list" heading="Leave with a shortlist, not a blank tab" description="No extra page. We email city and workspace picks only when listed price or Wi-Fi exists. No fabricated urgency." compact={false} context={waitlistContext} />
+          <WaitlistInline source="workspaces-list" heading="Leave with a shortlist, not a blank tab" description="No extra page. We email city and workspace picks only when listed price or Wi-Fi exists. No fabricated urgency." compact={false} />
         </div>
       </section>
       <Footer />
