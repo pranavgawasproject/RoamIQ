@@ -181,3 +181,59 @@ export function usefulStreetAddress(
   if (cityNorm && countryNorm && (lower === `${cityNorm}, ${countryNorm}` || lower === `${cityNorm} ${countryNorm}`)) return null;
   return cleaned;
 }
+
+/**
+ * Show a phone only when it looks like a reachable number.
+ * Registry IDs, truncated fragments, and all-zero strings stay pending.
+ * Never invent a replacement number.
+ */
+export function usefulContactPhone(phone: string | null | undefined): string | null {
+  if (!phone || typeof phone !== "string") return null;
+  const cleaned = phone.replace(/\s+/g, " ").trim();
+  if (!cleaned) return null;
+  const lower = cleaned.toLowerCase();
+  if (["n/a", "na", "tbd", "null", "undefined", "-", "—", "none", "pending"].includes(lower)) return null;
+  const digits = cleaned.replace(/\D/g, "");
+  if (digits.length < 8 || digits.length > 15) return null;
+  if (/^0+$/.test(digits)) return null;
+  if (/^0{3,}/.test(digits)) return null;
+  return cleaned;
+}
+
+/**
+ * Show an email only when it is a single well-formed address.
+ * Never invent a replacement inbox.
+ */
+export function usefulContactEmail(email: string | null | undefined): string | null {
+  if (!email || typeof email !== "string") return null;
+  const cleaned = email.replace(/\s+/g, "").trim();
+  if (!cleaned) return null;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(cleaned)) return null;
+  return cleaned;
+}
+
+/**
+ * Official venue site only. Social video URLs are not a booking/contact page.
+ */
+export function usefulListingWebsite(url: string | null | undefined): string | null {
+  if (!url || typeof url !== "string") return null;
+  const cleaned = url.trim();
+  if (!/^https?:\/\//i.test(cleaned)) return null;
+  let host = "";
+  try {
+    host = new URL(cleaned).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+  if (
+    host === "tiktok.com" ||
+    host.endsWith(".tiktok.com") ||
+    host === "youtube.com" ||
+    host === "www.youtube.com" ||
+    host === "youtu.be" ||
+    host === "i.ytimg.com"
+  ) {
+    return null;
+  }
+  return cleaned;
+}
