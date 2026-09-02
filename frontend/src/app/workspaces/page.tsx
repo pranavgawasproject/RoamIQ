@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, MapPin, Wifi, ArrowRight, ArrowLeft, Building2 } from "lucide-react";
+import { Star, MapPin, Wifi, ArrowRight, ArrowLeft, Building2, Phone, Mail, ExternalLink } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulListingAbout, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -78,7 +78,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, address, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about, description",
+        "id, company_name, company_title, company_type, city, state, country, address, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email",
         { count: "planned" }
       )
       .eq("is_public", true)
@@ -202,6 +202,9 @@ function ListingCard({ listing }: { listing: Listing }) {
   const ratingValue = Number(listing.ratings ?? 0);
   const showRating = ratingValue > 0 && reviewCount > 0;
   const visibleTags = usefulTags(listing.tags);
+  const listedPhone = usefulContactPhone(listing.contact_phone);
+  const listedEmail = usefulContactEmail(listing.contact_email);
+  const listedWebsite = usefulListingWebsite(listing.website);
   const typeHref = listing.company_type ? `/workspaces?type=${encodeURIComponent(listing.company_type)}` : null;
   const cityHref = listing.city ? `/workspaces?city=${encodeURIComponent(listing.city)}` : null;
   const countryHref = listing.country ? `/workspaces?country=${encodeURIComponent(listing.country)}` : null;
@@ -280,6 +283,36 @@ function ListingCard({ listing }: { listing: Listing }) {
             ) : null}
           </span>
         </div>
+        {(listedPhone || listedEmail || listedWebsite) && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {listedWebsite && (
+              <a
+                href={listedWebsite}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+              >
+                <ExternalLink className="h-3 w-3" /> Official site
+              </a>
+            )}
+            {listedPhone && (
+              <a
+                href={`tel:${listedPhone.replace(/[^+\d]/g, "")}`}
+                className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+              >
+                <Phone className="h-3 w-3" /> Call
+              </a>
+            )}
+            {listedEmail && (
+              <a
+                href={`mailto:${listedEmail}`}
+                className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+              >
+                <Mail className="h-3 w-3" /> Email
+              </a>
+            )}
+          </div>
+        )}
         <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
           <div>
             {usefulStartingPrice(listing.starting_price) ? (
@@ -383,6 +416,12 @@ export default async function WorkspacesPage({
           { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi },
         ];
       }
+      const listedPhone = usefulContactPhone(item.contact_phone);
+      const listedEmail = usefulContactEmail(item.contact_email);
+      const listedWebsite = usefulListingWebsite(item.website);
+      if (listedPhone) place.telephone = listedPhone;
+      if (listedEmail) place.email = listedEmail;
+      if (listedWebsite) place.sameAs = [listedWebsite];
       const ratingValue = Number(item.ratings);
       const reviewCount = Number(item.total_reviews);
       if (ratingValue > 0 && reviewCount > 0) {
