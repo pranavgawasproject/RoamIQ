@@ -314,6 +314,7 @@ export default async function WorkspacesPage({
   searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; page?: string }>;
 }) {
   const params = await searchParams;
+  const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
   const { listings, count, page } = await getListings(params);
   const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
   const filterQs = (overrides: Record<string, string | null | undefined> = {}) => {
@@ -502,7 +503,7 @@ export default async function WorkspacesPage({
               })}
             </div>
             <div className="mt-8 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
-              <WaitlistInline source="workspaces-list-above-fold" heading="Get a shortlist for this search instead of bouncing" description="This index is long. If you already know the city or type you need, leave an email — we only write when a listed price or Wi-Fi value matches. No extra page." compact />
+              <WaitlistInline source="workspaces-list-above-fold" askCity heading="This index is long — leave a city if you already know where you are going" description="Most /workspaces landings leave without a next click. Email plus an optional city is enough. We only write when a listed price or Wi-Fi value exists. No extra page." compact context={waitlistContext} />
             </div>
           </div>
         </section>
@@ -518,9 +519,11 @@ export default async function WorkspacesPage({
                 <div className="mt-2 w-full max-w-md text-left">
                   <WaitlistInline
                     source="workspaces-list-empty"
+                    askCity
                     heading="Want this search when a match exists?"
-                    description="Leave an email if you want a shortlist once a listing in this city or type has a written description. We do not invent missing copy."
+                    description="Leave an email and optional city if you want a shortlist once a listing in this place has a written description. We do not invent missing copy."
                     compact
+                    context={waitlistContext}
                   />
                 </div>
               </div>
@@ -533,7 +536,7 @@ export default async function WorkspacesPage({
                 </div>
                 {listings.length > 6 && (
                   <div className="my-8 rounded-2xl border border-border bg-card/80 p-5 sm:p-6">
-                    <WaitlistInline source="workspaces-list-mid-grid" heading="Still scanning cards? Grab a shortlist" description="If you are about to leave, drop an email here. We send matching workspaces when price or Wi-Fi is listed — we do not invent missing numbers." compact />
+                    <WaitlistInline source="workspaces-list-mid-grid" askCity heading="Still scanning cards? Leave a city and email" description="If you are about to leave this index, drop an email and optional city. We send matching workspaces when price or Wi-Fi is listed — we do not invent missing numbers." compact context={waitlistContext} />
                   </div>
                 )}
                 {listings.length > 6 && (
@@ -567,7 +570,7 @@ export default async function WorkspacesPage({
             <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">Found a workspace you like — or still deciding where to go?</h2>
             <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">Leave your email on this page. We send destination shortlists matched to budget, visa window, and listed Wi-Fi speeds. No fabricated urgency, no spam.</p>
           </div>
-          <WaitlistInline source="workspaces-list" heading="Leave with a shortlist, not a blank tab" description="No extra page. We email city and workspace picks only when listed price or Wi-Fi exists. No fabricated urgency." compact={false} />
+          <WaitlistInline source="workspaces-list" askCity heading="Leave with a shortlist, not a blank tab" description="No extra page. Add a city if the filters above did not stick. We email workspace picks only when listed price or Wi-Fi exists. No fabricated urgency." compact={false} context={waitlistContext} />
         </div>
       </section>
       <Footer />
