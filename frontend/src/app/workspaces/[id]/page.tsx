@@ -19,7 +19,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, isUsableImageUrl, usefulListingAbout, usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
 
 export const revalidate = 180;
@@ -231,10 +231,13 @@ export default async function WorkspaceDetailPage({
       },
     },
   };
+  const listedPhone = usefulContactPhone(listing.contact_phone);
+  const listedEmail = usefulContactEmail(listing.contact_email);
+  const listedWebsite = usefulListingWebsite(listing.website);
   if (listing.company_type) localBusinessJsonLd.additionalType = String(listing.company_type);
   if (images.length > 1) localBusinessJsonLd.image = images;
   else if (primaryImage) localBusinessJsonLd.image = primaryImage;
-  if (listing.website) localBusinessJsonLd.sameAs = [listing.website];
+  if (listedWebsite) localBusinessJsonLd.sameAs = [listedWebsite];
   if (listing.address || locationParts.length) {
     localBusinessJsonLd.address = {
       "@type": "PostalAddress",
@@ -270,11 +273,11 @@ export default async function WorkspaceDetailPage({
   if (listing.open_hours) {
     localBusinessJsonLd.openingHours = String(listing.open_hours);
   }
-  if (listing.contact_phone) {
-    localBusinessJsonLd.telephone = String(listing.contact_phone);
+  if (listedPhone) {
+    localBusinessJsonLd.telephone = listedPhone;
   }
-  if (listing.contact_email) {
-    localBusinessJsonLd.email = String(listing.contact_email);
+  if (listedEmail) {
+    localBusinessJsonLd.email = listedEmail;
   }
   const listedWifi = usefulWifiSpeed(listing.wifi_speed);
   // download/upload/latency columns are populated on every row (bulk templates).
@@ -574,13 +577,13 @@ export default async function WorkspaceDetailPage({
                   <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Contact
                   </p>
-                  {listing.contact_phone ? (
+                  {listedPhone ? (
                     <a
-                      href={`tel:${String(listing.contact_phone).replace(/\s+/g, "")}`}
+                      href={`tel:${listedPhone.replace(/\s+/g, "")}`}
                       className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent transition-colors"
                     >
                       <Phone className="h-4 w-4 shrink-0 text-muted-foreground" />
-                      <span>{listing.contact_phone}</span>
+                      <span>{listedPhone}</span>
                     </a>
                   ) : (
                     <p className="flex items-center gap-2.5 text-sm text-muted-foreground/80">
@@ -588,13 +591,13 @@ export default async function WorkspaceDetailPage({
                       Phone not listed yet
                     </p>
                   )}
-                  {listing.contact_email ? (
+                  {listedEmail ? (
                     <a
-                      href={`mailto:${listing.contact_email}`}
+                      href={`mailto:${listedEmail}`}
                       className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent transition-colors"
                     >
                       <Mail className="h-4 w-4 shrink-0 text-muted-foreground" />
-                      <span className="break-all">{listing.contact_email}</span>
+                      <span className="break-all">{listedEmail}</span>
                     </a>
                   ) : (
                     <p className="flex items-center gap-2.5 text-sm text-muted-foreground/80">
@@ -604,9 +607,9 @@ export default async function WorkspaceDetailPage({
                   )}
                 </div>
 
-                {listing.website && (
+                {listedWebsite && (
                   <a
-                    href={listing.website}
+                    href={listedWebsite}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
