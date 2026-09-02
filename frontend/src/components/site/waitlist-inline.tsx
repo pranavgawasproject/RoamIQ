@@ -11,6 +11,8 @@ type WaitlistInlineProps = {
   compact?: boolean;
   /** Optional search intent stored on the signup row via `source` (no schema change). */
   context?: Record<string, string | null | undefined>;
+  /** Show a city field so bounce traffic can leave destination intent. */
+  askCity?: boolean;
 };
 
 function encodeWaitlistSource(source: string, context?: Record<string, string | null | undefined>) {
@@ -30,8 +32,10 @@ export function WaitlistInline({
   description = "Free to join. No spam — we only email when there is something useful for your next move.",
   compact = false,
   context,
+  askCity = false,
 }: WaitlistInlineProps) {
   const [email, setEmail] = useState("");
+  const [city, setCity] = useState((context?.city ?? "").toString());
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -42,9 +46,14 @@ export function WaitlistInline({
     setStatus("loading");
     setErrorMsg("");
 
+    const mergedContext = {
+      ...(context ?? {}),
+      city: city.trim() || context?.city,
+    };
+
     const { error } = await supabase
       .from("waitlist_signups")
-      .insert({ email: email.trim().toLowerCase(), source: encodeWaitlistSource(source, context) });
+      .insert({ email: email.trim().toLowerCase(), source: encodeWaitlistSource(source, mergedContext) });
 
     if (error) {
       if (error.code === "23505") {
@@ -59,6 +68,8 @@ export function WaitlistInline({
     setStatus("success");
     setEmail("");
   }
+
+  const showCity = askCity || !(context?.city ?? "").toString().trim();
 
   return (
     <div className={compact ? "w-full" : "w-full max-w-md"}>
@@ -79,34 +90,53 @@ export function WaitlistInline({
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="mt-3 flex w-full flex-col gap-2 sm:flex-row sm:items-center"
+          className="mt-3 flex w-full flex-col gap-2"
         >
-          <label htmlFor={`waitlist-email-${source}`} className="sr-only">
-            Email address
-          </label>
-          <input
-            id={`waitlist-email-${source}`}
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={status === "loading"}
-            placeholder="you@nomad.life"
-            className="min-w-0 flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-60"
-          />
-          <button
-            type="submit"
-            disabled={status === "loading"}
-            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-70"
-          >
-            {status === "loading" ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
+          <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center">
+            <label htmlFor={`waitlist-email-${source}`} className="sr-only">
+              Email address
+            </label>
+            <input
+              id={`waitlist-email-${source}`}
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={status === "loading"}
+              placeholder="you@nomad.life"
+              className="min-w-0 flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-60"
+            />
+            {showCity ? (
               <>
-                Join free <ArrowRight className="h-4 w-4" />
+                <label htmlFor={`waitlist-city-${source}`} className="sr-only">
+                  City you are considering
+                </label>
+                <input
+                  id={`waitlist-city-${source}`}
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  disabled={status === "loading"}
+                  placeholder="City (optional)"
+                  autoComplete="address-level2"
+                  className="min-w-0 flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-60"
+                />
               </>
-            )}
-          </button>
+            ) : null}
+            <button
+              type="submit"
+              disabled={status === "loading"}
+              className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-70"
+            >
+              {status === "loading" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  Join free <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </button>
+          </div>
         </form>
       )}
 
