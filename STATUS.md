@@ -1,12 +1,8 @@
-## 2026-09-02 daily growth run (Track A) — persist waitlist search intent
+## 2026-09-02 ~03:50 UTC — gate listing phone, email, and website
 
-Track A (conversion): about/images already render; admin auth already env + httpOnly cookie; price/wifi pending UI already exists; listing JSON-LD already gated. Remaining gap: homepage and destination-city landings bounce without writing filter/city intent onto waitlist_signups.source. Workspaces index waitlists now pass the active search/type/city/country/wifi/described/priced filters as context. Destination detail waitlists persist city + country. Homepage after-hero copy names the homepage last-stop pattern without fabricated stats. No invented copy, prices, or Wi-Fi. Sitemap not resubmitted (no new routes).
+Track A (data integrity + conversion): about/images already render; admin auth is env + httpOnly cookie; price/Wi-Fi pending UI exists; JSON-LD already exists. Contact fields were printed and schema-emitted raw, including registry IDs (`0000662624`), truncated fragments (`0730641943 02123`), and TikTok URLs as "Visit website". Added `usefulContactPhone` / `usefulContactEmail` / `usefulListingWebsite` and used them on `/workspaces/[id]` UI + LocalBusiness schema. Workspaces OG copy no longer claims "verified Wi-Fi speeds". No fabricated contacts. Did not rewrite DB rows. Sitemap not resubmitted.
 
-GSC 2026-08-03→2026-09-01 (`https://nomads-travel-indol.vercel.app/`): homepage 4 clicks / 179 imp / pos ~5.7. Query `4g-travel-tool.vercel.app` 3/26 / pos 3 — FLAG only; URL Inspection 403 (URL is not this property); no redirect. Non-branded listing clicks: coliving athens, Izzy coffee, NGB Living. Branded CTR capped until the custom domain is live.
-
-GA4 property `541610896` last 28d: `/` 153 sessions bounce ~80%; `/workspaces` landing 9 / ~89%; `/destinations` landing 9 / ~78%; city pages (chiang-mai, prague, taipei) 2 sessions each, bounce 100%. On-page `/workspaces` path sessions 17, bounce ~47%.
-
-Listings `davvpymbybvniexmkgcu`: 8,276 rows; about empty 5,850 (70.7%); price empty 3,637 (44.0%); images null 0; wifi empty 0 (templates filtered in UI); phone empty 7,810; logo empty 6,013; email empty 8,067.
+GSC 2026-08-03→2026-09-01 (`https://nomads-travel-indol.vercel.app/`): homepage 4 clicks / 179 imp / pos ~5.7. Query `4g-travel-tool.vercel.app` 3/26 / pos ~3.0 — FLAG only; inspect 403 (not this property); no redirect. Branded `roamiq` 0 clicks / 57 imp / pos ~6.2; `roamiq dashboard` 0/6; `roamiq price` 0/6. GA4 `541610896` last 30d: `/` 153 sessions bounce 79.7%; `/workspaces` landing 9 / 88.9%. Listings `davvpymbybvniexmkgcu`: 8,276 rows; about empty 5,850; price empty 3,637; phone empty 7,810 (466 present); email empty 8,067 (209 present). Branded CTR capped until the custom domain is live.
 
 ## 2026-09-02 ~03:35 UTC — homepage + destination description fallback
 
