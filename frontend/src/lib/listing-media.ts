@@ -159,3 +159,25 @@ export function usefulWifiSpeed(speed: string | number | null | undefined): stri
 export function usefulDirectionalMbps(_value: string | number | null | undefined): null {
   return null;
 }
+
+/**
+ * Show a street address only when it is more specific than city/country.
+ * City-name-only rows (e.g. "San José Province") stay hidden — never invent a street.
+ */
+export function usefulStreetAddress(
+  address: string | null | undefined,
+  city?: string | null,
+  country?: string | null
+): string | null {
+  if (!address) return null;
+  const cleaned = String(address).replace(/\s+/g, " ").trim();
+  if (cleaned.length < 8) return null;
+  const lower = cleaned.toLowerCase();
+  if (["n/a", "na", "tbd", "null", "undefined", "-", "—", "none", "unknown"].includes(lower)) return null;
+  const cityNorm = (city || "").replace(/\s+/g, " ").trim().toLowerCase();
+  const countryNorm = (country || "").replace(/\s+/g, " ").trim().toLowerCase();
+  if (cityNorm && (lower === cityNorm || lower === `${cityNorm},`)) return null;
+  if (countryNorm && lower === countryNorm) return null;
+  if (cityNorm && countryNorm && (lower === `${cityNorm}, ${countryNorm}` || lower === `${cityNorm} ${countryNorm}`)) return null;
+  return cleaned;
+}
