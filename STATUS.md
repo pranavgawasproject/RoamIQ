@@ -1,3 +1,13 @@
+## 2026-09-02 daily growth run (Track A) — persist waitlist search intent
+
+Track A (conversion): about/images already render; admin auth already env + httpOnly cookie; price/wifi pending UI already exists; listing JSON-LD already gated. Remaining gap: homepage and destination-city landings bounce without writing filter/city intent onto waitlist_signups.source. Workspaces index waitlists now pass the active search/type/city/country/wifi/described/priced filters as context. Destination detail waitlists persist city + country. Homepage after-hero copy names the homepage last-stop pattern without fabricated stats. No invented copy, prices, or Wi-Fi. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-03→2026-09-01 (`https://nomads-travel-indol.vercel.app/`): homepage 4 clicks / 179 imp / pos ~5.7. Query `4g-travel-tool.vercel.app` 3/26 / pos 3 — FLAG only; URL Inspection 403 (URL is not this property); no redirect. Non-branded listing clicks: coliving athens, Izzy coffee, NGB Living. Branded CTR capped until the custom domain is live.
+
+GA4 property `541610896` last 28d: `/` 153 sessions bounce ~80%; `/workspaces` landing 9 / ~89%; `/destinations` landing 9 / ~78%; city pages (chiang-mai, prague, taipei) 2 sessions each, bounce 100%. On-page `/workspaces` path sessions 17, bounce ~47%.
+
+Listings `davvpymbybvniexmkgcu`: 8,276 rows; about empty 5,850 (70.7%); price empty 3,637 (44.0%); images null 0; wifi empty 0 (templates filtered in UI); phone empty 7,810; logo empty 6,013; email empty 8,067.
+
 ## 2026-09-02 ~03:35 UTC — homepage + destination description fallback
 
 Track A (content depth): `/workspaces` index and listing detail already use `about || description`. Homepage `WorkspacesPreview` and destination `DestinationListingCard` / ItemList schema still selected and rendered `about` only, so rows with a usable `description` looked thin on the highest-traffic landing page (GA4 `/` bounce ~80%). Both views now select `description` and pass `about || description` through the existing noise filter. No fabricated copy. Price/Wi-Fi pending UI unchanged. Admin auth already env + httpOnly cookie. Sitemap not resubmitted (no new routes).

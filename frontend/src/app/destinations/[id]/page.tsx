@@ -636,6 +636,7 @@ export default async function CityDetailPage({
                     heading={`Shortlist the rest of ${typedCity.name}, or keep scrolling`}
                     description="These destination pages often end after the first few cards. Leave an email if you want listed workspaces for this city — we only write when there is something on the page to match. No fabricated scarcity."
                     compact
+                    context={{ city: typedCity.name, country: typedCity.country }}
                   />
                 </div>
               )}
@@ -653,7 +654,8 @@ export default async function CityDetailPage({
             <WaitlistInline
               source="destination_detail"
               heading={`Want a shortlist of workspaces in ${typedCity.name}?`}
-              description="Join here — no extra page. We only email when there is something useful for your next stay."
+              description="This city page is often a last stop. Leave an email here — no extra page. We only write when a listed workspace in this city has a description, price, or photo. No fabricated urgency."
+              context={{ city: typedCity.name, country: typedCity.country }}
             />
           </div>
 

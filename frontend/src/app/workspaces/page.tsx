@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulListingAbout, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulListingAbout, usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -242,11 +242,11 @@ function ListingCard({ listing }: { listing: Listing }) {
         {usefulTitle(listing.company_title, listing.company_name) && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulTitle(listing.company_title, listing.company_name)}</p>}
         {(() => {
           const aboutSnippet = usefulAboutSnippet(listing.about || listing.description, listing.company_name);
-          const addressSnippet = usefulStreetAddress(listing.address, listing.city, listing.country);
+          const addressSnippet = (listing.address || "").replace(/\s+/g, " ").trim();
           if (aboutSnippet) {
             return <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{aboutSnippet}</p>;
           }
-          if (addressSnippet) {
+          if (addressSnippet.length >= 8) {
             return <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{addressSnippet}</p>;
           }
           return <p className="mt-1 text-sm text-muted-foreground">Description pending</p>;
@@ -259,9 +259,6 @@ function ListingCard({ listing }: { listing: Listing }) {
               </span>
             ))}
           </div>
-        )}
-        {usefulStreetAddress(listing.address, listing.city, listing.country) && usefulAboutSnippet(listing.about || listing.description, listing.company_name) && (
-          <p className="mt-1.5 text-xs text-muted-foreground line-clamp-1">{usefulStreetAddress(listing.address, listing.city, listing.country)}</p>
         )}
         <div className="mt-2.5 flex items-center gap-1.5 text-sm text-foreground/70">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
@@ -341,6 +338,15 @@ export default async function WorkspacesPage({
     qs.set("page", String(targetPage));
     return `/workspaces?${qs.toString()}`;
   };
+  const waitlistContext = {
+    search: params.search,
+    type: params.type,
+    city: params.city,
+    country: params.country,
+    wifi: params.min_wifi,
+    described: params.described,
+    priced: params.priced,
+  };
   const breadcrumbJsonLd = {
     "@type": "BreadcrumbList",
     itemListElement: [
@@ -370,11 +376,9 @@ export default async function WorkspacesPage({
       // Only fields already visible on the card — never invent prices, wifi, or copy.
       if (aboutSnippet) place.description = aboutSnippet;
       if (imageUrl) place.image = imageUrl;
-      const street = usefulStreetAddress(item.address, item.city, item.country);
-      if (street || item.city || item.country) {
+      if (item.city || item.country) {
         place.address = {
           "@type": "PostalAddress",
-          ...(street ? { streetAddress: street } : {}),
           ...(item.city ? { addressLocality: item.city } : {}),
           ...(item.country ? { addressCountry: item.country } : {}),
         };
@@ -507,7 +511,7 @@ export default async function WorkspacesPage({
               })}
             </div>
             <div className="mt-8 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
-              <WaitlistInline source="workspaces-list-above-fold" heading="Get a shortlist for this search instead of bouncing" description="This index is long. If you already know the city or type you need, leave an email — we only write when a listed price or Wi-Fi value matches. No extra page." compact />
+              <WaitlistInline source="workspaces-list-above-fold" heading="Get a shortlist for this search instead of bouncing" description="This index is a common last stop. If you already picked a city or type, leave an email — we only write when a listed price or Wi-Fi value matches. No extra page." compact context={waitlistContext} />
             </div>
           </div>
         </section>
@@ -526,6 +530,7 @@ export default async function WorkspacesPage({
                     heading="Want this search when a match exists?"
                     description="Leave an email if you want a shortlist once a listing in this city or type has a written description. We do not invent missing copy."
                     compact
+                    context={waitlistContext}
                   />
                 </div>
               </div>
@@ -538,7 +543,7 @@ export default async function WorkspacesPage({
                 </div>
                 {listings.length > 6 && (
                   <div className="my-8 rounded-2xl border border-border bg-card/80 p-5 sm:p-6">
-                    <WaitlistInline source="workspaces-list-mid-grid" heading="Still scanning cards? Grab a shortlist" description="If you are about to leave, drop an email here. We send matching workspaces when price or Wi-Fi is listed — we do not invent missing numbers." compact />
+                    <WaitlistInline source="workspaces-list-mid-grid" heading="Still scanning cards? Grab a shortlist" description="If you are about to leave, drop an email here. We send matching workspaces when price or Wi-Fi is listed — we do not invent missing numbers." compact context={waitlistContext} />
                   </div>
                 )}
                 {listings.length > 6 && (
@@ -572,7 +577,7 @@ export default async function WorkspacesPage({
             <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">Found a workspace you like — or still deciding where to go?</h2>
             <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">Leave your email on this page. We send destination shortlists matched to budget, visa window, and listed Wi-Fi speeds. No fabricated urgency, no spam.</p>
           </div>
-          <WaitlistInline source="workspaces-list" heading="Leave with a shortlist, not a blank tab" description="No extra page. We email city and workspace picks only when listed price or Wi-Fi exists. No fabricated urgency." compact={false} />
+          <WaitlistInline source="workspaces-list" heading="Leave with a shortlist, not a blank tab" description="No extra page. We email city and workspace picks only when listed price or Wi-Fi exists. No fabricated urgency." compact={false} context={waitlistContext} />
         </div>
       </section>
       <Footer />
