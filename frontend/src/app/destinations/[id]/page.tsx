@@ -19,7 +19,7 @@ import { Footer } from "@/components/site/footer";
 import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
 
@@ -147,7 +147,7 @@ export default async function CityDetailPage({
           .maybeSingle(),
         supabase
           .from("listings")
-          .select("id, company_name, company_type, address, city, country, starting_price, wifi_speed, ratings, total_reviews, images, logo_url, about, description, website, tags")
+          .select("id, company_name, company_type, address, city, country, starting_price, wifi_speed, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email")
           .eq("city", city.name)
           .eq("is_public", true)
           .eq("is_active", true)
@@ -795,6 +795,8 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
   const about = usefulListingAbout(listing.about || listing.description, listing.company_name, 180);
   const listedStreet = usefulStreetAddress(listing.address, listing.city, listing.country);
   const listedWebsite = usefulListingWebsite(listing.website);
+  const listedPhone = usefulContactPhone(listing.contact_phone);
+  const listedEmail = usefulContactEmail(listing.contact_email);
   const visibleTags = usefulTags(listing.tags);
   return (
     <Link
@@ -839,8 +841,12 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
             {listedStreet ? `${listedStreet} · ` : ""}
             {listing.city}, {listing.country}
           </p>
-          {listedWebsite && (
-            <p className="mt-1 text-[11px] text-muted-foreground">Official website listed</p>
+          {(listedWebsite || listedPhone || listedEmail) && (
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              {[listedWebsite && "Official website listed", listedPhone && "Phone listed", listedEmail && "Email listed"]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
           )}
           {about ? (
             <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-foreground/70">
