@@ -19,7 +19,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
 
 export const revalidate = 180;
@@ -231,6 +231,7 @@ export default async function WorkspaceDetailPage({
       },
     },
   };
+  const listedStreet = usefulStreetAddress(listing.address, listing.city, listing.country);
   const listedPhone = usefulContactPhone(listing.contact_phone);
   const listedEmail = usefulContactEmail(listing.contact_email);
   const listedWebsite = usefulListingWebsite(listing.website);
@@ -238,10 +239,10 @@ export default async function WorkspaceDetailPage({
   if (images.length > 1) localBusinessJsonLd.image = images;
   else if (primaryImage) localBusinessJsonLd.image = primaryImage;
   if (listedWebsite) localBusinessJsonLd.sameAs = [listedWebsite];
-  if (listing.address || locationParts.length) {
+  if (listedStreet || locationParts.length) {
     localBusinessJsonLd.address = {
       "@type": "PostalAddress",
-      ...(listing.address ? { streetAddress: listing.address } : {}),
+      ...(listedStreet ? { streetAddress: listedStreet } : {}),
       ...(listing.city ? { addressLocality: listing.city } : {}),
       ...(listing.state ? { addressRegion: listing.state } : {}),
       ...(listing.country ? { addressCountry: listing.country } : {}),
@@ -550,10 +551,10 @@ export default async function WorkspaceDetailPage({
                       {listing.capacity}
                     </div>
                   )}
-                  {listing.address && (
+                  {listedStreet && (
                     <div className="flex items-start gap-2.5 text-foreground/80">
                       <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                      {listing.address}
+                      {listedStreet}
                     </div>
                   )}
 
