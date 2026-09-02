@@ -19,7 +19,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingServices, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
 
 export const revalidate = 180;
@@ -271,8 +271,11 @@ export default async function WorkspaceDetailPage({
       reviewCount: Number(listing.total_reviews),
     };
   }
-  if (listing.open_hours) {
-    localBusinessJsonLd.openingHours = String(listing.open_hours);
+  const listedHours = usefulOpenHours(listing.open_hours);
+  if (listedHours.length === 1) {
+    localBusinessJsonLd.openingHours = listedHours[0];
+  } else if (listedHours.length > 1) {
+    localBusinessJsonLd.openingHours = listedHours;
   }
   if (listedPhone) {
     localBusinessJsonLd.telephone = listedPhone;
@@ -291,24 +294,6 @@ export default async function WorkspaceDetailPage({
               "@type": "LocationFeatureSpecification",
               name: "Wi-Fi Speed",
               value: listedWifi,
-            },
-          ]
-        : []),
-      ...(listing.has_24_7_access
-        ? [
-            {
-              "@type": "LocationFeatureSpecification",
-              name: "24/7 Access",
-              value: true,
-            },
-          ]
-        : []),
-      ...(listing.has_standing_desks
-        ? [
-            {
-              "@type": "LocationFeatureSpecification",
-              name: "Standing Desks",
-              value: true,
             },
           ]
         : []),
@@ -444,6 +429,17 @@ export default async function WorkspaceDetailPage({
                 </div>
               )}
 
+              {usefulListingServices(listing.services).length > 0 && (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold">Services</h2>
+                  <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-relaxed text-foreground/80">
+                    {usefulListingServices(listing.services).map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               {related.length > 0 && (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">
@@ -534,10 +530,14 @@ export default async function WorkspaceDetailPage({
                       <span>Wi-Fi speed pending</span>
                     </div>
                   )}
-                  {listing.open_hours ? (
-                    <div className="flex items-center gap-2.5 text-foreground/80">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
-                      {listing.open_hours}
+                  {listedHours.length > 0 ? (
+                    <div className="flex items-start gap-2.5 text-foreground/80">
+                      <Clock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                      <div className="space-y-0.5">
+                        {listedHours.map((line) => (
+                          <div key={line}>{line}</div>
+                        ))}
+                      </div>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2.5 text-muted-foreground/80">

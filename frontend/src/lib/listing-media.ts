@@ -237,3 +237,82 @@ export function usefulListingWebsite(url: string | null | undefined): string | n
   }
   return cleaned;
 }
+
+/**
+ * open_hours is stored as a JSON object on most filled rows
+ * (e.g. {"typical": "Mon-Fri 07:00-19:00"}). Render those keys as labels;
+ * never invent hours. Raw JSON dumped into the sidebar is not usable.
+ */
+export function usefulOpenHours(raw: string | null | undefined): string[] {
+  if (!raw || typeof raw !== "string") return [];
+  const cleaned = raw.replace(/\s+/g, " ").trim();
+  if (!cleaned) return [];
+  const lower = cleaned.toLowerCase();
+  if (["n/a", "na", "tbd", "null", "undefined", "-", "—", "none", "pending", "unknown"].includes(lower)) {
+    return [];
+  }
+
+  const looksLikeHours = (value: string) => {
+    const v = value.replace(/\s+/g, " ").trim();
+    if (v.length < 4 || v.length > 120) return false;
+    return /(\d{1,2}[:.]\d{2}|\d{1,2}\s*(am|pm)|24\s*\/?\s*7|closed|by appointment)/i.test(v);
+  };
+
+  const labelize = (key: string) =>
+    key.replace(/[_-]+/g, " ").replace(/\w/g, (c) => c.toUpperCase()).trim();
+
+  const tryParse = (text: string): unknown => {
+    try {
+      return JSON.parse(text);
+    } catch {
+      return null;
+    }
+  };
+
+  const parsed = cleaned.startsWith("{") || cleaned.startsWith("[") ? tryParse(cleaned) : null;
+
+  if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+    const lines: string[] = [];
+    for (const [key, value] of Object.entries(parsed as Record<string, unknown>)) {
+      if (typeof value !== "string") continue;
+      if (!looksLikeHours(value)) continue;
+      const label = labelize(key);
+      lines.push(label && label.toLowerCase() !== "typical" ? `${label}: ${value.trim()}` : value.trim());
+    }
+    return lines.slice(0, 6);
+  }
+
+  if (Array.isArray(parsed)) {
+    return parsed
+      .filter((item): item is string => typeof item === "string" && looksLikeHours(item))
+      .map((item) => item.replace(/\s+/g, " ").trim())
+      .slice(0, 6);
+  }
+
+  if (looksLikeHours(cleaned) && !cleaned.startsWith("{")) {
+    return [cleaned];
+  }
+  return [];
+}
+
+/**
+ * services is a JSON array string on a handful of rows. Show only real strings.
+ * Never invent amenities.
+ */
+export function usefulListingServices(raw: string | null | undefined): string[] {
+  if (!raw || typeof raw !== "string") return [];
+  const cleaned = raw.trim();
+  if (!cleaned) return [];
+  let parsed: unknown = null;
+  try {
+    parsed = JSON.parse(cleaned);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(parsed)) return [];
+  return parsed
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.replace(/\s+/g, " ").trim())
+    .filter((item) => item.length >= 3 && item.length <= 140)
+    .slice(0, 12);
+}
