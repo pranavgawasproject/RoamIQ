@@ -173,14 +173,25 @@ export default function Page() {
           <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
             <WaitlistInline
               source="homepage_after_hero"
-              heading="Want a shortlist instead of bouncing after the hero?"
-              description="Most visits end on this homepage. Leave an email here if you already have a city in mind — we send workspace picks only when a listed description, price, or photo exists. No extra page, no fabricated urgency."
+              askCity
+              heading="Leaving after the homepage? Send the city you are considering."
+              description="Most sessions start and end here. Email is enough; add a city if you have one. We only write when a listed workspace description, price, or photo exists for that place. No extra page, no fabricated urgency."
             />
           </div>
         </section>
         <Features />
         <DestinationsPreview />
         <WorkspacesPreview />
+        <section className="border-y border-border bg-secondary/30">
+          <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
+            <WaitlistInline
+              source="homepage_after_workspaces_preview"
+              askCity
+              heading="Scanned the preview cards and still leaving?"
+              description="The homepage is the highest-exit landing page. Leave an email and optional city so a shortlist can follow — only for listings that already have a description, price, or photo."
+            />
+          </div>
+        </section>
         <WhyRoamIQ />
         <CTA />
       </main>
