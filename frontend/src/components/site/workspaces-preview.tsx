@@ -14,15 +14,19 @@ function getCardImage(listing: Listing): string | null {
   return firstUsableListingImage(listing.images, listing.logo_url);
 }
 
-function usefulAboutSnippet(about: string | null | undefined, companyName?: string | null): string | null {
-  return usefulListingAbout(about, companyName, 160);
+function usefulAboutSnippet(
+  about: string | null | undefined,
+  description?: string | null,
+  companyName?: string | null
+): string | null {
+  return usefulListingAbout(about || description, companyName, 160);
 }
 
 export async function WorkspacesPreview() {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, company_name, company_type, city, country, starting_price, wifi_speed, ratings, total_reviews, images, logo_url, about"
+      "id, company_name, company_type, city, country, starting_price, wifi_speed, ratings, total_reviews, images, logo_url, about, description"
     )
     .eq("is_public", true)
     .eq("is_active", true)
@@ -30,7 +34,7 @@ export async function WorkspacesPreview() {
     .limit(24);
 
   const listings = ((data ?? []) as Listing[])
-    .filter((row) => usefulAboutSnippet(row.about, row.company_name) || getCardImage(row))
+    .filter((row) => usefulAboutSnippet(row.about, row.description, row.company_name) || getCardImage(row))
     .slice(0, 4);
 
   if (listings.length === 0) return null;
@@ -78,7 +82,7 @@ export async function WorkspacesPreview() {
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {listings.map((listing) => {
             const imageUrl = getCardImage(listing);
-            const about = usefulAboutSnippet(listing.about, listing.company_name);
+            const about = usefulAboutSnippet(listing.about, listing.description, listing.company_name);
             const reviewCount = Number(listing.total_reviews ?? 0);
             const ratingValue = Number(listing.ratings ?? 0);
             const showRating = ratingValue > 0 && reviewCount > 0;

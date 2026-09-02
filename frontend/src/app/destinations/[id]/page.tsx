@@ -147,7 +147,7 @@ export default async function CityDetailPage({
           .maybeSingle(),
         supabase
           .from("listings")
-          .select("id, company_name, company_type, address, city, country, starting_price, wifi_speed, ratings, total_reviews, images, logo_url, about, website, tags")
+          .select("id, company_name, company_type, address, city, country, starting_price, wifi_speed, ratings, total_reviews, images, logo_url, about, description, website, tags")
           .eq("city", city.name)
           .eq("is_public", true)
           .eq("is_active", true)
@@ -274,7 +274,7 @@ export default async function CityDetailPage({
   };
 
   const visibleListingItems = typedListings.map((listing, index) => {
-    const aboutSnippet = usefulListingAbout(listing.about, listing.company_name, 180);
+    const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 180);
     const imageUrl = firstUsableListingImage(listing.images, listing.logo_url);
     const item: Record<string, unknown> = {
       "@type": "ListItem",
@@ -790,7 +790,7 @@ function usefulTags(tags: string[] | null | undefined): string[] {
 
 function DestinationListingCard({ listing }: { listing: Listing }) {
   const img = getCardImage(listing);
-  const about = usefulListingAbout(listing.about, listing.company_name, 180);
+  const about = usefulListingAbout(listing.about || listing.description, listing.company_name, 180);
   const visibleTags = usefulTags(listing.tags);
   return (
     <Link
