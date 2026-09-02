@@ -19,7 +19,7 @@ import { Footer } from "@/components/site/footer";
 import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulListingAbout, usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
 
@@ -793,6 +793,8 @@ function usefulTags(tags: string[] | null | undefined): string[] {
 function DestinationListingCard({ listing }: { listing: Listing }) {
   const img = getCardImage(listing);
   const about = usefulListingAbout(listing.about || listing.description, listing.company_name, 180);
+  const listedStreet = usefulStreetAddress(listing.address, listing.city, listing.country);
+  const listedWebsite = usefulListingWebsite(listing.website);
   const visibleTags = usefulTags(listing.tags);
   return (
     <Link
@@ -834,10 +836,10 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
             {listing.company_name}
           </h3>
           <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-            {listing.address ? `${listing.address} · ` : ""}
+            {listedStreet ? `${listedStreet} · ` : ""}
             {listing.city}, {listing.country}
           </p>
-          {listing.website && /^https?:\/\//i.test(listing.website.trim()) && (
+          {listedWebsite && (
             <p className="mt-1 text-[11px] text-muted-foreground">Official website listed</p>
           )}
           {about ? (
