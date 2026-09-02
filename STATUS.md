@@ -1,3 +1,9 @@
+## 2026-09-02 ~04:15 UTC — gate city-only street addresses on listing views
+
+Track A (data integrity): `usefulStreetAddress` already existed, but `/workspaces` card fallback and `/workspaces/[id]` sidebar + LocalBusiness `streetAddress` still printed raw `listing.address` (city/province-only rows). Both views now hide those rows and omit them from schema. No fabricated streets. About/images already render. Price/Wi-Fi pending UI unchanged. Admin auth already env + httpOnly cookie. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-01→2026-08-31 (`https://nomads-travel-indol.vercel.app/`): query `4g-travel-tool.vercel.app` 3 clicks / 33 impr / pos ~2.9 — FLAG only; not this property; no redirect. Branded `roamiq` 1 click / 64 impr / pos ~6.4 / CTR 1.6%. Other clicks: coliving athens, izzys coffee and brunch, ngb living. Sitemap 48 submitted / 0 indexed (pending). GA4 `541610896` Aug 2026: `/` 151 sess bounce 79.5%; `/workspaces` landing 9 / 88.9%; `/destinations` 9 / 77.8%. Listings project `davvpymbybvniexmkgcu` SQL 403 this run — using last known 8,276 rows (about empty 5,850; price empty 3,637; phone empty 7,810; email empty 8,067). Branded CTR capped until the custom domain is live.
+
 ## 2026-09-02 ~03:50 UTC — gate listing phone, email, and website
 
 Track A (data integrity + conversion): about/images already render; admin auth is env + httpOnly cookie; price/Wi-Fi pending UI exists; JSON-LD already exists. Contact fields were printed and schema-emitted raw, including registry IDs (`0000662624`), truncated fragments (`0730641943 02123`), and TikTok URLs as "Visit website". Added `usefulContactPhone` / `usefulContactEmail` / `usefulListingWebsite` and used them on `/workspaces/[id]` UI + LocalBusiness schema. Workspaces OG copy no longer claims "verified Wi-Fi speeds". No fabricated contacts. Did not rewrite DB rows. Sitemap not resubmitted.
