@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulListingAbout, usefulStartingPrice, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulListingAbout, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -242,11 +242,11 @@ function ListingCard({ listing }: { listing: Listing }) {
         {usefulTitle(listing.company_title, listing.company_name) && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulTitle(listing.company_title, listing.company_name)}</p>}
         {(() => {
           const aboutSnippet = usefulAboutSnippet(listing.about || listing.description, listing.company_name);
-          const addressSnippet = (listing.address || "").replace(/\s+/g, " ").trim();
+          const addressSnippet = usefulStreetAddress(listing.address, listing.city, listing.country);
           if (aboutSnippet) {
             return <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{aboutSnippet}</p>;
           }
-          if (addressSnippet.length >= 8) {
+          if (addressSnippet) {
             return <p className="mt-1 text-sm text-foreground/70 line-clamp-2">{addressSnippet}</p>;
           }
           return <p className="mt-1 text-sm text-muted-foreground">Description pending</p>;
