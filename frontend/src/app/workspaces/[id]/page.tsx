@@ -557,15 +557,6 @@ export default async function WorkspaceDetailPage({
                       {listedStreet}
                     </div>
                   )}
-
-
-                      {listing.has_standing_desks && (
-                        <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
-                          ✓ Standing Desks
-                        </span>
-                      )}
-                    </div>
-                  )}
                 </div>
 
                 <div className="mt-6 space-y-2 border-t border-border pt-4">
