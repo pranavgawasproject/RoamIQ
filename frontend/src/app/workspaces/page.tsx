@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulWifiSpeed } from "@/lib/listing-media";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -179,21 +179,8 @@ function usefulTitle(title: string | null | undefined, companyName?: string | nu
 }
 
 function usefulTags(tags: string[] | null | undefined): string[] {
-  if (!Array.isArray(tags)) return [];
-  const seen = new Set<string>();
-  const out: string[] = [];
-  for (const raw of tags) {
-    if (typeof raw !== "string") continue;
-    const cleaned = raw.replace(/\s+/g, " ").trim();
-    if (cleaned.length < 2 || cleaned.length > 32) continue;
-    const key = cleaned.toLowerCase();
-    if (seen.has(key)) continue;
-    if (/https?:\/\//i.test(cleaned)) continue;
-    seen.add(key);
-    out.push(cleaned);
-    if (out.length >= 4) break;
-  }
-  return out;
+  return usefulListingTags(tags);
+
 }
 
 function ListingCard({ listing }: { listing: Listing }) {

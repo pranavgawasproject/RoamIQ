@@ -19,7 +19,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingServices, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingServices, usefulListingTags, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
 
 export const revalidate = 180;
@@ -173,7 +173,7 @@ export default async function WorkspaceDetailPage({
     )
   );
 
-  const tags: string[] = Array.isArray(listing.tags) ? listing.tags : [];
+  const tags: string[] = usefulListingTags(listing.tags);
 
   const locationParts = [listing.city, listing.state, listing.country].filter(Boolean);
   const pageUrl = `${BASE_URL}/workspaces/${listing.id}`;

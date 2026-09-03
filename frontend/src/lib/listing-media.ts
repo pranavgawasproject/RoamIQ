@@ -355,3 +355,47 @@ export function usefulListingServices(raw: string | null | undefined): string[] 
 export function usefulVenueAmenityFlag(_value: boolean | null | undefined): false {
   return false;
 }
+
+const TYPE_OR_FACTORY_TAGS = new Set([
+  "coworking",
+  "coliving",
+  "workation",
+  "hostel",
+  "cafe",
+  "coffee",
+  "coffee shop",
+  "meetingroom",
+  "meeting room",
+  "workspace",
+  "24/7",
+  "24/7 access",
+  "24-7 access",
+  "standing desk",
+  "standing desks",
+  "site logo",
+]);
+
+/**
+ * Tags shown as amenities. Drops category labels and factory 24/7 / standing-desk
+ * strings that are not venue-reported. Never invents replacements.
+ */
+export function usefulListingTags(tags: string[] | null | undefined): string[] {
+  if (!Array.isArray(tags)) return [];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of tags) {
+    if (typeof raw !== "string") continue;
+    const cleaned = raw.replace(/\s+/g, " ").trim();
+    if (cleaned.length < 2 || cleaned.length > 32) continue;
+    const key = cleaned.toLowerCase();
+    if (seen.has(key)) continue;
+    if (/https?:\/\//i.test(cleaned)) continue;
+    if (TYPE_OR_FACTORY_TAGS.has(key)) continue;
+    if (/24\s*\/?\s*7/.test(key) && /access/.test(key)) continue;
+    if (/standing\s*desk/.test(key)) continue;
+    seen.add(key);
+    out.push(cleaned);
+    if (out.length >= 6) break;
+  }
+  return out;
+}
