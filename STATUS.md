@@ -1,3 +1,9 @@
+## 2026-09-03 ~04:10 UTC — daily growth/conversion (Track A)
+
+Gap fixed: about/images already render; price/Wi-Fi pending UI and per-listing JSON-LD already exist; admin auth is env + httpOnly cookie. Remaining integrity hole: listing detail Amenities + JSON-LD amenityFeature used raw listing.tags, so category labels (coworking) and factory strings (24/7 Access, Standing Desks) still printed. Added usefulListingTags and wired it on /workspaces/[id] and the index card helper. No invented amenities. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-04→2026-09-01 (`https://nomads-travel-indol.vercel.app/`): homepage 4 clicks / 178 impressions / pos ~5.7. Top query `4g-travel-tool.vercel.app` 3/26 / pos 3.0 — FLAG only; host is not a GSC property on this account; no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living. No branded `roamiq` in the top-50 queries this window. GA4 last logged (`541610896`): `/` ~155 sessions bounce ~80%; `/workspaces` ~9 / ~89%. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-03 — daily growth/conversion (Track A)
 
 Gap fixed: `about`/`images` already render on listing cards, but many about snippets were scraped chrome (contact dumps, site logo, booking terms). Tightened `usefulListingAbout` to drop noisy sentences and fall back to pending instead of junk — no fabricated copy. Sitemap not resubmitted (no new routes).
