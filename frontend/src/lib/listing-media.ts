@@ -1,1 +1,34 @@
-see-file
+export function isUsableImageUrl(url: string | null | undefined): url is string {
+  if (!url || typeof url !== "string") return false;
+  const trimmed = url.trim();
+  if (!trimmed || !/^https?:\/\//i.test(trimmed)) return false;
+
+  let host = "";
+  try {
+    host = new URL(trimmed).hostname.toLowerCase();
+  } catch {
+    return false;
+  }
+
+  const blockedExact = new Set([
+    "wallpapers.com",
+    "www.wallpapers.com",
+    "wallpaperaccess.com",
+    "www.wallpaperaccess.com",
+    "images.alphacoders.com",
+    "wallpapercave.com",
+    "www.wallpapercave.com",
+    "i.ytimg.com",
+    "img.youtube.com",
+    "tiktok.com",
+    "www.tiktok.com",
+  ]);
+  if (blockedExact.has(host)) return false;
+  if (host.endsWith(".tiktokcdn.com") || host.endsWith(".tiktok.com")) return false;
+  if (host.includes("wallpaper")) return false;
+
+  const path = trimmed.toLowerCase();
+  if (/(disney|mickey-mouse|cartoon-wallpaper|4k-ultra-wide)/i.test(path)) return false;
+
+  return true;
+}
