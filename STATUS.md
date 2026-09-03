@@ -1,3 +1,9 @@
+## 2026-09-03 ~03:37 UTC — finish factory amenity badge removal on listing detail
+
+Track A (data integrity): about/images already render; price/Wi-Fi pending UI exists; admin auth is env + httpOnly cookie; per-listing JSON-LD exists. Yesterday’s hide of factory amenity flags left an orphaned Standing Desks span on `/workspaces/[id]`, so the live sidebar still printed unverified desk badges. Removed the leftover JSX. No invented amenities. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-03→2026-09-02 (`https://nomads-travel-indol.vercel.app/`): query `4g-travel-tool.vercel.app` 3 clicks / 26 imp / pos ~3.0 — FLAG only; URL is not this GSC property; no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-03 ~03:37 UTC — show verified contact on homepage workspace preview
 
 Track A (conversion): about/images already render; price/Wi-Fi pending UI exists; admin auth is env + httpOnly cookie; per-listing JSON-LD exists on detail; `/workspaces` cards already show gated Official site / Call / Email. Remaining gap: homepage (`/` ~154 sess, bounce ~80%) preview selected no website/phone/email. Preview query now selects those columns and chips render only when usefulListingWebsite / usefulContactPhone / usefulContactEmail pass. Preview waitlist asks for city. No invented contacts. Sitemap not resubmitted.
