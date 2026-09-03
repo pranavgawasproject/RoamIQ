@@ -80,6 +80,18 @@ const ABOUT_NOISE = [
   "latest from our blog",
   "потеряшки",
   "забывают драгоценные вещи",
+  "site logo",
+  "site photo",
+  "contact us today",
+  "after booking, all of the property",
+  "a valid credit card is required",
+  "free cancellation",
+  "we're currently refreshing our website",
+  "vat number",
+  "owned by",
+  "join today",
+  "view on google maps",
+  "search all coworking",
 ];
 
 /**
@@ -87,6 +99,18 @@ const ABOUT_NOISE = [
  * OTA/review-site chrome, YouTube descriptions, and contact-dump pages are not a listing description.
  * Never invent replacement text — callers should show a pending state.
  */
+function isNoisyAboutChunk(chunk: string): boolean {
+  const lower = chunk.toLowerCase();
+  if (ABOUT_NOISE.some((n) => lower.includes(n))) return true;
+  if (/\b\d{1,3}(,\d{3})+\s+views\b/i.test(chunk)) return true;
+  if (/ranked\s+#\d+/i.test(chunk)) return true;
+  if (/\b\d+\s+reviews?\b/i.test(lower) && /rating\s*:/i.test(lower)) return true;
+  const emailHits = lower.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/g) || [];
+  if (emailHits.length >= 2) return true;
+  if (/\b(tel|phone|whatsapp)\b/i.test(lower) && emailHits.length >= 1) return true;
+  return false;
+}
+
 export function usefulListingAbout(
   about: string | null | undefined,
   companyName?: string | null,
@@ -98,13 +122,19 @@ export function usefulListingAbout(
   const lower = cleaned.toLowerCase();
   const name = (companyName || "").replace(/\s+/g, " ").trim().toLowerCase();
   if (name && (lower === name || lower === `${name}.`)) return null;
-  if (ABOUT_NOISE.some((n) => lower.includes(n))) return null;
-  const emailHits = lower.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/g) || [];
-  if (emailHits.length >= 2) return null;
-  if (/\b\d{1,3}(,\d{3})+\s+views\b/i.test(cleaned)) return null;
-  if (/ranked\s+#\d+/i.test(cleaned)) return null;
-  if (maxLen > 0) return cleaned.slice(0, maxLen);
-  return cleaned;
+  const sentences = cleaned.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter((s) => s.length >= 40);
+  const picked: string[] = [];
+  for (const sentence of sentences.length ? sentences : [cleaned]) {
+    if (isNoisyAboutChunk(sentence)) continue;
+    picked.push(sentence);
+    const joined = picked.join(" ");
+    if (maxLen > 0 && joined.length >= maxLen) break;
+    if (maxLen === 0 && picked.length >= 2) break;
+  }
+  if (!picked.length) return null;
+  const visible = picked.join(" ");
+  if (maxLen > 0) return visible.slice(0, maxLen);
+  return visible;
 }
 
 /**

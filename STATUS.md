@@ -1,3 +1,9 @@
+## 2026-09-03 — daily growth/conversion (Track A)
+
+Gap fixed: `about`/`images` already render on listing cards, but many about snippets were scraped chrome (contact dumps, site logo, booking terms). Tightened `usefulListingAbout` to drop noisy sentences and fall back to pending instead of junk — no fabricated copy. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-04→2026-09-01 (`https://nomads-travel-indol.vercel.app/`): dated rows 10 clicks / 2,091 impressions. Top query `4g-travel-tool.vercel.app` 3/26 / pos 3.0 — FLAG only; host is not a GSC property here; no redirect. Other clicks: coliving athens, izzy's coffee, ngb living. No branded `roamiq` in top-50 queries this window. GA4 `541610896` 30d: `/` 155 sessions bounce 80%; `/workspaces` 9 / 88.9%; `/destinations` 9 / 77.8%. Listings `davvpymbybvniexmkgcu`: 8,276 rows; about empty 5,850 (70.7%) / filled 2,426; images filled 8,268; starting_price empty 3,637 (44.0%); wifi_speed column non-null (templates gated in UI); phone empty 7,810; logo empty 6,013; email empty 8,067. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-03 ~03:37 UTC — finish factory amenity badge removal on listing detail
 
 Track A (data integrity): about/images already render; price/Wi-Fi pending UI exists; admin auth is env + httpOnly cookie; per-listing JSON-LD exists. Yesterday’s hide of factory amenity flags left an orphaned Standing Desks span on `/workspaces/[id]`, so the live sidebar still printed unverified desk badges. Removed the leftover JSX. No invented amenities. Sitemap not resubmitted (no new routes).
