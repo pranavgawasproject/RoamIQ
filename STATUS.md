@@ -1,3 +1,9 @@
+## 2026-09-04 — daily growth/conversion (Track A)
+
+Gap fixed: yesterday's hide-duplicate-titles commit replaced frontend/src/lib/listing-media.ts with a PLACEHOLDER, which would break every listing view. Restored the helpers and implemented the intended gates: usefulListingTitle hides name-duplicate / category subtitles; usefulListingInclusions and usefulListingServices drop factory amenity dumps (24/7 Access, Standing Desks, templated Wi-Fi labels). Wired on /workspaces cards and /workspaces/[id]. No fabricated copy. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-04 to 2026-09-03 (https://nomads-travel-indol.vercel.app/): homepage 4 clicks / 181 impressions / pos ~5.7. Top query 4g-travel-tool.vercel.app 3/26 / pos 3.0 — FLAG only; host is not a GSC property on this account; no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living. No branded roamiq in the top-20 queries this window. GA4 541610896 30d landings: / 156 sessions bounce 80.1%; /workspaces 9 / 88.9%; /destinations 9 / 77.8%. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-03 ~04:10 UTC — daily growth/conversion (Track A)
 
 Gap fixed: about/images already render; price/Wi-Fi pending UI and per-listing JSON-LD already exist; admin auth is env + httpOnly cookie. Remaining integrity hole: listing detail Amenities + JSON-LD amenityFeature used raw listing.tags, so category labels (coworking) and factory strings (24/7 Access, Standing Desks) still printed. Added usefulListingTags and wired it on /workspaces/[id] and the index card helper. No invented amenities. Sitemap not resubmitted (no new routes).

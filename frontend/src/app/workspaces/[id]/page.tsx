@@ -19,7 +19,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingServices, usefulListingTags, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
 
 export const revalidate = 180;
@@ -351,9 +351,9 @@ export default async function WorkspaceDetailPage({
                 <h1 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
                   {listing.company_name}
                 </h1>
-                {listing.company_title && (
+                {usefulListingTitle(listing.company_title, listing.company_name) && (
                   <p className="mt-2 text-lg text-muted-foreground">
-                    {listing.company_title}
+                    {usefulListingTitle(listing.company_title, listing.company_name)}
                   </p>
                 )}
 
@@ -419,12 +419,12 @@ export default async function WorkspaceDetailPage({
                 </div>
               )}
 
-              {/* Inclusions */}
-              {listing.inclusions && (
+              {/* Inclusions — factory amenity dumps stay hidden */}
+              {usefulListingInclusions(listing.inclusions) && (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">Included</h2>
                   <p className="mt-3 leading-relaxed text-foreground/80">
-                    {listing.inclusions}
+                    {usefulListingInclusions(listing.inclusions)}
                   </p>
                 </div>
               )}

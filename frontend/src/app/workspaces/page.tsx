@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulWifiSpeed } from "@/lib/listing-media";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -169,14 +169,6 @@ function usefulAboutSnippet(about: string | null | undefined, companyName?: stri
 }
 
 
-function usefulTitle(title: string | null | undefined, companyName?: string | null): string | null {
-  if (!title) return null;
-  const cleaned = title.replace(/\s+/g, " ").trim();
-  if (!cleaned) return null;
-  const name = (companyName || "").replace(/\s+/g, " ").trim();
-  if (name && cleaned.toLowerCase() === name.toLowerCase()) return null;
-  return cleaned;
-}
 
 function usefulTags(tags: string[] | null | undefined): string[] {
   return usefulListingTags(tags);
@@ -229,7 +221,7 @@ function ListingCard({ listing }: { listing: Listing }) {
         <h3 className="font-serif text-lg font-semibold tracking-tight line-clamp-1">
           <Link href={`/workspaces/${listing.id}`} className="hover:text-accent transition-colors">{listing.company_name}</Link>
         </h3>
-        {usefulTitle(listing.company_title, listing.company_name) && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulTitle(listing.company_title, listing.company_name)}</p>}
+        {usefulListingTitle(listing.company_title, listing.company_name) && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulListingTitle(listing.company_title, listing.company_name)}</p>}
         {(() => {
           const aboutSnippet = usefulAboutSnippet(listing.about || listing.description, listing.company_name);
           const addressSnippet = usefulStreetAddress(listing.address, listing.city, listing.country);
