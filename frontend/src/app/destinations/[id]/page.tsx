@@ -19,7 +19,7 @@ import { Footer } from "@/components/site/footer";
 import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
 
@@ -369,9 +369,11 @@ export default async function CityDetailPage({
             <div className="max-w-xl rounded-2xl border border-border bg-card/90 p-4 sm:p-5">
               <WaitlistInline
                 source="destination_detail_after_hero"
+                askCity
                 heading={`Get ${typedCity.name} updates without bouncing around`}
-                description="Cost, visa notes, and listed workspaces are already on this page. Leave an email if you want a short follow-up when we add a stay or speed for this city — no extra tab."
+                description="Cost, visa notes, and listed workspaces are already on this page. Leave an email and optional city if you want a short follow-up when a stay in this place has a listed price, photo, or description — no extra tab."
                 compact
+                context={{ city: typedCity.name, country: typedCity.country }}
               />
             </div>
           </div>
@@ -773,21 +775,7 @@ function getCardImage(listing: Listing): string | null {
 
 
 function usefulTags(tags: string[] | null | undefined): string[] {
-  if (!Array.isArray(tags)) return [];
-  const seen = new Set<string>();
-  const out: string[] = [];
-  for (const raw of tags) {
-    if (typeof raw !== "string") continue;
-    const cleaned = raw.replace(/\s+/g, " ").trim();
-    if (cleaned.length < 2 || cleaned.length > 32) continue;
-    const key = cleaned.toLowerCase();
-    if (seen.has(key)) continue;
-    if (/https?:\/\//i.test(cleaned)) continue;
-    seen.add(key);
-    out.push(cleaned);
-    if (out.length >= 4) break;
-  }
-  return out;
+  return usefulListingTags(tags);
 }
 
 function DestinationListingCard({ listing }: { listing: Listing }) {
