@@ -1,3 +1,7 @@
+## 2026-09-04 ~03:38 UTC — restore workspace detail after placeholder overwrite
+
+Track A follow-up: commit 4876516 briefly replaced `frontend/src/app/workspaces/[id]/page.tsx` with PLACEHOLDER (11 bytes). Restored the full page from last good source and wired `usefulListingTitle` + `usefulListingInclusions` so duplicate subtitles and factory inclusion lists stay hidden. Index already uses `usefulListingTitle`. Sitemap not resubmitted.
+
 ## 2026-09-04 — daily growth/conversion (Track A)
 
 Gap fixed: yesterday's hide-duplicate-titles commit replaced frontend/src/lib/listing-media.ts with a PLACEHOLDER, which would break every listing view. Restored the helpers and implemented the intended gates: usefulListingTitle hides name-duplicate / category subtitles; usefulListingInclusions and usefulListingServices drop factory amenity dumps (24/7 Access, Standing Desks, templated Wi-Fi labels). Wired on /workspaces cards and /workspaces/[id]. No fabricated copy. Sitemap not resubmitted (no new routes).
