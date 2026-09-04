@@ -69,6 +69,7 @@ async function getListings(params: {
   min_wifi?: string;
   described?: string;
   priced?: string;
+  photographed?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -114,6 +115,7 @@ async function getListings(params: {
         .neq("starting_price", "N/A")
         .neq("starting_price", "TBD");
     }
+    const photographedOnly = params.photographed === "1";
     const unfilteredFirstPage =
       page === 1 &&
       !params.search &&
@@ -122,13 +124,15 @@ async function getListings(params: {
       !params.country &&
       !params.min_wifi &&
       params.described !== "1" &&
-      params.priced !== "1";
+      params.priced !== "1" &&
+      !photographedOnly;
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
-    const fetchTo = unfilteredFirstPage ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+    const fetchTo =
+      unfilteredFirstPage || photographedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -137,6 +141,14 @@ async function getListings(params: {
       return { listings: [] as Listing[], count: 0, page };
     }
     const rows = (data ?? []) as Listing[];
+    if (photographedOnly) {
+      // images[] is populated on almost every row; only keep cards whose
+      // photo already passes firstUsableListingImage (same gate as the UI).
+      const withPhoto = rows.filter((listing) =>
+        Boolean(firstUsableListingImage(listing.images, listing.logo_url))
+      );
+      return { listings: withPhoto.slice(0, PAGE_SIZE), count: withPhoto.length, page };
+    }
     if (!unfilteredFirstPage) {
       return { listings: rows, count: count ?? 0, page };
     }
@@ -323,7 +335,7 @@ function ListingCard({ listing }: { listing: Listing }) {
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -339,6 +351,7 @@ export default async function WorkspacesPage({
       min_wifi: params.min_wifi,
       described: params.described,
       priced: params.priced,
+      photographed: params.photographed,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -467,6 +480,10 @@ export default async function WorkspacesPage({
                 <input type="checkbox" name="priced" value="1" defaultChecked={params.priced === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed price
               </label>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="photographed" value="1" defaultChecked={params.photographed === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has usable photo
+              </label>
               <button type="submit" className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Search</button>
             </form>
             <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -482,6 +499,12 @@ export default async function WorkspacesPage({
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.priced === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Has listed price
+              </Link>
+              <Link
+                href={`/workspaces?${filterQs({ photographed: params.photographed === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.photographed === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has usable photo
               </Link>
               {types.filter((t) => t.value).map((t) => {
                 const active = params.type === t.value;
