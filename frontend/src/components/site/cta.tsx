@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
+import { trackEvent } from "@/lib/site";
 
 const perks = [
   "Browse destinations & workspaces free — no account needed",
@@ -32,6 +33,7 @@ export function CTA() {
     if (error) {
       if (error.code === "23505") {
         setStatus("success");
+        trackEvent("waitlist_signup", { source: "homepage_cta", status: "already_subscribed" });
       } else {
         setStatus("error");
         setErrorMsg("Something went wrong. Please try again.");
@@ -40,6 +42,7 @@ export function CTA() {
     }
 
     setStatus("success");
+    trackEvent("waitlist_signup", { source: "homepage_cta", status: "created" });
     setEmail("");
   }
 

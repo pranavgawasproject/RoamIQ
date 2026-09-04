@@ -10,7 +10,7 @@ import { WaitlistInline } from "@/components/site/waitlist-inline";
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Destinations for Digital Nomads — Cost, Visa & Internet | RoamIQ",
+  title: "Digital Nomad Destinations — Cost, Visa & Internet Scores | RoamIQ",
   description:
     "Browse digital nomad destinations ranked by real cost of living, internet speed, safety and visa difficulty. Filter by continent and budget. Plan your next workation on RoamIQ.",
   keywords: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     canonical: `${BASE_URL}/destinations`,
   },
   openGraph: {
-    title: "Destinations for Digital Nomads — Cost, Visa & Internet | RoamIQ",
+    title: "Digital Nomad Destinations — Cost, Visa & Internet Scores | RoamIQ",
     description:
       "Browse digital nomad destinations ranked by real cost of living, internet speed, safety and visa difficulty. Filter by continent and budget.",
     url: `${BASE_URL}/destinations`,

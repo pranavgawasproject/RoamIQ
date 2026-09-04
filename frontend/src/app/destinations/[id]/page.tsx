@@ -47,8 +47,26 @@ export async function generateMetadata({
       };
     }
 
-    const title = `${city.flag ? city.flag + " " : ""}${city.name}, ${city.country} — Digital Nomad Guide | RoamIQ`;
-    const description = `Cost of living, internet speed, visa rules, and lifestyle scores for digital nomads in ${city.name}, ${city.country}. Overall score ${Number(city.overall_score).toFixed(1)}/5 · ~$${Number(city.cost_usd).toLocaleString()}/mo · Visa: ${city.visa_difficulty}.`;
+    // Title without leading emoji for cleaner SERP CTR; keep flag in on-page H1.
+    const costLabel = Number.isFinite(Number(city.cost_usd))
+      ? `~$${Number(city.cost_usd).toLocaleString()}/mo`
+      : null;
+    const scoreLabel = Number.isFinite(Number(city.overall_score))
+      ? `${Number(city.overall_score).toFixed(1)}/5 score`
+      : null;
+    const wifiLabel =
+      Number.isFinite(Number(city.internet_mbps)) && Number(city.internet_mbps) > 0
+        ? `${Math.round(Number(city.internet_mbps))} Mbps Wi-Fi`
+        : null;
+    const visaLabel = city.visa_difficulty
+      ? `Visa: ${city.visa_difficulty}`
+      : null;
+    const factBits = [costLabel, wifiLabel, scoreLabel, visaLabel].filter(Boolean);
+    const title = `${city.name}, ${city.country}: Cost of Living, Visa & Wi-Fi | RoamIQ`;
+    const description =
+      factBits.length > 0
+        ? `RoamIQ guide to ${city.name}, ${city.country} for digital nomads — ${factBits.join(" · ")}. Compare costs, visa rules, and coworking before you move.`
+        : `RoamIQ digital nomad guide to ${city.name}, ${city.country}: cost of living, visa rules, internet, and lifestyle scores — free to browse.`;
     const url = `${BASE_URL}/destinations/${city.id}`;
     const image = city.image || undefined;
 
@@ -337,7 +355,18 @@ export default async function CityDetailPage({
                 {typedCity.flag} {typedCity.name}
               </h1>
               <p className="mt-2 text-lg text-white/85">
-                {typedCity.country} · {typedCity.continent}
+                {typedCity.country} · {typedCity.continent} · Digital nomad guide on RoamIQ
+              </p>
+              <p className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-white/80">
+                <Link href={`/workspaces?city=${encodeURIComponent(typedCity.name)}`} className="underline-offset-4 hover:underline">
+                  Coworking & stays in {typedCity.name}
+                </Link>
+                <Link href="/visa" className="underline-offset-4 hover:underline">
+                  Check visa rules
+                </Link>
+                <Link href="/destinations" className="underline-offset-4 hover:underline">
+                  Compare more destinations
+                </Link>
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">

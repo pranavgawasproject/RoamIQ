@@ -21,6 +21,7 @@ import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
 import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
+import { TrackedAnchor } from "@/components/site/tracked-anchor";
 
 export const revalidate = 180;
 
@@ -93,8 +94,12 @@ export async function generateMetadata({
       };
     }
     const location = [listing.city, listing.state, listing.country].filter(Boolean).join(", ");
-    const title = `${listing.company_name}${location ? ` \u2014 ${location}` : ""} | RoamIQ Workspaces`;
-    const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 140) || "";
+    const cityPart = listing.city ? ` in ${listing.city}` : location ? ` in ${location}` : "";
+    const typeLabel = listing.company_type ? String(listing.company_type) : "Coworking";
+    const title = listing.city
+      ? `${listing.company_name}${cityPart} — ${typeLabel} & Wi-Fi | RoamIQ`
+      : `${listing.company_name}${location ? ` — ${location}` : ""} | RoamIQ Workspaces`;
+    const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 155) || "";
     const extras: string[] = [];
     const listedPrice = usefulStartingPrice(listing.starting_price);
     if (listedPrice) extras.push(listedPrice);
@@ -103,7 +108,7 @@ export async function generateMetadata({
     if (listing.company_type) extras.push(String(listing.company_type));
     const description =
       aboutSnippet ||
-      `${listing.company_name}${location ? ` in ${location}` : ""} \u2014 coworking and workspace details for digital nomads on RoamIQ.${extras.length ? ` ${extras.join(" \u00b7 ")}.` : ""}`;
+      `${listing.company_name}${cityPart} on RoamIQ — workspace details for digital nomads.${extras.length ? ` ${extras.join(" · ")}.` : " Compare Wi-Fi, pricing, and location before you book."}`;
     const url = `${BASE_URL}/workspaces/${listing.id}`;
     const image = firstUsableListingImage(listing.images, listing.logo_url) || undefined;
     return {
@@ -296,6 +301,23 @@ export default async function WorkspaceDetailPage({
                 {usefulListingTitle(listing.company_title, listing.company_name) && (
                   <p className="mt-2 text-lg text-muted-foreground">{usefulListingTitle(listing.company_title, listing.company_name)}</p>
                 )}
+                {listing.city ? (
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    <Link
+                      href={`/destinations?search=${encodeURIComponent(listing.city)}`}
+                      className="font-medium text-foreground underline-offset-4 hover:underline"
+                    >
+                      Explore {listing.city} cost of living & visa data on RoamIQ
+                    </Link>
+                    {" · "}
+                    <Link
+                      href={`/workspaces?city=${encodeURIComponent(listing.city)}`}
+                      className="underline-offset-4 hover:underline"
+                    >
+                      More workspaces in {listing.city}
+                    </Link>
+                  </p>
+                ) : null}
                 <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-foreground/70">
                   <span className="inline-flex items-center gap-1.5">
                     <MapPin className="h-4 w-4" />
@@ -465,20 +487,30 @@ export default async function WorkspaceDetailPage({
                 <div className="mt-6 space-y-2 border-t border-border pt-4">
                   <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Contact</p>
                   {listedPhone ? (
-                    <a href={`tel:${listedPhone.replace(/\s+/g, "")}`} className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent transition-colors">
+                    <TrackedAnchor
+                      href={`tel:${listedPhone.replace(/\s+/g, "")}`}
+                      eventName="contact_workspace"
+                      eventParams={{ method: "phone", workspace_id: listing.id, city: listing.city || undefined }}
+                      className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent transition-colors"
+                    >
                       <Phone className="h-4 w-4 shrink-0 text-muted-foreground" />
                       <span>{listedPhone}</span>
-                    </a>
+                    </TrackedAnchor>
                   ) : (
                     <p className="flex items-center gap-2.5 text-sm text-muted-foreground/80">
                       <Phone className="h-4 w-4 shrink-0" /> Phone not listed yet
                     </p>
                   )}
                   {listedEmail ? (
-                    <a href={`mailto:${listedEmail}`} className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent transition-colors">
+                    <TrackedAnchor
+                      href={`mailto:${listedEmail}`}
+                      eventName="contact_workspace"
+                      eventParams={{ method: "email", workspace_id: listing.id, city: listing.city || undefined }}
+                      className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent transition-colors"
+                    >
                       <Mail className="h-4 w-4 shrink-0 text-muted-foreground" />
-                      <span className="break-all">{listedEmail}</span>
-                    </a>
+                      <span className="truncate">{listedEmail}</span>
+                    </TrackedAnchor>
                   ) : (
                     <p className="flex items-center gap-2.5 text-sm text-muted-foreground/80">
                       <Mail className="h-4 w-4 shrink-0" /> Email not listed yet
