@@ -24,13 +24,16 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-const BASE_URL = "https://nomads-travel-indol.vercel.app";
+const BASE_URL = "https://nomads-travel-indol.vercel.app"; // primary host for canonicals; no hard 301 to/from secondary
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
+  title: {
+    default: "RoamIQ — Digital Nomad Visa, Cost of Living & Coworking Guides",
+    template: "%s | RoamIQ",
+  },
   description:
-    "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads — searchable by city, free to browse, no signup required.",
+    "RoamIQ is the digital nomad platform for visa rules, live cost of living, Wi-Fi scores, and vetted coworking in 200+ cities — free to browse, no signup required.",
   keywords: [
     "roamiq",
     "roam iq",
@@ -59,9 +62,9 @@ export const metadata: Metadata = {
     apple: "/logo.svg",
   },
   openGraph: {
-    title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
+    title: "RoamIQ — Digital Nomad Visa, Cost of Living & Coworking Guides",
     description:
-      "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads — searchable by city, free to browse, no signup required.",
+      "Compare visa rules, monthly costs, Wi-Fi, and vetted coworking spaces with RoamIQ — built for digital nomads planning their next workation.",
     siteName: "RoamIQ",
     type: "website",
     url: BASE_URL,
@@ -70,15 +73,15 @@ export const metadata: Metadata = {
         url: "/logo.svg",
         width: 512,
         height: 512,
-        alt: "RoamIQ Digital Nomad Travel Platform",
+        alt: "RoamIQ — digital nomad visa, cost of living, and coworking",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
+    title: "RoamIQ — Digital Nomad Visa, Cost of Living & Coworking Guides",
     description:
-      "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads — searchable by city, free to browse, no signup required.",
+      "Compare visa rules, monthly costs, Wi-Fi, and vetted coworking spaces with RoamIQ — free to browse for digital nomads.",
     creator: "@pranavgawas",
     images: ["/logo.svg"],
   },

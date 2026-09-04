@@ -12,16 +12,19 @@ import { WaitlistInline } from "@/components/site/waitlist-inline";
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 export const metadata: Metadata = {
-  title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
+  // Absolute title (not template) for brand query "roamiq" CTR
+  title: {
+    absolute: "RoamIQ — Digital Nomad Visa, Cost of Living & Coworking Guides",
+  },
   description:
-    "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads — searchable by city, free to browse, no signup required.",
+    "RoamIQ helps digital nomads compare visa rules, monthly living costs, Wi-Fi speeds, and vetted coworking in 200+ cities. Free to browse — no signup required.",
   alternates: {
-    canonical: BASE_URL,
+    canonical: BASE_URL, // primary host; secondary vercel host stays live (no 301)
   },
   openGraph: {
-    title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
+    title: "RoamIQ — Digital Nomad Visa, Cost of Living & Coworking Guides",
     description:
-      "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads — searchable by city, free to browse, no signup required.",
+      "Plan your next workation with RoamIQ: visa intelligence, cost of living, and coworking spaces for digital nomads — free to browse.",
     url: BASE_URL,
     siteName: "RoamIQ",
     type: "website",
@@ -30,15 +33,15 @@ export const metadata: Metadata = {
         url: `${BASE_URL}/logo.svg`,
         width: 512,
         height: 512,
-        alt: "RoamIQ Digital Nomad Operating System",
+        alt: "RoamIQ — digital nomad operating system",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
+    title: "RoamIQ — Digital Nomad Visa, Cost of Living & Coworking Guides",
     description:
-      "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads.",
+      "Compare visa rules, costs, Wi-Fi, and coworking with RoamIQ — built for digital nomads.",
     creator: "@pranavgawas",
     images: [`${BASE_URL}/logo.svg`],
   },
