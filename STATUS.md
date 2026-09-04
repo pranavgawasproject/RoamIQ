@@ -1,3 +1,9 @@
+## 2026-09-04 ~04:20 UTC — daily growth/conversion (Track A)
+
+Gap fixed: about/images already render; price/Wi-Fi pending UI, per-listing JSON-LD, and admin env auth already exist. Remaining conversion hole: related-city cards on `/workspaces/[id]` (a common last stop; `/workspaces` landing bounce 88.9%) selected no `website` / `contact_phone` / `contact_email`, so rows with a real next step hid it. Related query now selects those columns. Chips render only when `usefulListingWebsite` / `usefulContactPhone` / `usefulContactEmail` pass. Nested `<a>` inside the row `<Link>` removed so the chips are valid. No invented contacts. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-05 to 2026-09-03 (`https://nomads-travel-indol.vercel.app/`): homepage 3 clicks / 166 impressions / pos ~5.8. Top query `4g-travel-tool.vercel.app` 2/22 / pos 3.0 — FLAG only; inspect 403 (URL is not this GSC property); no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living. Branded `roamiq` 0/49 / pos ~6.5; `roamiq dashboard` 0/6; `roamiq price` 0/8. GA4 `541610896` 30d landings: `/` 156 sessions bounce 80.1%; `/workspaces` 9 / 88.9%; `/destinations` 9 / 77.8%. Listings `davvpymbybvniexmkgcu`: SQL 403 this run — last known 8,276 rows; about empty 5,850; starting_price empty 3,637; images null 0; phone empty 7,810; logo empty 6,013; email empty 8,067. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-04 ~03:38 UTC — restore workspace detail after placeholder overwrite
 
 Track A follow-up: commit 4876516 briefly replaced `frontend/src/app/workspaces/[id]/page.tsx` with PLACEHOLDER (11 bytes). Restored the full page from last good source and wired `usefulListingTitle` + `usefulListingInclusions` so duplicate subtitles and factory inclusion lists stay hidden. Index already uses `usefulListingTitle`. Sitemap not resubmitted.
