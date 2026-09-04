@@ -1,3 +1,7 @@
+## 2026-09-04 ~13:25 UTC — daily growth/conversion (Track A)
+
+Gap fixed: about/images already render; price/Wi-Fi pending UI, per-listing JSON-LD, and admin env auth already exist. Remaining conversion hole: `/workspaces` landings bounce ~89% and only some cards expose a next step (Official site / Call / Email). Added `?contactable=1` using the same `usefulListingWebsite` / `usefulContactPhone` / `usefulContactEmail` gates as the chips — no invented contacts. First-page ranking also prefers rows that already pass those gates. Sitemap not resubmitted (no new routes).
+
 ## 2026-09-04 ~13:10 UTC — daily growth/conversion (Track A)
 
 Gap fixed: about/images already render on listing views; price/Wi-Fi pending UI, per-listing JSON-LD, and admin env auth already exist. Remaining crawl hole: sitemap.ts only emitted /workspaces/[id] when about + photo + usefulWifiSpeed all passed. Wi-Fi is almost entirely factory templates, so rich listing URLs were dropped. Now include rows with a usable about snippet and a usable photo (fields the page actually shows). Cap 80. Added ?photographed=1 on the workspaces index so users can jump to cards whose photo already passes firstUsableListingImage. No invented speeds or copy. Sitemap contents changed (listing URL set); resubmit pending GSC lag.
