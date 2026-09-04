@@ -11,7 +11,7 @@ import { firstUsableListingImage, usefulContactEmail, usefulContactPhone, useful
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
+  title: "Coworking, Coliving & Workation Spaces for Nomads | RoamIQ",
   description:
     "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads. Filter by city, type, price and Wi-Fi speed.",
   keywords: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: `${BASE_URL}/workspaces` },
   openGraph: {
-    title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
+    title: "Coworking, Coliving & Workation Spaces for Nomads | RoamIQ",
     description:
       "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads. Price and Wi-Fi appear only when the listing has a real value.",
     url: `${BASE_URL}/workspaces`,
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Workspaces & Stays — Coworking, Coliving & Workations | RoamIQ",
+    title: "Coworking, Coliving & Workation Spaces for Nomads | RoamIQ",
     description:
       "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads. Price and Wi-Fi appear only when the listing has a real value.",
     images: [`${BASE_URL}/logo.svg`],
