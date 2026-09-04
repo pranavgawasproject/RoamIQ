@@ -325,76 +325,6 @@ export function usefulOpenHours(raw: string | null | undefined): string[] {
   return [];
 }
 
-
-const FACTORY_AMENITY_LABELS = new Set([
-  "24/7",
-  "24/7 access",
-  "24-7 access",
-  "standing desk",
-  "standing desks",
-  "high-speed wi-fi",
-  "high-speed wifi",
-  "free wi-fi",
-  "free wifi",
-  "nomad wi-fi",
-  "dedicated line",
-  "dedicated fiber",
-  "high-speed fiber",
-  "site logo",
-  "coworking",
-  "coliving",
-  "workation",
-  "hostel",
-  "cafe",
-  "meeting room",
-]);
-
-function isFactoryAmenityLabel(value: string): boolean {
-  const key = value.replace(/\s+/g, " ").trim().toLowerCase();
-  if (!key) return true;
-  if (FACTORY_AMENITY_LABELS.has(key)) return true;
-  if (/24\s*\/?\s*7/.test(key) && /access/.test(key)) return true;
-  if (/standing\s*desk/.test(key)) return true;
-  if (/high[- ]speed\s+(wi-?fi|fiber)/.test(key)) return true;
-  if (/^(free|nomad)\s+wi-?fi$/.test(key)) return true;
-  return false;
-}
-
-export function usefulListingTitle(
-  title: string | null | undefined,
-  companyName?: string | null
-): string | null {
-  if (!title || typeof title !== "string") return null;
-  const cleaned = title.replace(/\s+/g, " ").trim();
-  if (!cleaned) return null;
-  const name = (companyName || "").replace(/\s+/g, " ").trim();
-  if (name && cleaned.toLowerCase() === name.toLowerCase()) return null;
-  if (isFactoryAmenityLabel(cleaned)) return null;
-  if (cleaned.length > 160) return null;
-  return cleaned;
-}
-
-export function usefulListingInclusions(raw: string | null | undefined): string | null {
-  if (!raw || typeof raw !== "string") return null;
-  const cleaned = raw.replace(/\s+/g, " ").trim();
-  if (!cleaned) return null;
-  const parts = cleaned
-    .split(/[,;•|/]+/)
-    .map((part) => part.replace(/\s+/g, " ").trim())
-    .filter((part) => part.length >= 3 && part.length <= 80 && !isFactoryAmenityLabel(part));
-  if (parts.length === 0) return null;
-  const unique: string[] = [];
-  const seen = new Set<string>();
-  for (const part of parts) {
-    const key = part.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    unique.push(part);
-  }
-  if (unique.length === 0) return null;
-  return unique.join(", ");
-}
-
 /**
  * services is a JSON array string on a handful of rows. Show only real strings.
  * Never invent amenities.
@@ -414,7 +344,12 @@ export function usefulListingServices(raw: string | null | undefined): string[] 
     .filter((item): item is string => typeof item === "string")
     .map((item) => item.replace(/\s+/g, " ").trim())
     .filter((item) => item.length >= 3 && item.length <= 140)
-    .filter((item) => !isFactoryAmenityLabel(item))
+    .filter((item) => {
+      const key = item.toLowerCase();
+      if (/24\s*\/?\s*7/.test(key) && /access/.test(key)) return false;
+      if (/standing\s*desk/.test(key)) return false;
+      return true;
+    })
     .slice(0, 12);
 }
 
