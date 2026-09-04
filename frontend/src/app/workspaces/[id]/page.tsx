@@ -49,7 +49,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_type, city, country, starting_price, wifi_speed, images, logo_url, about, description, ratings"
+        "id, company_name, company_type, city, country, starting_price, wifi_speed, images, logo_url, about, description, ratings, website, contact_phone, contact_email"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -453,13 +453,16 @@ export default async function WorkspaceDetailPage({
                       const thumb = firstUsableListingImage(item.images, item.logo_url);
                       const snippet = usefulListingAbout(item.about || item.description, item.company_name, 140);
                       const aboutOk = Boolean(snippet);
+                      const relatedWebsite = usefulListingWebsite(item.website);
+                      const relatedPhone = usefulContactPhone(item.contact_phone);
+                      const relatedEmail = usefulContactEmail(item.contact_email);
                       return (
-                      <li key={item.id}>
-                        <Link
-                          href={`/workspaces/${item.id}`}
-                          className="flex items-center gap-3 px-4 py-3 hover:bg-secondary/50 transition-colors"
-                        >
-                          <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-secondary">
+                      <li key={item.id} className="px-4 py-3 hover:bg-secondary/50 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <Link
+                            href={`/workspaces/${item.id}`}
+                            className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-secondary"
+                          >
                             {thumb ? (
                               <Image
                                 src={thumb.trim()}
@@ -474,9 +477,11 @@ export default async function WorkspaceDetailPage({
                                 <Building2 className="h-5 w-5 text-muted-foreground/50" />
                               </div>
                             )}
-                          </div>
+                          </Link>
                           <div className="min-w-0 flex-1">
-                            <p className="truncate font-medium">{item.company_name}</p>
+                            <Link href={`/workspaces/${item.id}`} className="truncate font-medium hover:text-accent">
+                              {item.company_name}
+                            </Link>
                             {aboutOk ? (
                               <p className="mt-0.5 line-clamp-2 text-xs text-foreground/70">{snippet}</p>
                             ) : (
@@ -486,11 +491,44 @@ export default async function WorkspaceDetailPage({
                               {item.company_type || "workspace"}
                               {usefulWifiSpeed(item.wifi_speed) ? ` · ${usefulWifiSpeed(item.wifi_speed)}` : " · Wi-Fi speed pending"}
                             </p>
+                            {(relatedWebsite || relatedPhone || relatedEmail) && (
+                              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                                {relatedWebsite && (
+                                  <a
+                                    href={relatedWebsite}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2 py-0.5 text-[10px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+                                  >
+                                    <ExternalLink className="h-3 w-3" /> Official site
+                                  </a>
+                                )}
+                                {relatedPhone && (
+                                  <a
+                                    href={`tel:${relatedPhone.replace(/[^+\d]/g, "")}`}
+                                    className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2 py-0.5 text-[10px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+                                  >
+                                    <Phone className="h-3 w-3" /> Call
+                                  </a>
+                                )}
+                                {relatedEmail && (
+                                  <a
+                                    href={`mailto:${relatedEmail}`}
+                                    className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2 py-0.5 text-[10px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+                                  >
+                                    <Mail className="h-3 w-3" /> Email
+                                  </a>
+                                )}
+                              </div>
+                            )}
                           </div>
-                          <span className="shrink-0 text-sm text-muted-foreground">
+                          <Link
+                            href={`/workspaces/${item.id}`}
+                            className="shrink-0 text-sm text-muted-foreground hover:text-accent"
+                          >
                             {usefulStartingPrice(item.starting_price) || "Price not listed yet"}
-                          </span>
-                        </Link>
+                          </Link>
+                        </div>
                       </li>
                       );
                     })}
