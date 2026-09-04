@@ -13,7 +13,7 @@ const BASE_URL = "https://nomads-travel-indol.vercel.app";
 export const metadata: Metadata = {
   title: "Coworking, Coliving & Workation Spaces for Nomads | RoamIQ",
   description:
-    "Browse coworking desks, coliving houses, workations, hostels, cafes and meeting rooms for digital nomads. Filter by city, type, price and Wi-Fi speed.",
+    "Browse RoamIQ workspaces: coworking desks, coliving, workations, cafes and meeting rooms. Filter by city — Wi-Fi and prices when listed.",
   keywords: [
     "coworking spaces digital nomad",
     "coliving for remote workers",
