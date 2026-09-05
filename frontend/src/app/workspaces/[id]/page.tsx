@@ -62,7 +62,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_type, city, country, starting_price, wifi_speed, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email"
+        "id, company_name, company_type, city, country, starting_price, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -306,6 +306,9 @@ export default async function WorkspaceDetailPage({
                       { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi },
                     ];
                   }
+                  const relatedHours = usefulOpenHours(item.open_hours);
+                  if (relatedHours.length === 1) place.openingHours = relatedHours[0];
+                  else if (relatedHours.length > 1) place.openingHours = relatedHours;
                   const relatedWebsite = usefulListingWebsite(item.website);
                   const relatedPhone = usefulContactPhone(item.contact_phone);
                   const relatedEmail = usefulContactEmail(item.contact_email);
@@ -431,7 +434,7 @@ export default async function WorkspaceDetailPage({
                               )}
                               <p className="text-xs text-muted-foreground">
                                 {item.company_type || "workspace"}
-                                {usefulWifiSpeed(item.wifi_speed) ? ` \u00b7 ${usefulWifiSpeed(item.wifi_speed)}` : " \u00b7 Wi-Fi speed pending"}
+                                {usefulWifiSpeed(item.wifi_speed) ? ` \u00b7 ${usefulWifiSpeed(item.wifi_speed)}` : " \u00b7 Wi-Fi speed pending"}{usefulOpenHours(item.open_hours)[0] ? ` \u00b7 ${usefulOpenHours(item.open_hours)[0]}` : ""}
                               </p>
                               {(relatedWebsite || relatedPhone || relatedEmail) && (
                                 <div className="mt-1.5 flex flex-wrap gap-1.5">
