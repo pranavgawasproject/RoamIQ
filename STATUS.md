@@ -1,3 +1,9 @@
+## 2026-09-05 ~13:07 UTC — daily growth/conversion (Track A)
+
+Gap fixed: about/images already render and JSON-LD/price-Wi-Fi pending UI already exist. Remaining content-integrity hole: workspace detail hero often opened on a dead first URL (favicon / blank placeholder) while later photos loaded. Gallery now drops failed images at runtime; `listingGalleryImages` prefers venue photos and only falls back to a usable logo. No invented photos. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-06 to 2026-09-04 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos ~3.0 — FLAG only; host is not this GSC property (inspect 403); no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-05 ~04:11 UTC — daily growth/conversion (Track A)
 
 Gap fixed: about/images already render; price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, destination contact chips, and compare waitlist already exist. Remaining content-depth hole: `/workspaces` cards already show a usable `logo_url` beside the title, but homepage preview and `/destinations/[id]` workspace cards hid the same field. Both views now render the logo next to the name when `isUsableImageUrl` passes — no invented logos. Sitemap not resubmitted (no new routes).
