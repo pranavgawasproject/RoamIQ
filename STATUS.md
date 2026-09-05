@@ -1,3 +1,9 @@
+## 2026-09-05 ~13:20 UTC — daily growth/conversion (Track A)
+
+Gap fixed: about/images, pending price/Wi-Fi UI, per-listing JSON-LD, admin env auth, and waitlist CTAs already exist. Remaining schema hole: listed prices were visible on cards and the workspace sidebar but JSON-LD only set `priceRange`. Added `makesOffer` + `PriceSpecification.description` from the same `usefulStartingPrice` gate (no invented numbers). Logo `alt` on `/workspaces` cards now uses the company name. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-01 to 2026-09-05 (`https://nomads-travel-indol.vercel.app/`): query `4g-travel-tool.vercel.app` 3 clicks / 34 impressions / pos ~2.9 — FLAG only; host is not this GSC property; no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living, roamiq (1/64 / pos ~6.4). Branded CTR capped until the custom domain is live.
+
 ## 2026-09-05 ~13:07 UTC — daily growth/conversion (Track A)
 
 Gap fixed: about/images already render and JSON-LD/price-Wi-Fi pending UI already exist. Remaining content-integrity hole: workspace detail hero often opened on a dead first URL (favicon / blank placeholder) while later photos loaded. Gallery now drops failed images at runtime; `listingGalleryImages` prefers venue photos and only falls back to a usable logo. No invented photos. Sitemap not resubmitted (no new routes).
