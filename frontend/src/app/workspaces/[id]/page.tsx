@@ -170,6 +170,7 @@ export default async function WorkspaceDetailPage({
   const locationParts = [listing.city, listing.state, listing.country].filter(Boolean);
   const pageUrl = `${BASE_URL}/workspaces/${listing.id}`;
   const primaryImage = images[0] || undefined;
+  const listedLogo = isUsableImageUrl(listing.logo_url) ? listing.logo_url.trim() : null;
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -206,6 +207,7 @@ export default async function WorkspaceDetailPage({
   if (listing.company_type) localBusinessJsonLd.additionalType = String(listing.company_type);
   if (images.length > 1) localBusinessJsonLd.image = images;
   else if (primaryImage) localBusinessJsonLd.image = primaryImage;
+  if (listedLogo) localBusinessJsonLd.logo = listedLogo;
   if (listedWebsite) localBusinessJsonLd.sameAs = [listedWebsite];
   if (listedStreet || locationParts.length) {
     localBusinessJsonLd.address = {
@@ -292,7 +294,14 @@ export default async function WorkspaceDetailPage({
           <div className="mx-auto grid max-w-6xl gap-10 px-5 sm:px-8 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-8">
               <div>
-                <h1 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">{listing.company_name}</h1>
+                <div className="flex items-start gap-3 sm:gap-4">
+                  {listedLogo ? (
+                    <div className="relative mt-1 h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-border bg-secondary sm:h-14 sm:w-14">
+                      <Image src={listedLogo} alt={`${listing.company_name} logo`} fill className="object-contain p-1" sizes="56px" unoptimized />
+                    </div>
+                  ) : null}
+                  <h1 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">{listing.company_name}</h1>
+                </div>
                 {usefulListingTitle(listing.company_title, listing.company_name) && (
                   <p className="mt-2 text-lg text-muted-foreground">{usefulListingTitle(listing.company_title, listing.company_name)}</p>
                 )}

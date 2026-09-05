@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulWifiSpeed } from "@/lib/listing-media";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -244,9 +244,16 @@ function ListingCard({ listing }: { listing: Listing }) {
             </Link>
           </div>
         )}
-        <h3 className="font-serif text-lg font-semibold tracking-tight line-clamp-1">
-          <Link href={`/workspaces/${listing.id}`} className="hover:text-accent transition-colors">{listing.company_name}</Link>
-        </h3>
+        <div className="flex items-center gap-2.5">
+          {isUsableImageUrl(listing.logo_url) ? (
+            <Link href={`/workspaces/${listing.id}`} className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg border border-border bg-secondary">
+              <Image src={listing.logo_url.trim()} alt="" fill className="object-contain p-0.5" sizes="32px" unoptimized />
+            </Link>
+          ) : null}
+          <h3 className="font-serif text-lg font-semibold tracking-tight line-clamp-1">
+            <Link href={`/workspaces/${listing.id}`} className="hover:text-accent transition-colors">{listing.company_name}</Link>
+          </h3>
+        </div>
         {usefulListingTitle(listing.company_title, listing.company_name) && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulListingTitle(listing.company_title, listing.company_name)}</p>}
         {(() => {
           const aboutSnippet = usefulAboutSnippet(listing.about || listing.description, listing.company_name);
