@@ -269,16 +269,50 @@ export default async function WorkspaceDetailPage({
                 itemListElement: related.map((item, index) => {
                   const thumb = firstUsableListingImage(item.images, item.logo_url);
                   const snippet = usefulListingAbout(item.about || item.description, item.company_name, 140);
+                  const relatedUrl = `${BASE_URL}/workspaces/${item.id}`;
+                  const typeKey = String(item.company_type || "").toLowerCase();
+                  const relatedType =
+                    typeKey === "cafe" || typeKey === "coffee" || typeKey === "coffee shop"
+                      ? "CafeOrCoffeeShop"
+                      : typeKey === "coliving" || typeKey === "hostel" || typeKey === "workation"
+                        ? "LodgingBusiness"
+                        : "LocalBusiness";
                   const place: Record<string, unknown> = {
-                    "@type": "LocalBusiness",
+                    "@type": relatedType,
                     name: item.company_name,
-                    url: `${BASE_URL}/workspaces/${item.id}`,
+                    url: relatedUrl,
                   };
                   if (snippet) place.description = snippet;
                   if (thumb) place.image = thumb;
+                  if (item.city || item.country) {
+                    place.address = {
+                      "@type": "PostalAddress",
+                      ...(item.city ? { addressLocality: item.city } : {}),
+                      ...(item.country ? { addressCountry: item.country } : {}),
+                    };
+                  }
                   const listedPrice = usefulStartingPrice(item.starting_price);
-                  if (listedPrice) place.priceRange = listedPrice;
-                  return { "@type": "ListItem", position: index + 1, url: `${BASE_URL}/workspaces/${item.id}`, item: place };
+                  if (listedPrice) {
+                    place.priceRange = listedPrice;
+                    place.makesOffer = {
+                      "@type": "Offer",
+                      url: relatedUrl,
+                      priceSpecification: { "@type": "PriceSpecification", description: listedPrice },
+                    };
+                  }
+                  const listedWifi = usefulWifiSpeed(item.wifi_speed);
+                  if (listedWifi) {
+                    place.amenityFeature = [
+                      { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi },
+                    ];
+                  }
+                  const relatedWebsite = usefulListingWebsite(item.website);
+                  const relatedPhone = usefulContactPhone(item.contact_phone);
+                  const relatedEmail = usefulContactEmail(item.contact_email);
+                  if (relatedWebsite) place.sameAs = [relatedWebsite];
+                  if (relatedPhone) place.telephone = relatedPhone;
+                  if (relatedEmail) place.email = relatedEmail;
+                  return { "@type": "ListItem", position: index + 1, url: relatedUrl, item: place };
                 }),
               }),
             }}
