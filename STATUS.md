@@ -1,3 +1,7 @@
+## 2026-09-05 ~03:40 UTC — daily growth/conversion (Track A)
+
+Gap fixed: `/destinations/compare` had cost/visa tables but no on-page capture. GA4 30d shows this route as a last-stop landing. Added WaitlistInline under the comparator with askCity and cityA/cityB context. Copy does not invent prices, Wi-Fi, or urgency. Destination listing contact chips were already on main. Sitemap not resubmitted (no new routes).
+
 ## 2026-09-05 ~03:36 UTC — daily growth/conversion (Track A)
 
 Gap fixed: about/images already render; price/Wi-Fi pending UI, per-listing JSON-LD, and admin env auth already exist. Remaining conversion hole: `/destinations/[id]` workspace cards wrapped the whole card in a single Link, so verified phone/email/website could only render as dead "Phone listed" text. Cards now match the workspaces index: photo + title link to the listing; Official site / Call / Email chips use usefulListingWebsite / usefulContactPhone / usefulContactEmail. No invented contacts. Sitemap not resubmitted (no new routes).
