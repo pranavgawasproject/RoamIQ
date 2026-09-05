@@ -31,8 +31,40 @@ export function isUsableImageUrl(url: string | null | undefined): url is string 
 
   const path = trimmed.toLowerCase();
   if (/(disney|mickey-mouse|cartoon-wallpaper|4k-ultra-wide)/i.test(path)) return false;
+  // Favicons, 1x1 trackers, and generic placeholders load as a blank hero.
+  if (/(favicon|apple-touch-icon|android-chrome|mstile|safari-pinned|1x1|pixel\.gif|spacer\.(gif|png)|placeholder|blank\.(png|gif|jpg|jpeg|webp)|default-image)/i.test(path)) return false;
 
   return true;
+}
+
+/** Venue photos only. Tiny logos stay usable as a last-resort card thumb via firstUsableListingImage. */
+export function isVenuePhotoUrl(url: string | null | undefined): url is string {
+  if (!isUsableImageUrl(url)) return false;
+  const path = url.trim().toLowerCase();
+  if (/(^|\/)(logo|icon|icons|brand)(\/|_|-|\.)/i.test(path)) return false;
+  if (/logo/i.test(path) && !/(photo|gallery|image|img|media)/i.test(path)) return false;
+  return true;
+}
+
+export function listingGalleryImages(
+  images: string[] | null | undefined,
+  logoUrl?: string | null
+): string[] {
+  const photos: string[] = [];
+  const seen = new Set<string>();
+  const push = (raw: string | null | undefined, photoOnly: boolean) => {
+    if (!raw) return;
+    const trimmed = raw.trim();
+    if (seen.has(trimmed)) return;
+    if (photoOnly ? !isVenuePhotoUrl(trimmed) : !isUsableImageUrl(trimmed)) return;
+    seen.add(trimmed);
+    photos.push(trimmed);
+  };
+  if (Array.isArray(images)) {
+    for (const raw of images) push(raw, true);
+  }
+  if (!photos.length) push(logoUrl, false);
+  return photos;
 }
 
 export function firstUsableListingImage(
