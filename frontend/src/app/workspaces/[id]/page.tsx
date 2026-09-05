@@ -19,7 +19,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
 
 export const revalidate = 180;
@@ -158,14 +158,7 @@ export default async function WorkspaceDetailPage({
   const listing = await getListing(id);
   if (!listing) notFound();
   const related = await getRelatedListings(listing);
-  const images: string[] = Array.from(
-    new Set(
-      [
-        ...(Array.isArray(listing.images) ? listing.images : []),
-        listing.logo_url,
-      ].filter((u): u is string => isUsableImageUrl(u)).map((u) => u.trim())
-    )
-  );
+  const images: string[] = listingGalleryImages(listing.images, listing.logo_url);
   const tags: string[] = usefulListingTags(listing.tags);
   const locationParts = [listing.city, listing.state, listing.country].filter(Boolean);
   const pageUrl = `${BASE_URL}/workspaces/${listing.id}`;
