@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, Building2, ExternalLink, Mail, MapPin, Phone, Star, Wifi } from "lucide-react";
+import { ArrowUpRight, Building2, Clock, ExternalLink, Mail, MapPin, Phone, Star, Wifi } from "lucide-react";
 import { supabase, type Listing } from "@/lib/supabase";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import {
@@ -11,7 +11,7 @@ import {
   usefulListingAbout,
   usefulListingWebsite,
   usefulStartingPrice,
-  usefulWifiSpeed,
+  usefulOpenHours, usefulWifiSpeed,
 } from "@/lib/listing-media";
 
 function getCardImage(listing: Listing): string | null {
@@ -30,7 +30,7 @@ export async function WorkspacesPreview() {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, company_name, company_type, city, country, starting_price, wifi_speed, ratings, total_reviews, images, logo_url, about, description, website, contact_phone, contact_email"
+      "id, company_name, company_type, city, country, starting_price, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, contact_phone, contact_email"
     )
     .eq("is_public", true)
     .eq("is_active", true)
@@ -104,6 +104,9 @@ export async function WorkspacesPreview() {
                     <div>
                       <div className={usefulStartingPrice(listing.starting_price) ? "text-sm font-semibold text-forest" : "text-xs text-muted-foreground"}>{usefulStartingPrice(listing.starting_price) || "Price not listed yet"}</div>
                       <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground"><Wifi className="h-3 w-3" />{listedWifi || "Wi-Fi speed pending"}</div>
+                      {usefulOpenHours(listing.open_hours)[0] ? (
+                        <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground"><Clock className="h-3 w-3" />{usefulOpenHours(listing.open_hours)[0]}</div>
+                      ) : null}
                     </div>
                     {showRating ? (<div className="flex items-center gap-1 text-xs font-medium"><Star className="h-3 w-3 fill-sunset text-sunset" />{ratingValue.toFixed(1)}</div>) : (<div className="text-[11px] text-muted-foreground">Reviews pending</div>)}
                   </div>
