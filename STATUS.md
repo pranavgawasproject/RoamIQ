@@ -1,8 +1,8 @@
-## 2026-09-05 ~03:35 UTC — daily growth/conversion (Track A)
+## 2026-09-05 ~03:36 UTC — daily growth/conversion (Track A)
 
-Gap fixed: about/images already render; price/Wi-Fi pending UI, per-listing JSON-LD, and admin env auth already exist. Remaining hole: `logo_url` is populated on thousands of rows but only used as a gallery fallback, so venue marks never appeared next to the name. `/workspaces` cards and `/workspaces/[id]` now show the logo beside the title when `isUsableImageUrl(logo_url)` passes; LocalBusiness JSON-LD gets `logo` only when that same image is visible. No invented marks. Sitemap not resubmitted (no new routes).
+Gap fixed: about/images already render; price/Wi-Fi pending UI, per-listing JSON-LD, and admin env auth already exist. Remaining conversion hole: `/destinations/[id]` workspace cards wrapped the whole card in a single Link, so verified phone/email/website could only render as dead "Phone listed" text. Cards now match the workspaces index: photo + title link to the listing; Official site / Call / Email chips use usefulListingWebsite / usefulContactPhone / usefulContactEmail. No invented contacts. Sitemap not resubmitted (no new routes).
 
-GSC 2026-08-05 to 2026-09-04 (`https://nomads-travel-indol.vercel.app/`): homepage 3 clicks / 168 impressions / pos ~5.8. Top query `4g-travel-tool.vercel.app` 2/23 / pos ~3.0 — FLAG only; that host is not this GSC property; no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living. GA4 last known: `/` ~158 sess bounce ~80%; `/workspaces` 9 / 88.9%. Branded CTR capped until the custom domain is live.
+GSC 2026-08-08 to 2026-09-04: top query `4g-travel-tool.vercel.app` 2/22 / pos ~3 — FLAG only; inspect 403 (URL not on this property); no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living. Branded `roamiq` 0/34 / pos ~6.5. GA4 30d: `/` 160 sessions bounce 80.6%; `/workspaces` 9 / 88.9%; `/destinations` 9 / 77.8%; `/destinations/chiang-mai` 5 / 100%. Branded CTR capped until the custom domain is live.
 
 ## 2026-09-04 ~13:26 UTC — daily growth/conversion (Track A)
 
