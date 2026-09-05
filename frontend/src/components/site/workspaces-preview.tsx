@@ -5,6 +5,7 @@ import { supabase, type Listing } from "@/lib/supabase";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import {
   firstUsableListingImage,
+  isUsableImageUrl,
   usefulContactEmail,
   usefulContactPhone,
   usefulListingAbout,
@@ -82,7 +83,14 @@ export async function WorkspacesPreview() {
                 </Link>
                 <div className="flex flex-1 flex-col p-4">
                   {listing.company_type && (<div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-foreground/70">{listing.company_type}</div>)}
-                  <h3 className="font-serif text-base font-semibold tracking-tight line-clamp-1"><Link href={`/workspaces/${listing.id}`} className="hover:text-accent">{listing.company_name}</Link></h3>
+                  <div className="flex items-center gap-2.5">
+                    {isUsableImageUrl(listing.logo_url) ? (
+                      <Link href={`/workspaces/${listing.id}`} className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg border border-border bg-secondary">
+                        <Image src={listing.logo_url.trim()} alt="" fill className="object-contain p-0.5" sizes="32px" unoptimized />
+                      </Link>
+                    ) : null}
+                    <h3 className="font-serif text-base font-semibold tracking-tight line-clamp-1"><Link href={`/workspaces/${listing.id}`} className="hover:text-accent">{listing.company_name}</Link></h3>
+                  </div>
                   {about ? (<p className="mt-1 text-sm text-foreground/70 line-clamp-2">{about}</p>) : (<p className="mt-1 text-sm text-muted-foreground">Description pending</p>)}
                   <div className="mt-2 flex items-center gap-1.5 text-xs text-foreground/70"><MapPin className="h-3 w-3 shrink-0" /><span className="line-clamp-1">{[listing.city, listing.country].filter(Boolean).join(", ")}</span></div>
                   {(listedPhone || listedEmail || listedWebsite) && (
