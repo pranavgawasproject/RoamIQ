@@ -1,3 +1,9 @@
+## 2026-09-05 ~04:11 UTC — daily growth/conversion (Track A)
+
+Gap fixed: about/images already render; price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, destination contact chips, and compare waitlist already exist. Remaining content-depth hole: `/workspaces` cards already show a usable `logo_url` beside the title, but homepage preview and `/destinations/[id]` workspace cards hid the same field. Both views now render the logo next to the name when `isUsableImageUrl` passes — no invented logos. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-05 to 2026-09-04 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 23 impressions / pos ~3.0 — FLAG only; host is not this GSC property; no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-05 ~03:40 UTC — daily growth/conversion (Track A)
 
 Gap fixed: `/destinations/compare` had cost/visa tables but no on-page capture. GA4 30d shows this route as a last-stop landing. Added WaitlistInline under the comparator with askCity and cityA/cityB context. Copy does not invent prices, Wi-Fi, or urgency. Destination listing contact chips were already on main. Sitemap not resubmitted (no new routes).
