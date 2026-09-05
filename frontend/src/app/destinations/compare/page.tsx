@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { CityComparator } from "@/components/site/city-comparator";
+import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type City } from "@/lib/supabase";
 import { ArrowLeft, Sparkles, Scale } from "lucide-react";
 
@@ -171,6 +172,15 @@ export default async function ComparePage({
             defaultCityAId={cityAId}
             defaultCityBId={cityBId}
           />
+          <div className="mt-12 rounded-2xl border border-border bg-card p-6 sm:p-8">
+            <WaitlistInline
+              source="destinations-compare"
+              askCity
+              heading="Leave with both cities, not just the table"
+              description="This compare view is a common last stop. Email plus an optional city is enough. We only follow up when listed workspace rows for those cities already have a description, price, or photo. No fabricated urgency."
+              context={{ city: params.cityA || cityAId, country: params.cityB || cityBId }}
+            />
+          </div>
         </section>
       </main>
       <Footer />
