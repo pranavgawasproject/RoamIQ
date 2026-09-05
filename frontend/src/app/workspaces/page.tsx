@@ -247,7 +247,7 @@ function ListingCard({ listing }: { listing: Listing }) {
         <div className="flex items-center gap-2.5">
           {isUsableImageUrl(listing.logo_url) ? (
             <Link href={`/workspaces/${listing.id}`} className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg border border-border bg-secondary">
-              <Image src={listing.logo_url.trim()} alt="" fill className="object-contain p-0.5" sizes="32px" unoptimized />
+              <Image src={listing.logo_url.trim()} alt={`${listing.company_name} logo`} fill className="object-contain p-0.5" sizes="32px" unoptimized />
             </Link>
           ) : null}
           <h3 className="font-serif text-lg font-semibold tracking-tight line-clamp-1">
@@ -423,7 +423,14 @@ export default async function WorkspacesPage({
         };
       }
       const listedPrice = usefulStartingPrice(item.starting_price);
-      if (listedPrice) place.priceRange = listedPrice;
+      if (listedPrice) {
+        place.priceRange = listedPrice;
+        place.makesOffer = {
+          "@type": "Offer",
+          url: `${BASE_URL}/workspaces/${item.id}`,
+          priceSpecification: { "@type": "PriceSpecification", description: listedPrice },
+        };
+      }
       const listedWifi = usefulWifiSpeed(item.wifi_speed);
       if (listedWifi) {
         place.amenityFeature = [
