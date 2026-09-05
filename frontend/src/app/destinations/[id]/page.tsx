@@ -22,7 +22,7 @@ import { Footer } from "@/components/site/footer";
 import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
 
@@ -841,11 +841,18 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
               <span className="text-[10px] text-muted-foreground">Reviews pending</span>
             )}
           </div>
-          <h3 className="mt-3 font-serif text-lg font-semibold group-hover:text-forest transition-colors">
-            <Link href={`/workspaces/${listing.id}`} className="hover:text-forest">
-              {listing.company_name}
-            </Link>
-          </h3>
+          <div className="mt-3 flex items-center gap-2.5">
+            {isUsableImageUrl(listing.logo_url) ? (
+              <Link href={`/workspaces/${listing.id}`} className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg border border-border bg-secondary">
+                <Image src={listing.logo_url.trim()} alt="" fill className="object-contain p-0.5" sizes="32px" unoptimized />
+              </Link>
+            ) : null}
+            <h3 className="font-serif text-lg font-semibold group-hover:text-forest transition-colors">
+              <Link href={`/workspaces/${listing.id}`} className="hover:text-forest">
+                {listing.company_name}
+              </Link>
+            </h3>
+          </div>
           <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
             {listedStreet ? `${listedStreet} · ` : ""}
             {listing.city}, {listing.country}
