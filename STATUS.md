@@ -1,3 +1,9 @@
+## 2026-09-05 ~13:46 UTC — daily growth/conversion (Track A)
+
+Gap fixed: about/images already render; price/Wi-Fi pending UI, admin env auth, waitlist CTAs, and primary listing JSON-LD already exist. Remaining hole: the related-listings `ItemList` on `/workspaces/[id]` only exposed name/url/image/description/`priceRange` even though the same rows already show listed price, city, optional Wi-Fi, and contact chips. Schema now mirrors those visible fields (`makesOffer`, address, `sameAs`, telephone, email, Wi-Fi amenity) and uses Cafe/Lodging types when the card type is visible. No invented prices or contacts. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-01 to 2026-09-05 (`https://nomads-travel-indol.vercel.app/`): query `4g-travel-tool.vercel.app` 3 clicks / 34 impressions / pos ~2.9 — FLAG only; host is not this GSC property; no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living, roamiq (1 click / 64 impressions / pos ~6.4). Branded CTR capped until the custom domain is live.
+
 ## 2026-09-05 ~13:20 UTC — daily growth/conversion (Track A)
 
 Gap fixed: about/images, pending price/Wi-Fi UI, per-listing JSON-LD, admin env auth, and waitlist CTAs already exist. Remaining schema hole: listed prices were visible on cards and the workspace sidebar but JSON-LD only set `priceRange`. Added `makesOffer` + `PriceSpecification.description` from the same `usefulStartingPrice` gate (no invented numbers). Logo `alt` on `/workspaces` cards now uses the company name. Sitemap not resubmitted (no new routes).
