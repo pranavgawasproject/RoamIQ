@@ -15,6 +15,14 @@
 
 ---
 
+
+## 📸 Screenshots
+
+![RoamIQ homepage](docs/screenshot-home.jpg)
+
+![RoamIQ destinations](docs/screenshot-destinations.jpg)
+
+
 ## ✨ Key Features
 - 🛂 **AI Visa Intelligence Engine**: Instant passport & income eligibility checks for 50+ digital nomad visas.
 - 🏙️ **Global Nomad City Database**: Real-time cost of living, monthly rent estimates, Wi-Fi speed ratings, and safety scores.
