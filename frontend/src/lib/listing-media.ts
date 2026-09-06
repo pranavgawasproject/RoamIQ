@@ -42,7 +42,7 @@ export function isVenuePhotoUrl(url: string | null | undefined): url is string {
   if (!isUsableImageUrl(url)) return false;
   const path = url.trim().toLowerCase();
   if (/(^|\/)(logo|icon|icons|brand)(\/|_|-|\.)/i.test(path)) return false;
-  if (/\blogo\b/i.test(path) && !/\b(photo|gallery|image|img|media)\b/i.test(path)) return false;
+  if (/logo/i.test(path) && !/(photo|gallery|image|img|media)/i.test(path)) return false;
   return true;
 }
 
@@ -317,11 +317,11 @@ export function usefulOpenHours(raw: string | null | undefined): string[] {
   const looksLikeHours = (value: string) => {
     const v = value.replace(/\s+/g, " ").trim();
     if (v.length < 4 || v.length > 120) return false;
-    return /(\d{1,2}[:.]\d{2}|\b\d{1,2}\s*(am|pm)\b|24\s*\/?\s*7|closed|by appointment)/i.test(v);
+    return /(\d{1,2}[:.]\d{2}|\d{1,2}\s*(am|pm)|24\s*\/?\s*7|closed|by appointment)/i.test(v);
   };
 
   const labelize = (key: string) =>
-    key.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()).trim();
+    key.replace(/[_-]+/g, " ").replace(/\w/g, (c) => c.toUpperCase()).trim();
 
   const tryParse = (text: string): unknown => {
     try {
@@ -420,7 +420,7 @@ const TYPE_OR_FACTORY_TAGS = new Set([
 export function usefulListingTags(tags: string[] | null | undefined): string[] {
   if (!Array.isArray(tags)) return [];
   const seen = new Set<string>();
-  const out = [];
+  const out: string[] = [];
   for (const raw of tags) {
     if (typeof raw !== "string") continue;
     const cleaned = raw.replace(/\s+/g, " ").trim();
