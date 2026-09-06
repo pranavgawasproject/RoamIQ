@@ -1,3 +1,11 @@
+## 2026-09-06 ~13:19 UTC — daily growth/conversion (Track A)
+
+Gap fixed: about/images, price/Wi-Fi pending UI, per-listing JSON-LD, and admin env auth already exist. Remaining thin-page hole on `/workspaces/[id]`: Amenities / Included / Services disappeared when tags, inclusions, or services were empty (common on organic listing landings with 100% bounce). Those sections now use the same pending copy pattern as price/Wi-Fi. Visible inclusions and services are also mirrored into `amenityFeature` JSON-LD; empty fields stay out of schema. No invented amenities. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-09 to 2026-09-05: top query `4g-travel-tool.vercel.app` 2/22 / pos ~3 — FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, izzy's coffee and brunch, ngb living. Branded CTR capped until the custom domain is live.
+
+GA4 30d landings: `/` 164 sessions bounce 81.1%; `/workspaces` 9 / 88.9%; `/destinations` 9 / 77.8%; `/destinations/chiang-mai` 5 / 100%.
+
 ## 2026-09-06 ~13:07 UTC — daily growth/conversion (Track A)
 
 Gap fixed: `/workspaces` index hero + waitlist copy had latin-1-misdecoded em dashes (`â` / `â€”` on the live page). Restored real em dashes in user-facing strings and comments. No invented listing data. Sitemap not resubmitted (no new routes).
