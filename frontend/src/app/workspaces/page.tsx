@@ -346,7 +346,9 @@ function ListingCard({ listing }: { listing: Listing }) {
             )}
             {usefulOpenHours(listing.open_hours)[0] ? (
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"><Clock className="h-3 w-3" /> {usefulOpenHours(listing.open_hours)[0]}</div>
-            ) : null}
+            ) : (
+              <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground/70"><Clock className="h-3 w-3" /> Hours not listed yet</div>
+            )}
           </div>
           {showRating ? (
             <div className="flex items-center gap-1 text-sm font-medium">
