@@ -283,10 +283,14 @@ export default async function WorkspaceDetailPage({
   if (listedPhone) localBusinessJsonLd.telephone = listedPhone;
   if (listedEmail) localBusinessJsonLd.email = listedEmail;
   const listedWifi = usefulWifiSpeed(listing.wifi_speed);
-  if (tags.length > 0 || listedWifi) {
+  const listedInclusions = usefulListingInclusions(listing.inclusions);
+  const listedServices = usefulListingServices(listing.services);
+  if (tags.length > 0 || listedWifi || listedInclusions || listedServices.length > 0) {
     localBusinessJsonLd.amenityFeature = [
       ...(listedWifi ? [{ "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi }] : []),
       ...tags.map((tag) => ({ "@type": "LocationFeatureSpecification", name: tag, value: true })),
+      ...(listedInclusions ? [{ "@type": "LocationFeatureSpecification", name: "Included", value: listedInclusions }] : []),
+      ...listedServices.map((item) => ({ "@type": "LocationFeatureSpecification", name: item, value: true })),
     ];
   }
   return (
@@ -426,7 +430,7 @@ export default async function WorkspaceDetailPage({
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">A written description has not been verified for this listing yet. Photos, location, and any listed price or Wi-Fi figures above are from the live database — we do not generate placeholder copy.</p>
                 </div>
               )}
-              {tags.length > 0 && (
+              {tags.length > 0 ? (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">Amenities</h2>
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -435,21 +439,36 @@ export default async function WorkspaceDetailPage({
                     ))}
                   </div>
                 </div>
-              )}
-              {usefulListingInclusions(listing.inclusions) && (
-                <div>
-                  <h2 className="font-serif text-xl font-semibold">Included</h2>
-                  <p className="mt-3 leading-relaxed text-foreground/80">{usefulListingInclusions(listing.inclusions)}</p>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-5">
+                  <h2 className="font-serif text-xl font-semibold">Amenities</h2>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Amenity tags have not been verified for this listing yet. We do not invent desks, kitchens, or access hours to fill the gap.</p>
                 </div>
               )}
-              {usefulListingServices(listing.services).length > 0 && (
+              {listedInclusions ? (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold">Included</h2>
+                  <p className="mt-3 leading-relaxed text-foreground/80">{listedInclusions}</p>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-5">
+                  <h2 className="font-serif text-xl font-semibold">Included</h2>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">What the stay or desk includes is not listed in the database yet. No placeholder perks.</p>
+                </div>
+              )}
+              {listedServices.length > 0 ? (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">Services</h2>
                   <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-relaxed text-foreground/80">
-                    {usefulListingServices(listing.services).map((item) => (
+                    {listedServices.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-5">
+                  <h2 className="font-serif text-xl font-semibold">Services</h2>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">No verified service list yet. Meeting rooms, cleaning, and similar extras stay hidden until they exist in the listing row.</p>
                 </div>
               )}
               {related.length > 0 && (
