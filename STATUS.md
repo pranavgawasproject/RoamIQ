@@ -1,5 +1,13 @@
 ## 2026-09-06 ~03:35 UTC — daily growth/conversion (Track A)
 
+Gap fixed: about/images, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, waitlist CTAs, and open-hours chips already exist. Remaining content-depth hole: `address` was only used as a description fallback on `/workspaces` cards (hidden whenever about existed) and was omitted from index/related ItemList schema. Cards now show a gated `usefulStreetAddress` line under city/country when the DB has a real street. Related-city rows fetch `address` and show the same line. JSON-LD `streetAddress` is added only for that visible value. No invented addresses. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-07 to 2026-09-05 (`https://nomads-travel-indol.vercel.app/`): query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos ~3 — FLAG only; host is not this GSC property; no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living. Branded CTR capped until the custom domain is live.
+
+Supabase listings (n=8276): about empty 5816; starting_price empty 3637; contact_phone empty 7810; contact_email empty 8067; logo empty 6008; images array present on all rows; ~1129 rows have a usable-length address. wifi_speed / download_speed_mbps columns are bulk-filled and remain gated as pending in UI.
+
+## 2026-09-06 ~03:35 UTC — daily growth/conversion (Track A)
+
 Gap fixed: about/images, price/Wi-Fi pending UI, admin env auth, waitlist CTAs, listing-detail JSON-LD, and `/workspaces` + related ItemList schema already exist. Remaining hole: destination city pages (`/destinations/[id]`) already show listed price, gated Wi-Fi, open hours, official site, phone, and email on workspace cards, but the destination ItemList JSON-LD only exposed name/url/image/description. Schema now mirrors those visible card fields (`makesOffer`, address, `openingHours`, `sameAs`, telephone, email, Wi-Fi amenity) and uses Cafe/Lodging types when the card type is visible. No invented prices, hours, or contacts. Ratings stay out of schema because destination cards do not show ratings. Sitemap not resubmitted (no new routes).
 
 GSC 2026-08-07 to 2026-09-05 (`https://nomads-travel-indol.vercel.app/`): query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos ~3.0 — FLAG only; host is not this GSC property; no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living. Homepage 3 clicks / 151 impressions. Branded CTR capped until the custom domain is live.

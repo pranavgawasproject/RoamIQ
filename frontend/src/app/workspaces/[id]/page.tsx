@@ -62,7 +62,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_type, city, country, starting_price, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email"
+        "id, company_name, company_type, city, country, address, starting_price, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -284,9 +284,11 @@ export default async function WorkspaceDetailPage({
                   };
                   if (snippet) place.description = snippet;
                   if (thumb) place.image = thumb;
-                  if (item.city || item.country) {
+                  const relatedStreet = usefulStreetAddress(item.address, item.city, item.country);
+                  if (relatedStreet || item.city || item.country) {
                     place.address = {
                       "@type": "PostalAddress",
+                      ...(relatedStreet ? { streetAddress: relatedStreet } : {}),
                       ...(item.city ? { addressLocality: item.city } : {}),
                       ...(item.country ? { addressCountry: item.country } : {}),
                     };
@@ -436,6 +438,9 @@ export default async function WorkspaceDetailPage({
                                 {item.company_type || "workspace"}
                                 {usefulWifiSpeed(item.wifi_speed) ? ` \u00b7 ${usefulWifiSpeed(item.wifi_speed)}` : " \u00b7 Wi-Fi speed pending"}{usefulOpenHours(item.open_hours)[0] ? ` \u00b7 ${usefulOpenHours(item.open_hours)[0]}` : ""}
                               </p>
+                              {usefulStreetAddress(item.address, item.city, item.country) ? (
+                                <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground/80">{usefulStreetAddress(item.address, item.city, item.country)}</p>
+                              ) : null}
                               {(relatedWebsite || relatedPhone || relatedEmail) && (
                                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                                   {relatedWebsite && (

@@ -275,9 +275,10 @@ function ListingCard({ listing }: { listing: Listing }) {
             ))}
           </div>
         )}
-        <div className="mt-2.5 flex items-center gap-1.5 text-sm text-foreground/70">
-          <MapPin className="h-3.5 w-3.5 shrink-0" />
-          <span className="line-clamp-1">
+        <div className="mt-2.5 flex items-start gap-1.5 text-sm text-foreground/70">
+          <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span className="min-w-0">
+            <span className="line-clamp-1">
             {cityHref ? (
               <Link href={cityHref} className="hover:text-accent hover:underline underline-offset-2">{listing.city}</Link>
             ) : (
@@ -292,6 +293,12 @@ function ListingCard({ listing }: { listing: Listing }) {
                   listing.country
                 )}
               </>
+            ) : null}
+            </span>
+            {usefulStreetAddress(listing.address, listing.city, listing.country) ? (
+              <span className="mt-0.5 block line-clamp-1 text-xs text-muted-foreground">
+                {usefulStreetAddress(listing.address, listing.city, listing.country)}
+              </span>
             ) : null}
           </span>
         </div>
@@ -418,9 +425,11 @@ export default async function WorkspacesPage({
       // Only fields already visible on the card â never invent prices, wifi, or copy.
       if (aboutSnippet) place.description = aboutSnippet;
       if (imageUrl) place.image = imageUrl;
-      if (item.city || item.country) {
+      const listedStreet = usefulStreetAddress(item.address, item.city, item.country);
+      if (listedStreet || item.city || item.country) {
         place.address = {
           "@type": "PostalAddress",
+          ...(listedStreet ? { streetAddress: listedStreet } : {}),
           ...(item.city ? { addressLocality: item.city } : {}),
           ...(item.country ? { addressCountry: item.country } : {}),
         };
