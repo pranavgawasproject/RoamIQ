@@ -510,7 +510,7 @@ export default async function WorkspaceDetailPage({
                               )}
                               <p className="text-xs text-muted-foreground">
                                 {item.company_type || "workspace"}
-                                {usefulWifiSpeed(item.wifi_speed) ? ` \u00b7 ${usefulWifiSpeed(item.wifi_speed)}` : " \u00b7 Wi-Fi speed pending"}{usefulOpenHours(item.open_hours)[0] ? ` \u00b7 ${usefulOpenHours(item.open_hours)[0]}` : ""}
+                                {usefulWifiSpeed(item.wifi_speed) ? ` \u00b7 ${usefulWifiSpeed(item.wifi_speed)}` : " \u00b7 Wi-Fi speed pending"}{usefulOpenHours(item.open_hours)[0] ? ` \u00b7 ${usefulOpenHours(item.open_hours)[0]}` : " \u00b7 Hours not listed yet"}
                               </p>
                               {usefulStreetAddress(item.address, item.city, item.country) ? (
                                 <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground/80">{usefulStreetAddress(item.address, item.city, item.country)}</p>
@@ -578,16 +578,26 @@ export default async function WorkspaceDetailPage({
                       <Clock className="h-4 w-4 shrink-0" /> Hours not listed yet
                     </div>
                   )}
-                  {listing.capacity && (
+                  {listing.capacity ? (
                     <div className="flex items-center gap-2.5 text-foreground/80">
                       <Users className="h-4 w-4 text-muted-foreground" />
                       {listing.capacity}
                     </div>
+                  ) : (
+                    <div className="flex items-center gap-2.5 text-muted-foreground/80">
+                      <Users className="h-4 w-4 shrink-0" />
+                      Capacity not listed yet
+                    </div>
                   )}
-                  {listedStreet && (
+                  {listedStreet ? (
                     <div className="flex items-start gap-2.5 text-foreground/80">
                       <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                       {listedStreet}
+                    </div>
+                  ) : (
+                    <div className="flex items-start gap-2.5 text-muted-foreground/80">
+                      <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+                      Street address not listed yet
                     </div>
                   )}
                 </div>
