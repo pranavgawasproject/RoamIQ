@@ -106,7 +106,9 @@ export async function WorkspacesPreview() {
                       <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground"><Wifi className="h-3 w-3" />{listedWifi || "Wi-Fi speed pending"}</div>
                       {usefulOpenHours(listing.open_hours)[0] ? (
                         <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground"><Clock className="h-3 w-3" />{usefulOpenHours(listing.open_hours)[0]}</div>
-                      ) : null}
+                      ) : (
+                        <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground/70"><Clock className="h-3 w-3" />Hours not listed yet</div>
+                      )}
                     </div>
                     {showRating ? (<div className="flex items-center gap-1 text-xs font-medium"><Star className="h-3 w-3 fill-sunset text-sunset" />{ratingValue.toFixed(1)}</div>) : (<div className="text-[11px] text-muted-foreground">Reviews pending</div>)}
                   </div>
