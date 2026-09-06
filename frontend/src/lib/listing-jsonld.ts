@@ -17,10 +17,10 @@ type ListingLike = {
   country?: string | null;
   starting_price?: string | null;
   wifi_speed?: string | null;
-  open_hours?: unknown;
+  open_hours?: string | null;
   ratings?: number | string | null;
   total_reviews?: number | string | null;
-  images?: unknown;
+  images?: string[] | null;
   logo_url?: string | null;
   about?: string | null;
   description?: string | null;
