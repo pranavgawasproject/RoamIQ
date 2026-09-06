@@ -128,6 +128,7 @@ export type Listing = {
   open_hours?: string | null;
   capacity?: string | null;
   inclusions?: string | null;
+  services?: string | null;
   description?: string | null;
   contact_phone?: string | null;
   contact_email?: string | null;
