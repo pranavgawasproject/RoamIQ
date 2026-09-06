@@ -28,7 +28,7 @@ const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
+  title: "RoamIQ: Digital Nomad Visas, Cost of Living & Coworking in 200+ Cities",
   description:
     "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads — searchable by city, free to browse, no signup required.",
   keywords: [
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     apple: "/logo.svg",
   },
   openGraph: {
-    title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
+    title: "RoamIQ: Digital Nomad Visas, Cost of Living & Coworking in 200+ Cities",
     description:
       "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads — searchable by city, free to browse, no signup required.",
     siteName: "RoamIQ",
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
+    title: "RoamIQ: Digital Nomad Visas, Cost of Living & Coworking in 200+ Cities",
     description:
       "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads — searchable by city, free to browse, no signup required.",
     creator: "@pranavgawas",
