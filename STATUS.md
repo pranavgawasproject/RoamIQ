@@ -1,3 +1,11 @@
+## 2026-09-06 ~04:12 UTC — daily growth/conversion (Track A)
+
+Gap fixed: about/images, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, waitlist CTAs, open-hours chips, and gated street address on /workspaces + destination + related cards already exist. Remaining hole: homepage WorkspacesPreview (highest-exit landing) did not select `address` and only showed city/country. Preview cards now fetch `address` and render `usefulStreetAddress` under the pin line when the DB has a real street. No invented addresses. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-07 to 2026-09-05 (`https://nomads-travel-indol.vercel.app/`): query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos ~3 — FLAG only; host is not this GSC property; no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living. Branded CTR capped until the custom domain is live.
+
+Listings project `davvpymbybvniexmkgcu`: 8,276 rows (about empty 5,816; price null 3,637; phone empty 7,810; email empty 8,067; logo empty 6,008; images null 0; ~1,129 usable-length address rows).
+
 ## 2026-09-06 ~03:35 UTC — daily growth/conversion (Track A)
 
 Gap fixed: about/images, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, waitlist CTAs, and open-hours chips already exist. Remaining content-depth hole: `address` was only used as a description fallback on `/workspaces` cards (hidden whenever about existed) and was omitted from index/related ItemList schema. Cards now show a gated `usefulStreetAddress` line under city/country when the DB has a real street. Related-city rows fetch `address` and show the same line. JSON-LD `streetAddress` is added only for that visible value. No invented addresses. Sitemap not resubmitted (no new routes).
