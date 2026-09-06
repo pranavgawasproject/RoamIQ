@@ -21,6 +21,7 @@ import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Listing } from "@/lib/supabase";
 import { firstUsableListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
+import { TrackedAnchor } from "@/components/site/tracked-anchor";
 
 export const revalidate = 180;
 
@@ -385,6 +386,17 @@ export default async function WorkspaceDetailPage({
                 {usefulListingTitle(listing.company_title, listing.company_name) && (
                   <p className="mt-2 text-lg text-muted-foreground">{usefulListingTitle(listing.company_title, listing.company_name)}</p>
                 )}
+                {listing.city ? (
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    <Link href={`/destinations?search=${encodeURIComponent(listing.city)}`} className="font-medium text-foreground underline-offset-4 hover:underline">
+                      Explore {listing.city} cost of living & visa data on RoamIQ
+                    </Link>
+                    {" · "}
+                    <Link href={`/workspaces?city=${encodeURIComponent(listing.city)}`} className="underline-offset-4 hover:underline">
+                      More workspaces in {listing.city}
+                    </Link>
+                  </p>
+                ) : null}
                 <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-foreground/70">
                   <span className="inline-flex items-center gap-1.5">
                     <MapPin className="h-4 w-4" />
@@ -557,20 +569,20 @@ export default async function WorkspaceDetailPage({
                 <div className="mt-6 space-y-2 border-t border-border pt-4">
                   <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Contact</p>
                   {listedPhone ? (
-                    <a href={`tel:${listedPhone.replace(/\s+/g, "")}`} className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent transition-colors">
+                    <TrackedAnchor eventName="contact_workspace" eventParams={{ method: "phone", listing_id: listing.id, city: listing.city || undefined }} href={`tel:${listedPhone.replace(/\s+/g, "")}`} className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent transition-colors">
                       <Phone className="h-4 w-4 shrink-0 text-muted-foreground" />
                       <span>{listedPhone}</span>
-                    </a>
+                    </TrackedAnchor>
                   ) : (
                     <p className="flex items-center gap-2.5 text-sm text-muted-foreground/80">
                       <Phone className="h-4 w-4 shrink-0" /> Phone not listed yet
                     </p>
                   )}
                   {listedEmail ? (
-                    <a href={`mailto:${listedEmail}`} className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent transition-colors">
+                    <TrackedAnchor eventName="contact_workspace" eventParams={{ method: "email", listing_id: listing.id, city: listing.city || undefined }} href={`mailto:${listedEmail}`} className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent transition-colors">
                       <Mail className="h-4 w-4 shrink-0 text-muted-foreground" />
                       <span className="break-all">{listedEmail}</span>
-                    </a>
+                    </TrackedAnchor>
                   ) : (
                     <p className="flex items-center gap-2.5 text-sm text-muted-foreground/80">
                       <Mail className="h-4 w-4 shrink-0" /> Email not listed yet
