@@ -280,11 +280,58 @@ export default async function CityDetailPage({
   const visibleListingItems = typedListings.map((listing, index) => {
     const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 180);
     const imageUrl = firstUsableListingImage(listing.images, listing.logo_url);
+    const schemaType =
+      listing.company_type === "coliving" || listing.company_type === "hostel" || listing.company_type === "workation"
+        ? "LodgingBusiness"
+        : listing.company_type === "cafe"
+          ? "CafeOrCoffeeShop"
+          : "LocalBusiness";
+    const place: Record<string, unknown> = {
+      "@type": schemaType,
+      "@id": `${BASE_URL}/workspaces/${listing.id}#place`,
+      name: listing.company_name,
+      url: `${BASE_URL}/workspaces/${listing.id}`,
+    };
+    // Only fields already visible on destination cards — never invent prices, wifi, hours, or contacts.
+    if (aboutSnippet) place.description = aboutSnippet;
+    if (imageUrl) place.image = imageUrl;
+    if (listing.city || listing.country) {
+      place.address = {
+        "@type": "PostalAddress",
+        ...(listing.city ? { addressLocality: listing.city } : {}),
+        ...(listing.country ? { addressCountry: listing.country } : {}),
+      };
+    }
+    const listedPrice = usefulStartingPrice(listing.starting_price);
+    if (listedPrice) {
+      place.priceRange = listedPrice;
+      place.makesOffer = {
+        "@type": "Offer",
+        url: `${BASE_URL}/workspaces/${listing.id}`,
+        priceSpecification: { "@type": "PriceSpecification", description: listedPrice },
+      };
+    }
+    const listedWifi = usefulWifiSpeed(listing.wifi_speed);
+    if (listedWifi) {
+      place.amenityFeature = [
+        { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi },
+      ];
+    }
+    const listedHours = usefulOpenHours(listing.open_hours);
+    if (listedHours.length === 1) place.openingHours = listedHours[0];
+    else if (listedHours.length > 1) place.openingHours = listedHours;
+    const listedPhone = usefulContactPhone(listing.contact_phone);
+    const listedEmail = usefulContactEmail(listing.contact_email);
+    const listedWebsite = usefulListingWebsite(listing.website);
+    if (listedPhone) place.telephone = listedPhone;
+    if (listedEmail) place.email = listedEmail;
+    if (listedWebsite) place.sameAs = [listedWebsite];
     const item: Record<string, unknown> = {
       "@type": "ListItem",
       position: index + 1,
       name: listing.company_name,
       url: `${BASE_URL}/workspaces/${listing.id}`,
+      item: place,
     };
     if (aboutSnippet) item.description = aboutSnippet;
     if (imageUrl) item.image = imageUrl;

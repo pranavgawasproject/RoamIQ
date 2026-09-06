@@ -1,3 +1,11 @@
+## 2026-09-06 ~03:35 UTC — daily growth/conversion (Track A)
+
+Gap fixed: about/images, price/Wi-Fi pending UI, admin env auth, waitlist CTAs, listing-detail JSON-LD, and `/workspaces` + related ItemList schema already exist. Remaining hole: destination city pages (`/destinations/[id]`) already show listed price, gated Wi-Fi, open hours, official site, phone, and email on workspace cards, but the destination ItemList JSON-LD only exposed name/url/image/description. Schema now mirrors those visible card fields (`makesOffer`, address, `openingHours`, `sameAs`, telephone, email, Wi-Fi amenity) and uses Cafe/Lodging types when the card type is visible. No invented prices, hours, or contacts. Ratings stay out of schema because destination cards do not show ratings. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-07 to 2026-09-05 (`https://nomads-travel-indol.vercel.app/`): query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos ~3.0 — FLAG only; host is not this GSC property; no redirect. Other clicks: coliving athens, izzy's coffee and brunch, ngb living. Homepage 3 clicks / 151 impressions. Branded CTR capped until the custom domain is live.
+
+Listings project `davvpymbybvniexmkgcu`: 8,276 rows (about empty 5,816; price null 3,637; phone empty 7,810; email empty 8,067; logo empty 6,008; images null 0).
+
 ## 2026-09-05 ~13:28 UTC — daily growth/conversion (Track A)
 
 Gap fixed: about/images, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, and waitlist CTAs already exist. Remaining content-depth hole: `open_hours` already rendered on `/workspaces/[id]` but list views hid the same gated field. Index cards, homepage preview, destination city cards, and related-city rows now show the first `usefulOpenHours` line when it exists (no invented hours). ItemList schema on `/workspaces` and related listings mirrors `openingHours` only for those visible values. Sitemap not resubmitted (no new routes).
