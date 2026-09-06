@@ -1,3 +1,11 @@
+## 2026-09-06 ~13:07 UTC — daily growth/conversion (Track A)
+
+Gap fixed: `/workspaces` index hero + waitlist copy had latin-1-misdecoded em dashes (`â` / `â€”` on the live page). Restored real em dashes in user-facing strings and comments. No invented listing data. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-07 to 2026-09-05 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos ~3 — FLAG only; do not redirect without checking the existing canonical. Other clicks: cafe nenom, coliving athens, izzy's coffee and brunch, ngb living. Home 3/152; several /workspaces/{id} pages have 1 click each. Branded CTR capped until the custom domain is live.
+
+Listings project `davvpymbybvniexmkgcu`: 8,276 rows. about empty 2,932 (about length>20: 5,339); starting_price null 3,637; contact_phone empty 6,102; contact_email empty 7,094; logo empty 5,747; images array present on all rows (cardinality>0: 8,268). wifi_speed column is populated but UI still gates unusable values as pending.
+
 ## 2026-09-06 ~04:12 UTC — daily growth/conversion (Track A)
 
 Gap fixed: about/images, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, waitlist CTAs, open-hours chips, and gated street address on /workspaces + destination + related cards already exist. Remaining hole: homepage WorkspacesPreview (highest-exit landing) did not select `address` and only showed city/country. Preview cards now fetch `address` and render `usefulStreetAddress` under the pin line when the DB has a real street. No invented addresses. Sitemap not resubmitted (no new routes).
