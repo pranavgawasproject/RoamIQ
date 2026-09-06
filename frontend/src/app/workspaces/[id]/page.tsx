@@ -92,18 +92,55 @@ export async function generateMetadata({
         description: "This workspace listing could not be found on RoamIQ.",
       };
     }
-    const location = [listing.city, listing.state, listing.country].filter(Boolean).join(", ");
-    const title = `${listing.company_name}${location ? ` \u2014 ${location}` : ""} | RoamIQ Workspaces`;
-    const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 140) || "";
+    const cityCountry = [listing.city, listing.country].filter(Boolean).join(", ");
+    const typeRaw = String(listing.company_type || "").trim().toLowerCase();
+    const typeLabelMap: Record<string, string> = {
+      cafe: "cafe",
+      coffee: "cafe",
+      "coffee shop": "cafe",
+      coliving: "coliving",
+      coworking: "coworking",
+      hostel: "hostel",
+      meetingroom: "meeting room",
+      "meeting room": "meeting room",
+      workation: "workation",
+      workspace: "workspace",
+    };
+    const typeLabel = typeRaw
+      ? typeLabelMap[typeRaw] || typeRaw.replace(/[_-]+/g, " ")
+      : "";
+    const name = listing.company_name;
+    let titleCore = name;
+    if (typeLabel && cityCountry) {
+      titleCore = `${name} \u2014 ${typeLabel} in ${cityCountry}`;
+    } else if (cityCountry) {
+      titleCore = `${name} \u2014 ${cityCountry}`;
+    } else if (typeLabel) {
+      titleCore = `${name} \u2014 ${typeLabel}`;
+    }
     const extras: string[] = [];
     const listedPrice = usefulStartingPrice(listing.starting_price);
     if (listedPrice) extras.push(listedPrice);
     const listedWifiMeta = usefulWifiSpeed(listing.wifi_speed);
-    if (listedWifiMeta) extras.push(listedWifiMeta);
-    if (listing.company_type) extras.push(String(listing.company_type));
+    if (listedWifiMeta) extras.push(`Wi-Fi ${listedWifiMeta}`);
+    // Prefer clickable SERP titles; keep brand light (not the only differentiator).
+    const title = extras.length
+      ? `${titleCore} \u00b7 ${extras.slice(0, 2).join(" \u00b7 ")}`
+      : titleCore;
+    const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 140) || "";
+    const audience =
+      typeLabel === "cafe"
+        ? "laptop-friendly cafe for digital nomads"
+        : typeLabel === "coliving"
+        ? "coliving for remote workers and digital nomads"
+        : typeLabel === "meeting room"
+        ? "meeting room and flexible workspace"
+        : typeLabel === "hostel"
+        ? "hostel stay with workspace options for digital nomads"
+        : "coworking and workspace for digital nomads";
     const description =
       aboutSnippet ||
-      `${listing.company_name}${location ? ` in ${location}` : ""} \u2014 coworking and workspace details for digital nomads on RoamIQ.${extras.length ? ` ${extras.join(" \u00b7 ")}.` : ""}`;
+      `${name}${cityCountry ? ` in ${cityCountry}` : ""} \u2014 ${audience} on RoamIQ.${extras.length ? ` ${extras.join(" \u00b7 ")}.` : ""}`;
     const url = `${BASE_URL}/workspaces/${listing.id}`;
     const image = firstUsableListingImage(listing.images, listing.logo_url) || undefined;
     return {
@@ -111,12 +148,12 @@ export async function generateMetadata({
       description,
       keywords: [
         listing.company_name,
-        `${listing.company_name} wifi speed`,
-        `${listing.city || "coworking"} space`,
-        `${listing.company_name} ${listing.city || ""}`,
+        typeLabel || "workspace",
+        `${listing.company_name} ${listing.city || ""}`.trim(),
+        `${listing.city || ""} ${typeLabel || "coworking"}`.trim(),
         "digital nomad workspace",
-        "roamiq workspace listing",
-      ],
+        "roamiq",
+      ].filter(Boolean),
       alternates: { canonical: url },
       openGraph: {
         title,
@@ -374,7 +411,7 @@ export default async function WorkspaceDetailPage({
               ) : (
                 <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-5">
                   <h2 className="font-serif text-xl font-semibold">About</h2>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">A written description has not been verified for this listing yet. Photos, location, and any listed price or Wi-Fi figures above are from the live database \u2014 we do not generate placeholder copy.</p>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">A written description has not been verified for this listing yet. Photos, location, and any listed price or Wi-Fi figures above are from the live database — we do not generate placeholder copy.</p>
                 </div>
               )}
               {tags.length > 0 && (
@@ -406,7 +443,7 @@ export default async function WorkspaceDetailPage({
               {related.length > 0 && (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">More workspaces in {listing.city}</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">Other live listings in the same city \u2014 prices and Wi-Fi only when the database has them. Ranked by photo, description, and listed price when those fields exist.</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Other live listings in the same city — prices and Wi-Fi only when the database has them. Ranked by photo, description, and listed price when those fields exist.</p>
                   <ul className="mt-4 divide-y divide-border rounded-2xl border border-border">
                     {related.map((item) => {
                       const thumb = firstUsableListingImage(item.images, item.logo_url);
