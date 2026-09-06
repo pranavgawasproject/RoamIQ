@@ -1,3 +1,9 @@
+## 2026-09-06 ~18:55 IST — daily growth/conversion (Track A)
+
+Gap fixed: about/images, price/Wi-Fi pending UI, amenities/inclusions/services pending, JSON-LD, and admin env auth already exist. Remaining thin-card hole: open hours vanished on `/workspaces` index cards, homepage preview, and related-city rows when empty; detail sidebar hid capacity and street when empty. Those now use the same pending copy as price/Wi-Fi. No invented hours, capacity, or addresses. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-07 to 2026-09-06: query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos ~3 — FLAG only; no redirect. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-06 ~13:19 UTC — daily growth/conversion (Track A)
 
 Gap fixed: about/images, price/Wi-Fi pending UI, per-listing JSON-LD, and admin env auth already exist. Remaining thin-page hole on `/workspaces/[id]`: Amenities / Included / Services disappeared when tags, inclusions, or services were empty (common on organic listing landings with 100% bounce). Those sections now use the same pending copy pattern as price/Wi-Fi. Visible inclusions and services are also mirrored into `amenityFeature` JSON-LD; empty fields stay out of schema. No invented amenities. Sitemap not resubmitted (no new routes).
