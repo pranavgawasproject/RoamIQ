@@ -103,12 +103,12 @@ async function getListings(params: {
         .not("wifi_speed", "ilike", "%High-Speed Fiber%");
     }
     if (params.described === "1") {
-      // Prefer rows with a usable about *or* description â both are rendered
+      // Prefer rows with a usable about *or* description — both are rendered
       // as the card snippet. PostgREST or() keeps this a single request.
       query = query.or("about.neq.,description.neq.");
     }
     if (params.priced === "1") {
-      // Real listed prices only â empty / placeholder rows stay off this view.
+      // Real listed prices only — empty / placeholder rows stay off this view.
       query = query
         .not("starting_price", "is", null)
         .neq("starting_price", "")
@@ -132,7 +132,7 @@ async function getListings(params: {
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
-    // snippet or a usable photo â never invent copy, and do not hide the rest
+    // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
       unfilteredFirstPage || photographedOnly || contactableOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
@@ -422,7 +422,7 @@ export default async function WorkspacesPage({
         name: item.company_name,
         url: `${BASE_URL}/workspaces/${item.id}`,
       };
-      // Only fields already visible on the card â never invent prices, wifi, or copy.
+      // Only fields already visible on the card — never invent prices, wifi, or copy.
       if (aboutSnippet) place.description = aboutSnippet;
       if (imageUrl) place.image = imageUrl;
       const listedStreet = usefulStreetAddress(item.address, item.city, item.country);
@@ -502,7 +502,7 @@ export default async function WorkspacesPage({
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <div className="text-sm font-medium uppercase tracking-widest text-accent">Coworking, coliving & more</div>
             <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{count.toLocaleString()} workspaces & stays, live from the database.</h1>
-            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">Coworking desks, coliving houses, workations, hostels, cafes, and meeting rooms â filter by location, category, and Wi-Fi speed.</p>
+            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">Coworking desks, coliving houses, workations, hostels, cafes, and meeting rooms — filter by location, category, and Wi-Fi speed.</p>
             <form className="mt-8 flex flex-wrap gap-3" action="/workspaces">
               <input type="text" name="search" defaultValue={params.search ?? ""} placeholder="Search by name..." className="min-w-[200px] flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
               <input type="text" name="city" defaultValue={params.city ?? ""} placeholder="City..." className="w-40 rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
@@ -598,7 +598,7 @@ export default async function WorkspacesPage({
               })}
             </div>
             <div className="mt-8 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
-              <WaitlistInline source="workspaces-list-above-fold" askCity heading="This index is long â leave a city if you already know where you are going" description="Most /workspaces landings leave without a next click. Email plus an optional city is enough. We only write when a listed price or Wi-Fi value exists. No extra page." compact context={waitlistContext} />
+              <WaitlistInline source="workspaces-list-above-fold" askCity heading="This index is long — leave a city if you already know where you are going" description="Most /workspaces landings leave without a next click. Email plus an optional city is enough. We only write when a listed price or Wi-Fi value exists. No extra page." compact context={waitlistContext} />
             </div>
           </div>
         </section>
@@ -631,7 +631,7 @@ export default async function WorkspacesPage({
                 </div>
                 {listings.length > 6 && (
                   <div className="my-8 rounded-2xl border border-border bg-card/80 p-5 sm:p-6">
-                    <WaitlistInline source="workspaces-list-mid-grid" askCity heading="Still scanning cards? Leave a city and email" description="If you are about to leave this index, drop an email and optional city. We send matching workspaces when price or Wi-Fi is listed â we do not invent missing numbers." compact context={waitlistContext} />
+                    <WaitlistInline source="workspaces-list-mid-grid" askCity heading="Still scanning cards? Leave a city and email" description="If you are about to leave this index, drop an email and optional city. We send matching workspaces when price or Wi-Fi is listed — we do not invent missing numbers." compact context={waitlistContext} />
                   </div>
                 )}
                 {listings.length > 6 && (
@@ -662,7 +662,7 @@ export default async function WorkspacesPage({
       <section id="waitlist" className="border-t border-border bg-secondary/40">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-5 py-10 sm:flex-row sm:items-center sm:px-8">
           <div className="max-w-xl">
-            <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">Found a workspace you like â or still deciding where to go?</h2>
+            <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">Found a workspace you like — or still deciding where to go?</h2>
             <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">Leave your email on this page. We send destination shortlists matched to budget, visa window, and listed Wi-Fi speeds. No fabricated urgency, no spam.</p>
           </div>
           <WaitlistInline source="workspaces-list" askCity heading="Leave with a shortlist, not a blank tab" description="No extra page. Add a city if the filters above did not stick. We email workspace picks only when listed price or Wi-Fi exists. No fabricated urgency." compact={false} context={waitlistContext} />
