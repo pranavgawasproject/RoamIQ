@@ -61,6 +61,9 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.05 }}
             className="mt-6 font-serif text-5xl font-semibold leading-[1.02] tracking-tight text-white text-balance sm:text-6xl lg:text-7xl"
           >
+            <span className="block text-[0.55em] font-sans font-semibold tracking-[0.18em] uppercase text-white/90 sm:text-[0.42em]">
+              RoamIQ
+            </span>
             Where will you{" "}
             <span className="relative inline-block">
               <span className="bg-gradient-to-r from-sunset via-amber-200 to-sunset bg-clip-text italic text-transparent">
@@ -90,8 +93,9 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.15 }}
             className="mt-6 max-w-xl text-lg leading-relaxed text-white/85 text-pretty"
           >
-            Your AI-powered travel intelligence. Discover cities, compare costs,
-            find workspaces — and plan the perfect workation, all in one place.
+            RoamIQ is your AI-powered travel intelligence for digital nomads —
+            discover cities, compare costs, find workspaces, and plan the perfect
+            workation in one place.
           </motion.p>
 
           {/* AI Search Bar */}

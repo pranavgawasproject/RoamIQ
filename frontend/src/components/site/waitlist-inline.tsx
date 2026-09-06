@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowRight, Check, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { trackEvent } from "@/lib/site";
 
 type WaitlistInlineProps = {
   source: string;
@@ -58,6 +59,11 @@ export function WaitlistInline({
     if (error) {
       if (error.code === "23505") {
         setStatus("success");
+        trackEvent("waitlist_signup", {
+          source,
+          status: "already_subscribed",
+          has_city: Boolean((city.trim() || context?.city || "").toString().trim()),
+        });
       } else {
         setStatus("error");
         setErrorMsg("Something went wrong. Please try again.");
@@ -66,6 +72,11 @@ export function WaitlistInline({
     }
 
     setStatus("success");
+    trackEvent("waitlist_signup", {
+      source,
+      status: "created",
+      has_city: Boolean((city.trim() || context?.city || "").toString().trim()),
+    });
     setEmail("");
   }
 
