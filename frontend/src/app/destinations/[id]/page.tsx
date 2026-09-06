@@ -24,6 +24,7 @@ import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
 import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed } from "@/lib/listing-media";
+import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
 
@@ -277,66 +278,9 @@ export default async function CityDetailPage({
     })),
   };
 
-  const visibleListingItems = typedListings.map((listing, index) => {
-    const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 180);
-    const imageUrl = firstUsableListingImage(listing.images, listing.logo_url);
-    const schemaType =
-      listing.company_type === "coliving" || listing.company_type === "hostel" || listing.company_type === "workation"
-        ? "LodgingBusiness"
-        : listing.company_type === "cafe"
-          ? "CafeOrCoffeeShop"
-          : "LocalBusiness";
-    const place: Record<string, unknown> = {
-      "@type": schemaType,
-      "@id": `${BASE_URL}/workspaces/${listing.id}#place`,
-      name: listing.company_name,
-      url: `${BASE_URL}/workspaces/${listing.id}`,
-    };
-    // Only fields already visible on destination cards — never invent prices, wifi, hours, or contacts.
-    if (aboutSnippet) place.description = aboutSnippet;
-    if (imageUrl) place.image = imageUrl;
-    if (listing.city || listing.country) {
-      place.address = {
-        "@type": "PostalAddress",
-        ...(listing.city ? { addressLocality: listing.city } : {}),
-        ...(listing.country ? { addressCountry: listing.country } : {}),
-      };
-    }
-    const listedPrice = usefulStartingPrice(listing.starting_price);
-    if (listedPrice) {
-      place.priceRange = listedPrice;
-      place.makesOffer = {
-        "@type": "Offer",
-        url: `${BASE_URL}/workspaces/${listing.id}`,
-        priceSpecification: { "@type": "PriceSpecification", description: listedPrice },
-      };
-    }
-    const listedWifi = usefulWifiSpeed(listing.wifi_speed);
-    if (listedWifi) {
-      place.amenityFeature = [
-        { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi },
-      ];
-    }
-    const listedHours = usefulOpenHours(listing.open_hours);
-    if (listedHours.length === 1) place.openingHours = listedHours[0];
-    else if (listedHours.length > 1) place.openingHours = listedHours;
-    const listedPhone = usefulContactPhone(listing.contact_phone);
-    const listedEmail = usefulContactEmail(listing.contact_email);
-    const listedWebsite = usefulListingWebsite(listing.website);
-    if (listedPhone) place.telephone = listedPhone;
-    if (listedEmail) place.email = listedEmail;
-    if (listedWebsite) place.sameAs = [listedWebsite];
-    const item: Record<string, unknown> = {
-      "@type": "ListItem",
-      position: index + 1,
-      name: listing.company_name,
-      url: `${BASE_URL}/workspaces/${listing.id}`,
-      item: place,
-    };
-    if (aboutSnippet) item.description = aboutSnippet;
-    if (imageUrl) item.image = imageUrl;
-    return item;
-  });
+  const visibleListingItems = typedListings.map((listing, index) =>
+    workspaceListItemJsonLd(listing, index + 1, BASE_URL),
+  );
 
   const itemListLd =
     visibleListingItems.length > 0
@@ -892,7 +836,7 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
           <div className="mt-3 flex items-center gap-2.5">
             {isUsableImageUrl(listing.logo_url) ? (
               <Link href={`/workspaces/${listing.id}`} className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg border border-border bg-secondary">
-                <Image src={listing.logo_url.trim()} alt="" fill className="object-contain p-0.5" sizes="32px" unoptimized />
+                <Image src={listing.logo_url.trim()} alt={`${listing.company_name} logo`} fill className="object-contain p-0.5" sizes="32px" unoptimized />
               </Link>
             ) : null}
             <h3 className="font-serif text-lg font-semibold group-hover:text-forest transition-colors">
