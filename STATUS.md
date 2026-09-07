@@ -1,3 +1,9 @@
+## 2026-09-07 — daily growth/conversion (Track A)
+
+Gap fixed: about/images, price/Wi-Fi pending UI, JSON-LD, admin env auth, waitlist docks, and hours/capacity/street pending already exist. Remaining hole: listing detail city links only hit `/destinations?search=` even when a live destination page exists. `/workspaces/[id]` now resolves `cities` by name (+ country when unique) and links to `/destinations/{id}`; breadcrumbs and `containedInPlace` follow only when that row exists. Search fallback stays for cities without a destination page. No invented city pages. Sitemap not resubmitted (no new routes).
+
+GSC: `4g-travel-tool.vercel.app` remains FLAG-only duplicate-index — no redirect this run. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-06 ~18:55 IST — daily growth/conversion (Track A)
 
 Gap fixed: about/images, price/Wi-Fi pending UI, amenities/inclusions/services pending, JSON-LD, and admin env auth already exist. Remaining thin-card hole: open hours vanished on `/workspaces` index cards, homepage preview, and related-city rows when empty; detail sidebar hid capacity and street when empty. Those now use the same pending copy as price/Wi-Fi. No invented hours, capacity, or addresses. Sitemap not resubmitted (no new routes).
