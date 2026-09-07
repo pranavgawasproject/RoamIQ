@@ -13,6 +13,7 @@ import {
   usefulStartingPrice,
   usefulOpenHours, usefulStreetAddress, usefulWifiSpeed,
 } from "@/lib/listing-media";
+import { getDestinationForListingCity } from "@/lib/listing-destination";
 
 function getCardImage(listing: Listing): string | null {
   return firstUsableListingImage(listing.images, listing.logo_url);
@@ -43,6 +44,16 @@ export async function WorkspacesPreview() {
 
   if (listings.length === 0) return null;
 
+  const destKey = (city?: string | null, country?: string | null) => `${city || ""}||${country || ""}`;
+  const destPairs = await Promise.all(
+    Array.from(new Set(listings.map((l) => destKey(l.city, l.country)))).map(async (key) => {
+      const [city, country] = key.split("||");
+      const dest = await getDestinationForListingCity(city || null, country || null);
+      return [key, dest?.id ? `/destinations/${dest.id}` : null] as const;
+    }),
+  );
+  const destByCityCountry = new Map(destPairs);
+
   return (
     <section id="workspaces-preview" className="relative scroll-mt-24 py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -69,6 +80,8 @@ export async function WorkspacesPreview() {
             const listedPhone = usefulContactPhone(listing.contact_phone);
             const listedEmail = usefulContactEmail(listing.contact_email);
             const listedWebsite = usefulListingWebsite(listing.website);
+            const destinationHref = destByCityCountry.get(destKey(listing.city, listing.country)) || null;
+            const cityFilterHref = listing.city ? `/workspaces?city=${encodeURIComponent(listing.city)}` : null;
             return (
               <article key={listing.id} className="flex flex-col overflow-hidden rounded-3xl border border-border bg-card">
                 <Link href={`/workspaces/${listing.id}`} className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
@@ -92,7 +105,7 @@ export async function WorkspacesPreview() {
                     <h3 className="font-serif text-base font-semibold tracking-tight line-clamp-1"><Link href={`/workspaces/${listing.id}`} className="hover:text-accent">{listing.company_name}</Link></h3>
                   </div>
                   {about ? (<p className="mt-1 text-sm text-foreground/70 line-clamp-2">{about}</p>) : (<p className="mt-1 text-sm text-muted-foreground">Description pending</p>)}
-                  <div className="mt-2 flex items-center gap-1.5 text-xs text-foreground/70"><MapPin className="h-3 w-3 shrink-0" /><span className="min-w-0"><span className="line-clamp-1">{[listing.city, listing.country].filter(Boolean).join(", ")}</span>{usefulStreetAddress(listing.address, listing.city, listing.country) ? (<span className="mt-0.5 block line-clamp-1 text-[11px] text-muted-foreground">{usefulStreetAddress(listing.address, listing.city, listing.country)}</span>) : null}</span></div>
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-foreground/70"><MapPin className="h-3 w-3 shrink-0" /><span className="min-w-0"><span className="line-clamp-1">{listing.city ? (destinationHref ? <Link href={destinationHref} className="hover:text-accent hover:underline underline-offset-2">{listing.city}</Link> : cityFilterHref ? <Link href={cityFilterHref} className="hover:text-accent hover:underline underline-offset-2">{listing.city}</Link> : listing.city) : null}{listing.city && listing.country ? ", " : ""}{listing.country ? <Link href={`/workspaces?country=${encodeURIComponent(listing.country)}`} className="hover:text-accent hover:underline underline-offset-2">{listing.country}</Link> : null}</span>{usefulStreetAddress(listing.address, listing.city, listing.country) ? (<span className="mt-0.5 block line-clamp-1 text-[11px] text-muted-foreground">{usefulStreetAddress(listing.address, listing.city, listing.country)}</span>) : null}{destinationHref ? (<span className="mt-0.5 block text-[11px]"><Link href={destinationHref} className="hover:text-accent hover:underline underline-offset-2">City guide: cost of living & visa</Link>{cityFilterHref ? <>{" · "}<Link href={cityFilterHref} className="hover:text-accent hover:underline underline-offset-2">More workspaces</Link></> : null}</span>) : null}</span></div>
                   <div className="mt-3 flex flex-wrap gap-2">
                       {!(listedPhone || listedEmail || listedWebsite) && (<span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border bg-secondary/30 px-2.5 py-1 text-[11px] font-medium text-muted-foreground"><Phone className="h-3 w-3" /> Contact pending</span>)}
                       {listedWebsite && (<a href={listedWebsite} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"><ExternalLink className="h-3 w-3" /> Official site</a>)}
