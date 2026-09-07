@@ -18,6 +18,7 @@ import {
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
+import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
 import { firstUsableListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
@@ -651,6 +652,10 @@ export default async function WorkspaceDetailPage({
           </div>
         </section>
       </main>
+      <WaitlistSticky
+        source="workspace_detail_sticky"
+        context={{ city: listing.city, type: listing.company_type, listing: listing.company_name }}
+      />
       <Footer />
     </div>
   );
