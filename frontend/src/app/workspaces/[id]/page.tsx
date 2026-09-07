@@ -20,7 +20,6 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { firstUsableListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
 import { TrackedAnchor } from "@/components/site/tracked-anchor";
@@ -198,7 +197,6 @@ export default async function WorkspaceDetailPage({
   const listing = await getListing(id);
   if (!listing) notFound();
   const related = await getRelatedListings(listing);
-  const destination = await getDestinationForListingCity(listing.city, listing.country);
   const images: string[] = listingGalleryImages(listing.images, listing.logo_url);
   const tags: string[] = usefulListingTags(listing.tags);
   const locationParts = [listing.city, listing.state, listing.country].filter(Boolean);
@@ -211,10 +209,7 @@ export default async function WorkspaceDetailPage({
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: BASE_URL },
       { "@type": "ListItem", position: 2, name: "Workspaces", item: `${BASE_URL}/workspaces` },
-      ...(destination
-        ? [{ "@type": "ListItem", position: 3, name: destination.name, item: `${BASE_URL}/destinations/${destination.id}` }]
-        : []),
-      { "@type": "ListItem", position: destination ? 4 : 3, name: listing.company_name, item: pageUrl },
+      { "@type": "ListItem", position: 3, name: listing.company_name, item: pageUrl },
     ],
   };
   const typeKey = String(listing.company_type || "").toLowerCase();
@@ -246,13 +241,6 @@ export default async function WorkspaceDetailPage({
   else if (primaryImage) localBusinessJsonLd.image = primaryImage;
   if (listedLogo) localBusinessJsonLd.logo = listedLogo;
   if (listedWebsite) localBusinessJsonLd.sameAs = [listedWebsite];
-  if (destination) {
-    localBusinessJsonLd.containedInPlace = {
-      "@type": "City",
-      name: destination.name,
-      url: `${BASE_URL}/destinations/${destination.id}`,
-    };
-  }
   if (listedStreet || locationParts.length) {
     localBusinessJsonLd.address = {
       "@type": "PostalAddress",
@@ -405,13 +393,8 @@ export default async function WorkspaceDetailPage({
                 )}
                 {listing.city ? (
                   <p className="mt-3 text-sm text-muted-foreground">
-                    <Link
-                      href={destination ? `/destinations/${destination.id}` : `/destinations?search=${encodeURIComponent(listing.city)}`}
-                      className="font-medium text-foreground underline-offset-4 hover:underline"
-                    >
-                      {destination
-                        ? `Open the ${destination.name} destination page — cost of living & visa data`
-                        : `Explore ${listing.city} cost of living & visa data on RoamIQ`}
+                    <Link href={`/destinations?search=${encodeURIComponent(listing.city)}`} className="font-medium text-foreground underline-offset-4 hover:underline">
+                      Explore {listing.city} cost of living & visa data on RoamIQ
                     </Link>
                     {" · "}
                     <Link href={`/workspaces?city=${encodeURIComponent(listing.city)}`} className="underline-offset-4 hover:underline">
@@ -533,8 +516,12 @@ export default async function WorkspaceDetailPage({
                               {usefulStreetAddress(item.address, item.city, item.country) ? (
                                 <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground/80">{usefulStreetAddress(item.address, item.city, item.country)}</p>
                               ) : null}
-                              {(relatedWebsite || relatedPhone || relatedEmail) && (
-                                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                                  {!(relatedWebsite || relatedPhone || relatedEmail) && (
+                                    <span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border bg-secondary/30 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                                      <Phone className="h-3 w-3" /> Contact pending
+                                    </span>
+                                  )}
                                   {relatedWebsite && (
                                     <a href={relatedWebsite} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2 py-0.5 text-[10px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest">
                                       <ExternalLink className="h-3 w-3" /> Official site
@@ -551,7 +538,6 @@ export default async function WorkspaceDetailPage({
                                     </a>
                                   )}
                                 </div>
-                              )}
                             </div>
                             <Link href={`/workspaces/${item.id}`} className="shrink-0 text-sm text-muted-foreground hover:text-accent">
                               {usefulStartingPrice(item.starting_price) || "Price not listed yet"}

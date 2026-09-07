@@ -93,13 +93,12 @@ export async function WorkspacesPreview() {
                   </div>
                   {about ? (<p className="mt-1 text-sm text-foreground/70 line-clamp-2">{about}</p>) : (<p className="mt-1 text-sm text-muted-foreground">Description pending</p>)}
                   <div className="mt-2 flex items-center gap-1.5 text-xs text-foreground/70"><MapPin className="h-3 w-3 shrink-0" /><span className="min-w-0"><span className="line-clamp-1">{[listing.city, listing.country].filter(Boolean).join(", ")}</span>{usefulStreetAddress(listing.address, listing.city, listing.country) ? (<span className="mt-0.5 block line-clamp-1 text-[11px] text-muted-foreground">{usefulStreetAddress(listing.address, listing.city, listing.country)}</span>) : null}</span></div>
-                  {(listedPhone || listedEmail || listedWebsite) && (
-                    <div className="mt-3 flex flex-wrap gap-2">
+                  <div className="mt-3 flex flex-wrap gap-2">
+                      {!(listedPhone || listedEmail || listedWebsite) && (<span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border bg-secondary/30 px-2.5 py-1 text-[11px] font-medium text-muted-foreground"><Phone className="h-3 w-3" /> Contact pending</span>)}
                       {listedWebsite && (<a href={listedWebsite} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"><ExternalLink className="h-3 w-3" /> Official site</a>)}
                       {listedPhone && (<a href={`tel:${listedPhone.replace(/[^+\d]/g, "")}`} className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"><Phone className="h-3 w-3" /> Call</a>)}
                       {listedEmail && (<a href={`mailto:${listedEmail}`} className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"><Mail className="h-3 w-3" /> Email</a>)}
                     </div>
-                  )}
                   <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
                     <div>
                       <div className={usefulStartingPrice(listing.starting_price) ? "text-sm font-semibold text-forest" : "text-xs text-muted-foreground"}>{usefulStartingPrice(listing.starting_price) || "Price not listed yet"}</div>

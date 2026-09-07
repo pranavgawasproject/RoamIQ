@@ -303,8 +303,12 @@ function ListingCard({ listing }: { listing: Listing }) {
             ) : null}
           </span>
         </div>
-        {(listedPhone || listedEmail || listedWebsite) && (
-          <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
+          {!(listedPhone || listedEmail || listedWebsite) && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border bg-secondary/30 px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+              <Phone className="h-3 w-3" /> Contact pending
+            </span>
+          )}
             {listedWebsite && (
               <a
                 href={listedWebsite}
@@ -331,8 +335,7 @@ function ListingCard({ listing }: { listing: Listing }) {
                 <Mail className="h-3 w-3" /> Email
               </a>
             )}
-          </div>
-        )}
+        </div>
         <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
           <div>
             {usefulStartingPrice(listing.starting_price) ? (
