@@ -21,6 +21,7 @@ import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
 import { firstUsableListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
 import { TrackedAnchor } from "@/components/site/tracked-anchor";
 
@@ -197,6 +198,7 @@ export default async function WorkspaceDetailPage({
   const listing = await getListing(id);
   if (!listing) notFound();
   const related = await getRelatedListings(listing);
+  const destination = await getDestinationForListingCity(listing.city, listing.country);
   const images: string[] = listingGalleryImages(listing.images, listing.logo_url);
   const tags: string[] = usefulListingTags(listing.tags);
   const locationParts = [listing.city, listing.state, listing.country].filter(Boolean);
@@ -393,9 +395,15 @@ export default async function WorkspaceDetailPage({
                 )}
                 {listing.city ? (
                   <p className="mt-3 text-sm text-muted-foreground">
-                    <Link href={`/destinations?search=${encodeURIComponent(listing.city)}`} className="font-medium text-foreground underline-offset-4 hover:underline">
-                      Explore {listing.city} cost of living & visa data on RoamIQ
-                    </Link>
+                    {destination ? (
+                      <Link href={`/destinations/${destination.id}`} className="font-medium text-foreground underline-offset-4 hover:underline">
+                        Explore {destination.name} cost of living & visa data on RoamIQ
+                      </Link>
+                    ) : (
+                      <Link href={`/destinations?search=${encodeURIComponent(listing.city)}`} className="font-medium text-foreground underline-offset-4 hover:underline">
+                        Explore {listing.city} cost of living & visa data on RoamIQ
+                      </Link>
+                    )}
                     {" · "}
                     <Link href={`/workspaces?city=${encodeURIComponent(listing.city)}`} className="underline-offset-4 hover:underline">
                       More workspaces in {listing.city}

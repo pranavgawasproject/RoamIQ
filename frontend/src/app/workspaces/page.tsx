@@ -8,6 +8,7 @@ import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
 import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulOpenHours, usefulWifiSpeed } from "@/lib/listing-media";
+import { getDestinationForListingCity } from "@/lib/listing-destination";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -202,7 +203,7 @@ function usefulTags(tags: string[] | null | undefined): string[] {
 
 }
 
-function ListingCard({ listing }: { listing: Listing }) {
+function ListingCard({ listing, destinationHref }: { listing: Listing; destinationHref?: string | null }) {
   const imageUrl = getCardImage(listing);
   const reviewCount = Number(listing.total_reviews ?? 0);
   const ratingValue = Number(listing.ratings ?? 0);
@@ -212,7 +213,8 @@ function ListingCard({ listing }: { listing: Listing }) {
   const listedEmail = usefulContactEmail(listing.contact_email);
   const listedWebsite = usefulListingWebsite(listing.website);
   const typeHref = listing.company_type ? `/workspaces?type=${encodeURIComponent(listing.company_type)}` : null;
-  const cityHref = listing.city ? `/workspaces?city=${encodeURIComponent(listing.city)}` : null;
+  const cityFilterHref = listing.city ? `/workspaces?city=${encodeURIComponent(listing.city)}` : null;
+  const cityHref = destinationHref || cityFilterHref;
   const countryHref = listing.country ? `/workspaces?country=${encodeURIComponent(listing.country)}` : null;
   return (
     <article className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-forest/5 hover:-translate-y-0.5">
@@ -301,6 +303,21 @@ function ListingCard({ listing }: { listing: Listing }) {
                 {usefulStreetAddress(listing.address, listing.city, listing.country)}
               </span>
             ) : null}
+            {destinationHref && listing.city ? (
+              <span className="mt-0.5 block text-[11px] text-muted-foreground">
+                <Link href={destinationHref} className="hover:text-accent hover:underline underline-offset-2">
+                  City guide: cost of living & visa
+                </Link>
+                {cityFilterHref ? (
+                  <>
+                    {" · "}
+                    <Link href={cityFilterHref} className="hover:text-accent hover:underline underline-offset-2">
+                      More workspaces
+                    </Link>
+                  </>
+                ) : null}
+              </span>
+            ) : null}
           </span>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -377,6 +394,15 @@ export default async function WorkspacesPage({
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
   const { listings, count, page } = await getListings(params);
+  const destKey = (city?: string | null, country?: string | null) => `${city || ""}||${country || ""}`;
+  const destPairs = await Promise.all(
+    Array.from(new Set(listings.map((l) => destKey(l.city, l.country)))).map(async (key) => {
+      const [city, country] = key.split("||");
+      const dest = await getDestinationForListingCity(city || null, country || null);
+      return [key, dest?.id ? `/destinations/${dest.id}` : null] as const;
+    }),
+  );
+  const destByCityCountry = new Map(destPairs);
   const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
   const filterQs = (overrides: Record<string, string | null | undefined> = {}) => {
     const qs = new URLSearchParams();
@@ -632,7 +658,7 @@ export default async function WorkspacesPage({
               <>
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {listings.slice(0, 6).map((l) => (
-                    <ListingCard key={l.id} listing={l} />
+                    <ListingCard key={l.id} listing={l} destinationHref={destByCityCountry.get(destKey(l.city, l.country))} />
                   ))}
                 </div>
                 {listings.length > 6 && (
@@ -643,7 +669,7 @@ export default async function WorkspacesPage({
                 {listings.length > 6 && (
                   <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     {listings.slice(6).map((l) => (
-                      <ListingCard key={l.id} listing={l} />
+                      <ListingCard key={l.id} listing={l} destinationHref={destByCityCountry.get(destKey(l.city, l.country))} />
                     ))}
                   </div>
                 )}
