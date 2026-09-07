@@ -6,6 +6,7 @@ import { CityCard } from "@/components/site/city-card";
 import { supabase, type City } from "@/lib/supabase";
 import { Compass, ArrowLeftRight } from "lucide-react";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
+import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -124,7 +125,6 @@ export default async function DestinationsPage({
     ],
   };
 
-  // CollectionPage + ItemList from live city rows (no fabricated entries)
   const itemListJsonLd = {
     "@type": "ItemList",
     name: "Digital nomad destinations on RoamIQ",
@@ -254,6 +254,11 @@ export default async function DestinationsPage({
         </section>
       </main>
       <Footer />
+      <WaitlistSticky
+        source="destinations-list-sticky"
+        heading="Leaving the destination index?"
+        description="These city pages are often a last stop. Email plus an optional city is enough. We only write when a listed city score or workspace already exists."
+      />
     </div>
   );
 }
