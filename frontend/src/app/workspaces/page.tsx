@@ -463,6 +463,7 @@ export default async function WorkspacesPage({
           "@type": "PostalAddress",
           ...(listedStreet ? { streetAddress: listedStreet } : {}),
           ...(item.city ? { addressLocality: item.city } : {}),
+          ...(item.state ? { addressRegion: item.state } : {}),
           ...(item.country ? { addressCountry: item.country } : {}),
         };
       }
