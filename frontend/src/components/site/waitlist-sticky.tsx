@@ -6,10 +6,12 @@ import { WaitlistInline } from "@/components/site/waitlist-inline";
 type WaitlistStickyProps = {
   source: string;
   context?: Record<string, string | null | undefined>;
+  heading?: string;
+  description?: string;
 };
 
-/** Fixed bottom capture for /workspaces bounce traffic. No fabricated stats or urgency. */
-export function WaitlistSticky({ source, context }: WaitlistStickyProps) {
+/** Fixed bottom capture for high-exit listing and destination landings. No fabricated stats or urgency. */
+export function WaitlistSticky({ source, context, heading, description }: WaitlistStickyProps) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -31,8 +33,11 @@ export function WaitlistSticky({ source, context }: WaitlistStickyProps) {
           askCity
           compact
           context={context}
-          heading="Leaving without a shortlist?"
-          description="Most /workspaces visits end on this index or a listing. Email plus an optional city is enough. We only write when a listed price or Wi-Fi value exists."
+          heading={heading ?? "Leaving without a shortlist?"}
+          description={
+            description ??
+            "Most /workspaces visits end on this index or a listing. Email plus an optional city is enough. We only write when a listed price or Wi-Fi value exists."
+          }
         />
       </div>
     </div>
