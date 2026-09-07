@@ -5,6 +5,7 @@ import { Star, MapPin, Wifi, ArrowRight, ArrowLeft, Building2, Phone, Mail, Exte
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
+import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
 import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulOpenHours, usefulWifiSpeed } from "@/lib/listing-media";
 
@@ -670,6 +671,7 @@ export default async function WorkspacesPage({
           <WaitlistInline source="workspaces-list" askCity heading="Leave with a shortlist, not a blank tab" description="No extra page. Add a city if the filters above did not stick. We email workspace picks only when listed price or Wi-Fi exists. No fabricated urgency." compact={false} context={waitlistContext} />
         </div>
       </section>
+      <WaitlistSticky source="workspaces-list-sticky" context={waitlistContext} />
       <Footer />
     </div>
   );
