@@ -7,7 +7,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulOpenHours, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulOpenHours, usefulWifiSpeed } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
@@ -150,7 +150,7 @@ async function getListings(params: {
       // images[] is populated on almost every row; only keep cards whose
       // photo already passes firstUsableListingImage (same gate as the UI).
       const withPhoto = rows.filter((listing) =>
-        Boolean(firstUsableListingImage(listing.images, listing.logo_url))
+        Boolean(firstVenueListingImage(listing.images))
       );
       return { listings: withPhoto.slice(0, PAGE_SIZE), count: withPhoto.length, page };
     }
@@ -171,7 +171,7 @@ async function getListings(params: {
       .map((listing, index) => {
         let score = 0;
         if (usefulListingAbout(listing.about || listing.description, listing.company_name)) score += 100;
-        if (firstUsableListingImage(listing.images, listing.logo_url)) score += 20;
+        if (firstVenueListingImage(listing.images)) score += 20;
         if (usefulStartingPrice(listing.starting_price)) score += 10;
         if (usefulWifiSpeed(listing.wifi_speed)) score += 10;
         if (usefulListingWebsite(listing.website) || usefulContactPhone(listing.contact_phone) || usefulContactEmail(listing.contact_email)) score += 15;
@@ -189,7 +189,7 @@ async function getListings(params: {
 }
 
 function getCardImage(listing: Listing): string | null {
-  return firstUsableListingImage(listing.images, listing.logo_url);
+  return firstVenueListingImage(listing.images);
 }
 
 function usefulAboutSnippet(about: string | null | undefined, companyName?: string | null): string | null {
@@ -229,7 +229,7 @@ function ListingCard({ listing, destinationHref }: { listing: Listing; destinati
         )}
         {(() => {
           const photoCount = Array.isArray(listing.images)
-            ? listing.images.filter((u) => typeof u === "string" && u.trim().length > 8).length
+            ? listing.images.filter((u) => isVenuePhotoUrl(u)).length
             : 0;
           if (!imageUrl || photoCount < 2) return null;
           return (

@@ -4,7 +4,7 @@ import { ArrowUpRight, Building2, Clock, ExternalLink, Mail, MapPin, Phone, Star
 import { supabase, type Listing } from "@/lib/supabase";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import {
-  firstUsableListingImage,
+  firstVenueListingImage,
   isUsableImageUrl,
   usefulContactEmail,
   usefulContactPhone,
@@ -16,7 +16,7 @@ import {
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 
 function getCardImage(listing: Listing): string | null {
-  return firstUsableListingImage(listing.images, listing.logo_url);
+  return firstVenueListingImage(listing.images);
 }
 
 function usefulAboutSnippet(
