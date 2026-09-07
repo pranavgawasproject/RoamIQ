@@ -23,7 +23,7 @@ import { Footer } from "@/components/site/footer";
 import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed } from "@/lib/listing-media";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
@@ -811,7 +811,7 @@ function rankDestinationListings(rows: Listing[]): Listing[] {
 }
 
 function getCardImage(listing: Listing): string | null {
-  return firstUsableListingImage(listing.images, listing.logo_url);
+  return firstVenueListingImage(listing.images);
 }
 
 

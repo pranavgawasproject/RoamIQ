@@ -1,3 +1,9 @@
+## 2026-09-07 ~18:35 IST — daily growth/conversion (Track A)
+
+Gap fixed: about/images already render; default Track A items exist. Remaining list-view hole: `/workspaces`, homepage preview, destination city cards, and related-city thumbs used `firstUsableListingImage`, which can stretch a logo into the 16:10 hero. Heroes now use `firstVenueListingImage` (venue photos only). Logo stays in the small badge. Photo-pending and the photographed filter match that gate. No invented photos. Sitemap not resubmitted.
+
+GSC: `4g-travel-tool.vercel.app` remains FLAG-only duplicate-index — no redirect this run. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-07 ~04:05 UTC — daily growth/conversion (Track A)
 
 Gap fixed: default Track A items (about/images, pending price/Wi-Fi UI, JSON-LD, admin env auth, waitlist) already exist. Remaining conversion hole: `/workspaces` cards only filtered city names to `?city=`, and listing detail used `/destinations?search=` even when a live cities row exists. Index cards resolve getDestinationForListingCity per unique city/country and link to `/destinations/[id]` plus a City guide line when that row exists; the workspace-city filter stays as a secondary link. Detail Explore uses the destination id when matched. No invented slugs. Sitemap not resubmitted.

@@ -20,7 +20,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
 import { TrackedAnchor } from "@/components/site/tracked-anchor";
@@ -333,7 +333,7 @@ export default async function WorkspaceDetailPage({
                 name: listing.city ? `More workspaces in ${listing.city}` : "More workspaces",
                 numberOfItems: related.length,
                 itemListElement: related.map((item, index) => {
-                  const thumb = firstUsableListingImage(item.images, item.logo_url);
+                  const thumb = firstVenueListingImage(item.images);
                   const snippet = usefulListingAbout(item.about || item.description, item.company_name, 140);
                   const relatedUrl = `${BASE_URL}/workspaces/${item.id}`;
                   const typeKey = String(item.company_type || "").toLowerCase();
@@ -539,7 +539,7 @@ export default async function WorkspaceDetailPage({
                   <p className="mt-1 text-sm text-muted-foreground">Other live listings in the same city — prices and Wi-Fi only when the database has them. Ranked by photo, description, and listed price when those fields exist.</p>
                   <ul className="mt-4 divide-y divide-border rounded-2xl border border-border">
                     {related.map((item) => {
-                      const thumb = firstUsableListingImage(item.images, item.logo_url);
+                      const thumb = firstVenueListingImage(item.images);
                       const snippet = usefulListingAbout(item.about || item.description, item.company_name, 140);
                       const aboutOk = Boolean(snippet);
                       const relatedWebsite = usefulListingWebsite(item.website);
