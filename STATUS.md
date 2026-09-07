@@ -1,3 +1,9 @@
+## 2026-09-07 ~09:05 IST — daily growth/conversion (Track A)
+
+Gap fixed: about/images, price/Wi-Fi pending UI, JSON-LD, admin env auth, hours/capacity/street pending, and sticky waitlist already exist. Remaining thin-card hole: official site / phone / email chips vanished on `/workspaces` cards, homepage preview, and related-city rows when those fields were empty (~high null-rate on contact_phone / contact_email). Those cards now show a dashed **Contact pending** chip instead of an empty row. No invented phones, emails, or websites. Sitemap not resubmitted (no new routes).
+
+GSC: `4g-travel-tool.vercel.app` remains a FLAG-only duplicate-index query — no redirect this run. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-07 — daily growth/conversion (Track A)
 
 Gap fixed: about/images, price/Wi-Fi pending UI, JSON-LD, admin env auth, waitlist docks, and hours/capacity/street pending already exist. Remaining hole: listing detail city links only hit `/destinations?search=` even when a live destination page exists. `/workspaces/[id]` now resolves `cities` by name (+ country when unique) and links to `/destinations/{id}`; breadcrumbs and `containedInPlace` follow only when that row exists. Search fallback stays for cities without a destination page. No invented city pages. Sitemap not resubmitted (no new routes).
