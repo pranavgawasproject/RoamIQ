@@ -80,6 +80,17 @@ export function firstUsableListingImage(
   return null;
 }
 
+/** Card / list heroes only. Never stretch a logo or favicon into the 16:10 slot. */
+export function firstVenueListingImage(
+  images: string[] | null | undefined
+): string | null {
+  if (!Array.isArray(images)) return null;
+  for (const raw of images) {
+    if (isVenuePhotoUrl(raw)) return raw.trim();
+  }
+  return null;
+}
+
 const ABOUT_NOISE = [
   "skip to content",
   "sign in",
