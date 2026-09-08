@@ -15,8 +15,11 @@ import {
 } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 
-function getCardImage(listing: Listing): string | null {
-  return firstVenueListingImage(listing.images);
+function getCardImage(listing: Listing): { url: string; kind: "photo" | "logo" } | null {
+  const photo = firstVenueListingImage(listing.images);
+  if (photo) return { url: photo, kind: "photo" };
+  if (isUsableImageUrl(listing.logo_url)) return { url: listing.logo_url!.trim(), kind: "logo" };
+  return null;
 }
 
 function usefulAboutSnippet(
@@ -71,7 +74,9 @@ export async function WorkspacesPreview() {
         </div>
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {listings.map((listing) => {
-            const imageUrl = getCardImage(listing);
+            const cardImage = getCardImage(listing);
+            const imageUrl = cardImage?.url ?? null;
+            const imageKind = cardImage?.kind ?? null;
             const about = usefulAboutSnippet(listing.about, listing.description, listing.company_name);
             const reviewCount = Number(listing.total_reviews ?? 0);
             const ratingValue = Number(listing.ratings ?? 0);
@@ -86,13 +91,18 @@ export async function WorkspacesPreview() {
               <article key={listing.id} className="flex flex-col overflow-hidden rounded-3xl border border-border bg-card">
                 <Link href={`/workspaces/${listing.id}`} className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
                   {imageUrl ? (
-                    <Image src={imageUrl} alt={listing.company_name} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" unoptimized />
+                    <Image src={imageUrl} alt={imageKind === "logo" ? `${listing.company_name} logo` : listing.company_name} fill className={imageKind === "logo" ? "object-contain bg-secondary p-8" : "object-cover"} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" unoptimized />
                   ) : (
                     <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-secondary to-muted">
                       <Building2 className="h-10 w-10 text-muted-foreground/50" />
                       <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/80">Photo pending</span>
                     </div>
                   )}
+                  {imageKind === "logo" ? (
+                    <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium text-foreground/80">
+                      Logo
+                    </span>
+                  ) : null}
                 </Link>
                 <div className="flex flex-1 flex-col p-4">
                   {listing.company_type && (<div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-foreground/70">{listing.company_type}</div>)}
