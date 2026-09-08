@@ -1,3 +1,9 @@
+## 2026-09-08 ~09:05 IST — daily growth/conversion (Track A)
+
+Gap fixed: about/images, venue-photo heroes, price/Wi-Fi pending, JSON-LD, and admin env auth already exist. Remaining thin-card hole on `/destinations/[id]`: city listing cards hid the contact row when website/phone/email were empty and omitted hours when `open_hours` was empty. Cards now show a dashed **Contact pending** chip and **Hours pending**, matching `/workspaces`. No invented phones, emails, or hours. Sitemap not resubmitted.
+
+GSC: query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos ~3 — FLAG only; inspect against the nomads property is 403 (URL is not part of that property). No redirect. Branded CTR capped until the custom domain is live.
+
 ## 2026-09-07 ~18:35 IST — daily growth/conversion (Track A)
 
 Gap fixed: about/images already render; default Track A items exist. Remaining list-view hole: `/workspaces`, homepage preview, destination city cards, and related-city thumbs used `firstUsableListingImage`, which can stretch a logo into the 16:10 hero. Heroes now use `firstVenueListingImage` (venue photos only). Logo stays in the small badge. Photo-pending and the photographed filter match that gate. No invented photos. Sitemap not resubmitted.
