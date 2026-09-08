@@ -262,7 +262,7 @@ export default async function CityDetailPage({
     ],
   };
 
-  // FAQ answers are derived only from live city/visa/cost fields â no fabricated claims
+  // FAQ answers are derived only from live city/visa/cost fields — no fabricated claims
   const faqItems: { q: string; a: string }[] = [
     {
       q: `What is the cost of living for digital nomads in ${typedCity.name}?`,
@@ -365,7 +365,7 @@ export default async function CityDetailPage({
               <div className="mt-6 flex flex-wrap gap-3">
                 <Stat label="Overall score" value={Number(typedCity.overall_score).toFixed(1)} />
                 <Stat label="Cost / month" value={`$${typedCity.cost_usd.toLocaleString()}`} />
-                <Stat label="Avg temp" value={`${typedCity.avg_temp}Â°C`} />
+                <Stat label="Avg temp" value={`${typedCity.avg_temp}°C`} />
                 <Stat label="Visa difficulty" value={typedCity.visa_difficulty} />
               </div>
               <div className="mt-5 flex flex-wrap gap-2">
@@ -393,7 +393,7 @@ export default async function CityDetailPage({
                 source="destination_detail_after_hero"
                 askCity
                 heading={`Get ${typedCity.name} updates without bouncing around`}
-                description="Cost, visa notes, and listed workspaces are already on this page. Leave an email and optional city if you want a short follow-up when a stay in this place has a listed price, photo, or description â no extra tab."
+                description="Cost, visa notes, and listed workspaces are already on this page. Leave an email and optional city if you want a short follow-up when a stay in this place has a listed price, photo, or description — no extra tab."
                 compact
                 context={{ city: typedCity.name, country: typedCity.country }}
               />
@@ -474,7 +474,7 @@ export default async function CityDetailPage({
                       </div>
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                         <span className="font-semibold text-foreground">Processing Time:</span>
-                        <span className="text-muted-foreground">{typedVisa.processing_time || "2â6 weeks average"}</span>
+                        <span className="text-muted-foreground">{typedVisa.processing_time || "2–6 weeks average"}</span>
                       </div>
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                         <span className="font-semibold text-foreground">Path to Residency:</span>
@@ -492,7 +492,7 @@ export default async function CityDetailPage({
                           <div className="flex flex-wrap gap-1">
                             {typedVisa.required_docs.map((doc: string) => (
                               <span key={doc} className="rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-foreground/80">
-                                â {doc}
+                                ✓ {doc}
                               </span>
                             ))}
                           </div>
@@ -512,7 +512,7 @@ export default async function CityDetailPage({
                       href="/visa"
                       className="inline-flex items-center gap-1 text-xs font-semibold text-forest hover:underline"
                     >
-                      Compare all {typedVisa.country} visa rules & limits â
+                      Compare all {typedVisa.country} visa rules & limits →
                     </Link>
                   </div>
                 </div>
@@ -611,7 +611,7 @@ export default async function CityDetailPage({
                       .filter(Boolean)
                       .map((tip) => (
                         <li key={tip} className="flex gap-2">
-                          <span className="text-accent">Â·</span> {tip}
+                          <span className="text-accent">·</span> {tip}
                         </li>
                       ))}
                   </ul>
@@ -644,7 +644,7 @@ export default async function CityDetailPage({
                   href={`/workspaces?city=${encodeURIComponent(typedCity.name)}`}
                   className="inline-flex items-center gap-1 text-xs font-semibold text-forest hover:text-forest/80 self-start sm:self-auto"
                 >
-                  View all workspaces in {typedCity.name} â
+                  View all workspaces in {typedCity.name} →
                 </Link>
               </div>
 
@@ -658,7 +658,7 @@ export default async function CityDetailPage({
                   <WaitlistInline
                     source="destination_detail_mid_listings"
                     heading={`Shortlist the rest of ${typedCity.name}, or keep scrolling`}
-                    description="These destination pages often end after the first few cards. Leave an email if you want listed workspaces for this city â we only write when there is something on the page to match. No fabricated scarcity."
+                    description="These destination pages often end after the first few cards. Leave an email if you want listed workspaces for this city — we only write when there is something on the page to match. No fabricated scarcity."
                     compact
                     context={{ city: typedCity.name, country: typedCity.country }}
                   />
@@ -678,7 +678,7 @@ export default async function CityDetailPage({
             <WaitlistInline
               source="destination_detail"
               heading={`Want a shortlist of workspaces in ${typedCity.name}?`}
-              description="This city page is often a last stop. Leave an email here â no extra page. We only write when a listed workspace in this city has a description, price, or photo. No fabricated urgency."
+              description="This city page is often a last stop. Leave an email here — no extra page. We only write when a listed workspace in this city has a description, price, or photo. No fabricated urgency."
               context={{ city: typedCity.name, country: typedCity.country }}
             />
           </div>
@@ -718,7 +718,7 @@ export default async function CityDetailPage({
                   rel="noopener noreferrer"
                   className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-forest px-4 py-2.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
                 >
-                  Get SafetyWing (~$45/mo) â
+                  Get SafetyWing (~$45/mo) →
                 </a>
               </div>
 
@@ -740,7 +740,7 @@ export default async function CityDetailPage({
                   rel="noopener noreferrer"
                   className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
                 >
-                  Get Airalo eSIM ($3 Off) â
+                  Get Airalo eSIM ($3 Off) →
                 </a>
               </div>
 
@@ -762,7 +762,7 @@ export default async function CityDetailPage({
                   rel="noopener noreferrer"
                   className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-border bg-secondary px-4 py-2.5 text-xs font-semibold text-foreground transition-colors hover:bg-secondary/80"
                 >
-                  Find Stays in {typedCity.name} â
+                  Find Stays in {typedCity.name} →
                 </a>
               </div>
             </div>
@@ -854,7 +854,7 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
             </span>
             {listing.ratings > 0 && listing.total_reviews > 0 ? (
               <span className="text-xs font-medium text-amber-600 flex items-center gap-1">
-                â {Number(listing.ratings).toFixed(1)}
+                ★ {Number(listing.ratings).toFixed(1)}
               </span>
             ) : (
               <span className="text-[10px] text-muted-foreground">Reviews pending</span>
@@ -873,7 +873,7 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
             </h3>
           </div>
           <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-            {listedStreet ? `${listedStreet} Â· ` : ""}
+            {listedStreet ? `${listedStreet} · ` : ""}
             {listing.city}, {listing.country}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
