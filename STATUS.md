@@ -1,3 +1,13 @@
+## 2026-09-08 ~19:00 IST — daily growth/conversion (Track A)
+
+Gap fixed: default Track A items (about/images, price/Wi-Fi pending UI, JSON-LD, admin env auth) already exist. Remaining conversion hole: `/destinations/[id]` (GA4 Chiang Mai 5 sessions / 100% bounce; Prague/Taipei 2 / 100%) had inline waitlist only. Mounted the same sticky waitlist used on `/` and `/workspaces`, with city/country context and no fabricated stats. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-08 to 2026-09-07: query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos 3.0 — FLAG only; inspect against the nomads property is 403 (URL is not part of that property). No redirect. Home 3/147. Branded CTR capped until the custom domain is live.
+
+GA4 541610896 30d landings: `/` 173 bounce 79.8%; `/workspaces` 10 / 90.0%; `/destinations` 9 / 77.8%; `/destinations/chiang-mai` 5 / 100%.
+
+Listings `davvpymbybvniexmkgcu` n=8276: about empty 2932; images null 0; starting_price empty 3637; wifi_speed empty 0 (UI still gates unusable values); contact_phone empty 6102; logo empty 5747; contact_email empty 7094.
+
 ## 2026-09-08 ~09:05 IST — daily growth/conversion (Track A)
 
 Gap fixed: default Track A items (about/images, price/Wi-Fi pending UI, JSON-LD, admin env auth, waitlist, venue-photo heroes) already exist. Remaining content-quality hole on `/destinations/[id]`: visible strings were latin-1/UTF-8 mojibake (degree, middle-dot, star, em dash, arrows). Restored real punctuation on city pages. No invented listing data. Sitemap not resubmitted (no new routes).
