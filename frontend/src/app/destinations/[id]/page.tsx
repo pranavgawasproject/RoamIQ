@@ -876,8 +876,12 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
             {listedStreet ? `${listedStreet} Â· ` : ""}
             {listing.city}, {listing.country}
           </p>
-          {(listedWebsite || listedPhone || listedEmail) && (
-            <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-2 flex flex-wrap gap-2">
+              {!(listedWebsite || listedPhone || listedEmail) && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border bg-secondary/30 px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
+                  <Phone className="h-3 w-3" /> Contact pending
+                </span>
+              )}
               {listedWebsite && (
                 <a
                   href={listedWebsite}
@@ -938,7 +942,11 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
             <span className="flex items-center gap-1 text-muted-foreground">
               <Clock className="h-3 w-3" /> {usefulOpenHours(listing.open_hours)[0]}
             </span>
-          ) : null}
+          ) : (
+            <span className="flex items-center gap-1 text-muted-foreground/70">
+              <Clock className="h-3 w-3" /> Hours pending
+            </span>
+          )}
         </div>
       </div>
     </article>
