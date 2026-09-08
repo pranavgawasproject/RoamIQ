@@ -3,12 +3,13 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { Comparison } from "@/components/site/comparison";
 import { CTA } from "@/components/site/cta";
+import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { Check } from "lucide-react";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Pricing — RoamIQ free Explorer & Nomad plans for digital nomads",
+  title: "Pricing \u2014 RoamIQ free Explorer & Nomad plans for digital nomads",
   description:
     "RoamIQ pricing: free Explorer plan to browse destinations and visas, or Nomad plan for trip saving, visa tracking, community posts, and priority AI planning. No credit card to start.",
   keywords: [
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
     canonical: `${BASE_URL}/pricing`,
   },
   openGraph: {
-    title: "Pricing — RoamIQ free Explorer & Nomad plans",
+    title: "Pricing \u2014 RoamIQ free Explorer & Nomad plans",
     description:
       "Free Explorer plan to browse destinations and visas, or Nomad plan for trip saving, community, and priority AI planning.",
     url: `${BASE_URL}/pricing`,
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pricing — RoamIQ free Explorer & Nomad plans",
+    title: "Pricing \u2014 RoamIQ free Explorer & Nomad plans",
     description:
       "Free Explorer plan to browse destinations and visas, or Nomad plan for trip saving, community, and priority AI planning.",
   },
@@ -176,6 +177,11 @@ export default function PricingPage() {
         <Comparison />
         <CTA />
       </main>
+      <WaitlistSticky
+        source="pricing-sticky"
+        heading="Comparing plans before you have a city?"
+        description="Pricing exits often skip a destination. Email plus an optional city is enough. We do not invent plan discounts or urgency."
+      />
       <Footer />
     </div>
   );
