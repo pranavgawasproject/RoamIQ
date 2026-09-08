@@ -8,6 +8,7 @@ import { WhyRoamIQ } from "@/components/site/why-roamiq";
 import { CTA } from "@/components/site/cta";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
+import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -196,6 +197,11 @@ export default function Page() {
         <CTA />
       </main>
       <Footer />
+      <WaitlistSticky
+        source="homepage-sticky"
+        heading="Homepage visits often end here"
+        description="Email plus an optional city is enough. We only follow up when a listed workspace already has a description, price, or photo — no invented numbers or urgency."
+      />
     </div>
   );
 }
