@@ -1,5 +1,11 @@
 ## 2026-09-08 ~09:05 IST — daily growth/conversion (Track A)
 
+Gap fixed: default Track A items (about/images, price/Wi-Fi pending UI, JSON-LD, admin env auth, waitlist, venue-photo heroes) already exist. Remaining content-quality hole on `/destinations/[id]`: visible strings were latin-1/UTF-8 mojibake (degree, middle-dot, star, em dash, arrows). Restored real punctuation on city pages. No invented listing data. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-08 to 2026-09-06: query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos 3.0 — FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, izzy's coffee and brunch, ngb living. Home 3/146. Branded CTR capped until the custom domain is live.
+
+## 2026-09-08 ~09:05 IST — daily growth/conversion (Track A)
+
 Gap fixed: about/images, venue-photo heroes, price/Wi-Fi pending, JSON-LD, and admin env auth already exist. Remaining thin-card hole on `/destinations/[id]`: city listing cards hid the contact row when website/phone/email were empty and omitted hours when `open_hours` was empty. Cards now show a dashed **Contact pending** chip and **Hours pending**, matching `/workspaces`. No invented phones, emails, or hours. Sitemap not resubmitted.
 
 GSC: query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos ~3 — FLAG only; inspect against the nomads property is 403 (URL is not part of that property). No redirect. Branded CTR capped until the custom domain is live.
