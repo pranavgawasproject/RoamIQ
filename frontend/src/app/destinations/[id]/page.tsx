@@ -22,6 +22,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
+import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
 import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed } from "@/lib/listing-media";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
@@ -769,6 +770,12 @@ export default async function CityDetailPage({
           </div>
         </section>
       </main>
+      <WaitlistSticky
+        source="destination-detail-sticky"
+        context={{ city: typedCity.name, country: typedCity.country }}
+        heading={`Leaving ${typedCity.name} without a shortlist?`}
+        description="City pages like this often end after the first screen. Email plus an optional city is enough. We only write when a listed workspace here has a description, price, or photo. No fabricated urgency."
+      />
       <Footer />
     </div>
   );
