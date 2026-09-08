@@ -1,11 +1,13 @@
 import {
-  firstUsableListingImage,
+  firstVenueListingImage,
+  isUsableImageUrl,
   usefulContactEmail,
   usefulContactPhone,
   usefulListingAbout,
   usefulListingWebsite,
   usefulOpenHours,
   usefulStartingPrice,
+  usefulStreetAddress,
   usefulWifiSpeed,
 } from "@/lib/listing-media";
 
@@ -14,7 +16,9 @@ type ListingLike = {
   company_name: string;
   company_type?: string | null;
   city?: string | null;
+  state?: string | null;
   country?: string | null;
+  address?: string | null;
   starting_price?: string | null;
   wifi_speed?: string | null;
   open_hours?: string | null;
@@ -44,7 +48,9 @@ export function workspaceListItemJsonLd(
   baseUrl: string,
 ): Record<string, unknown> {
   const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 180);
-  const imageUrl = firstUsableListingImage(listing.images, listing.logo_url);
+  // Cards render venue photos, never logos, in the hero. Schema must match visible media.
+  const imageUrl = firstVenueListingImage(listing.images);
+  const logoUrl = isUsableImageUrl(listing.logo_url) ? listing.logo_url!.trim() : null;
   const place: Record<string, unknown> = {
     "@type": listingSchemaType(listing.company_type),
     "@id": `${baseUrl}/workspaces/${listing.id}#place`,
@@ -53,10 +59,14 @@ export function workspaceListItemJsonLd(
   };
   if (aboutSnippet) place.description = aboutSnippet;
   if (imageUrl) place.image = imageUrl;
-  if (listing.city || listing.country) {
+  if (logoUrl) place.logo = logoUrl;
+  const street = usefulStreetAddress(listing.address, listing.city, listing.country);
+  if (street || listing.city || listing.state || listing.country) {
     place.address = {
       "@type": "PostalAddress",
+      ...(street ? { streetAddress: street } : {}),
       ...(listing.city ? { addressLocality: listing.city } : {}),
+      ...(listing.state ? { addressRegion: listing.state } : {}),
       ...(listing.country ? { addressCountry: listing.country } : {}),
     };
   }
