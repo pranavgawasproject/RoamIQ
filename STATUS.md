@@ -1,3 +1,9 @@
+## 2026-09-08 ~18:35 IST — daily growth/conversion (Track A)
+
+Gap fixed: `/workspaces` cards already render about, venue photos, price/Wi-Fi/hours pending, and contact. Logo URLs existed in the DB and as a 32px chip but cards with no venue photo still showed an empty "Photo pending" hero. Cards now fall back to `logo_url` (contain, labeled "Logo"). ItemList JSON-LD still uses venue photos only — logos are not treated as listing photos.
+
+Sitemap not resubmitted (no new routes). `4g-travel-tool.vercel.app` remains a FLAG in GSC (top query on this property); no redirect.
+
 ## 2026-09-08 ~19:00 IST — daily growth/conversion (Track A)
 
 Gap fixed: default Track A items (about/images, price/Wi-Fi pending UI, JSON-LD, admin env auth) already exist. Remaining conversion hole: `/destinations/[id]` (GA4 Chiang Mai 5 sessions / 100% bounce; Prague/Taipei 2 / 100%) had inline waitlist only. Mounted the same sticky waitlist used on `/` and `/workspaces`, with city/country context and no fabricated stats. Sitemap not resubmitted (no new routes).

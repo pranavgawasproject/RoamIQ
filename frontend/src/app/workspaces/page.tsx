@@ -188,8 +188,11 @@ async function getListings(params: {
   }
 }
 
-function getCardImage(listing: Listing): string | null {
-  return firstVenueListingImage(listing.images);
+function getCardImage(listing: Listing): { url: string; kind: "photo" | "logo" } | null {
+  const photo = firstVenueListingImage(listing.images);
+  if (photo) return { url: photo, kind: "photo" };
+  if (isUsableImageUrl(listing.logo_url)) return { url: listing.logo_url!.trim(), kind: "logo" };
+  return null;
 }
 
 function usefulAboutSnippet(about: string | null | undefined, companyName?: string | null): string | null {
@@ -204,7 +207,9 @@ function usefulTags(tags: string[] | null | undefined): string[] {
 }
 
 function ListingCard({ listing, destinationHref }: { listing: Listing; destinationHref?: string | null }) {
-  const imageUrl = getCardImage(listing);
+  const cardImage = getCardImage(listing);
+  const imageUrl = cardImage?.url ?? null;
+  const imageKind = cardImage?.kind ?? null;
   const reviewCount = Number(listing.total_reviews ?? 0);
   const ratingValue = Number(listing.ratings ?? 0);
   const showRating = ratingValue > 0 && reviewCount > 0;
@@ -220,7 +225,7 @@ function ListingCard({ listing, destinationHref }: { listing: Listing; destinati
     <article className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-forest/5 hover:-translate-y-0.5">
       <Link href={`/workspaces/${listing.id}`} className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
         {imageUrl ? (
-          <Image src={imageUrl} alt={listing.company_name} fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" unoptimized />
+          <Image src={imageUrl} alt={imageKind === "logo" ? `${listing.company_name} logo` : listing.company_name} fill className={imageKind === "logo" ? "object-contain bg-secondary p-8 transition-transform duration-300 group-hover:scale-105" : "object-cover transition-transform duration-300 group-hover:scale-105"} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" unoptimized />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-secondary to-muted">
             <Building2 className="h-12 w-12 text-muted-foreground/50" />
@@ -231,6 +236,13 @@ function ListingCard({ listing, destinationHref }: { listing: Listing; destinati
           const photoCount = Array.isArray(listing.images)
             ? listing.images.filter((u) => isVenuePhotoUrl(u)).length
             : 0;
+          if (imageKind === "logo") {
+            return (
+              <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium text-foreground/80">
+                Logo
+              </span>
+            );
+          }
           if (!imageUrl || photoCount < 2) return null;
           return (
             <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium text-foreground/80">
