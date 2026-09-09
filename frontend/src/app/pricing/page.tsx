@@ -3,6 +3,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { Comparison } from "@/components/site/comparison";
 import { CTA } from "@/components/site/cta";
+import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { Check } from "lucide-react";
 
@@ -140,6 +141,14 @@ export default function PricingPage() {
               No credit card needed to browse. Upgrade when you&apos;re ready to
               save trips and join the community.
             </p>
+            <div className="mt-8 max-w-xl rounded-2xl border border-border bg-card p-5 sm:p-6">
+              <WaitlistInline
+                source="pricing-hero"
+                askCity
+                heading="Leave a city if you were comparing plans before picking a destination"
+                description="Pricing is often a last stop. Email plus an optional city is enough. We do not invent plan discounts, prices, or urgency."
+              />
+            </div>
           </div>
         </section>
 
@@ -175,7 +184,7 @@ export default function PricingPage() {
         </section>
 
         <Comparison />
-        <CTA />
+        <CTA source="pricing-cta" />
       </main>
       <WaitlistSticky
         source="pricing-sticky"
