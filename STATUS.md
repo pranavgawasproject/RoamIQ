@@ -1,3 +1,11 @@
+## 2026-09-09 ~19:40 IST — daily growth/conversion (Track A)
+
+Gap fixed: default Track A items (about/images, pending price/Wi-Fi UI, per-listing JSON-LD, admin env auth) already exist. Remaining content-depth hole: `/destinations` city cards already had cost, internet, visa, and overall score, but hid live `safety_score`, `fun_score`, and `walkability_score` from the cities table. Cards now show those chips when the values exist. Destinations ItemList JSON-LD now mirrors the same visible cost/safety/fun/walk figures as Place additionalProperty — no invented scores. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-10 to 2026-09-09 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 21 impressions / pos ~3.0 — FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, durty nellys amsterdam, izzy's coffee and brunch, ngb living. Branded CTR capped until the custom domain is live.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-09 ~18:55 IST — daily growth/conversion (Track A)
 
 Gap fixed: default Track A items (about/images, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, waitlist CTAs) already exist. Remaining content-depth hole: related-city rows on `/workspaces/[id]` already selected `ratings` / `total_reviews` and ranked by them, but hid the score. Index and destination cards already show ratings. Related rows now render the live rating + review count when both exist, or a "Reviews pending" label — no invented scores. Related ItemList JSON-LD now mirrors `aggregateRating` only for those visible values. Sitemap not resubmitted (no new routes).
