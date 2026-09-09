@@ -374,6 +374,15 @@ export default async function WorkspaceDetailPage({
                       { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi },
                     ];
                   }
+                  const relatedRating = Number(item.ratings);
+                  const relatedReviews = Number(item.total_reviews);
+                  if (relatedRating > 0 && relatedReviews > 0) {
+                    place.aggregateRating = {
+                      "@type": "AggregateRating",
+                      ratingValue: relatedRating,
+                      reviewCount: relatedReviews,
+                    };
+                  }
                   const relatedHours = usefulOpenHours(item.open_hours);
                   if (relatedHours.length === 1) place.openingHours = relatedHours[0];
                   else if (relatedHours.length > 1) place.openingHours = relatedHours;
@@ -591,7 +600,10 @@ export default async function WorkspaceDetailPage({
                               )}
                               <p className="text-xs text-muted-foreground">
                                 {item.company_type || "workspace"}
-                                {usefulWifiSpeed(item.wifi_speed) ? ` \u00b7 ${usefulWifiSpeed(item.wifi_speed)}` : " \u00b7 Wi-Fi speed pending"}{usefulOpenHours(item.open_hours)[0] ? ` \u00b7 ${usefulOpenHours(item.open_hours)[0]}` : " \u00b7 Hours not listed yet"}
+                                {Number(item.ratings) > 0 && Number(item.total_reviews) > 0
+                                  ? ` · ${Number(item.ratings).toFixed(1)} (${Number(item.total_reviews)})`
+                                  : " · Reviews pending"}
+                                {usefulWifiSpeed(item.wifi_speed) ? ` · ${usefulWifiSpeed(item.wifi_speed)}` : " · Wi-Fi speed pending"}{usefulOpenHours(item.open_hours)[0] ? ` · ${usefulOpenHours(item.open_hours)[0]}` : " · Hours not listed yet"}
                               </p>
                               {usefulStreetAddress(item.address, item.city, item.country) ? (
                                 <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground/80">{usefulStreetAddress(item.address, item.city, item.country)}</p>
