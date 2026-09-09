@@ -1,3 +1,13 @@
+## 2026-09-09 ~18:35 IST — daily growth/conversion (Track A)
+
+Gap fixed: default Track A items (about/images on listing views, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth) already exist. Remaining conversion hole: GSC clicks concentrate on `/workspaces/[id]` while the waitlist sat in the desktop sidebar — below the fold on mobile after About. Mounted a compact `WaitlistInline` immediately after About on small screens (`source=workspace_detail_after_about`), city-aware copy, no fabricated stats or urgency. Desktop sidebar + sticky waitlist unchanged. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-09 to 2026-09-08 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos 3 — FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, durty nellys amsterdam, izzy's coffee and brunch, ngb living. Branded CTR capped until the custom domain is live.
+
+Supabase `listings` (n=8414): about empty 2932; images null 0; starting_price null 3631; wifi_speed null 138; contact_phone empty 6234; logo_url empty 5874; contact_email empty 7228.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-09 ~09:10 IST — daily growth/conversion (Track A)
 
 Gap fixed: `/workspaces` index and homepage preview already fall back from venue photos to `logo_url` heroes. Destination city cards (`/destinations/[id]`) and related-city thumbs on `/workspaces/[id]` still showed an empty "Photo pending" block when the row had a usable logo. Those views now use the same contain + "Logo" label fallback. ItemList JSON-LD still uses venue photos only — logos are not treated as listing photos. No invented images. Sitemap not resubmitted (no new routes).
