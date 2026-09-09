@@ -4,6 +4,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { CityComparator } from "@/components/site/city-comparator";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
+import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type City } from "@/lib/supabase";
 import { ArrowLeft, Sparkles, Scale } from "lucide-react";
 
@@ -183,6 +184,11 @@ export default async function ComparePage({
           </div>
         </section>
       </main>
+      <WaitlistSticky
+        source="destinations-compare-sticky"
+        heading="Leaving the compare table without both cities?"
+        description="Compare is often the last page in a session. Email plus an optional city is enough. We only follow up when listed workspace rows already have a description, price, or photo."
+      />
       <Footer />
     </div>
   );
