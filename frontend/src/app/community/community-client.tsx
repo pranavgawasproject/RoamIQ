@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
+import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Meetup, type ForumPost } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
@@ -1034,6 +1035,11 @@ export function CommunityClient() {
         </section>
       </main>
 
+      <WaitlistSticky
+        source="community-sticky"
+        heading="Leaving community without a city shortlist?"
+        description="Meetups and threads are easy to bounce from. Email plus an optional city is enough. We only write when a listed workspace already has a description, price, or photo."
+      />
       <Footer />
 
       {/* ── PROFILE MODAL ── */}
