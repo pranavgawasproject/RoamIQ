@@ -1,3 +1,9 @@
+## 2026-09-09 ~09:10 IST — daily growth/conversion (Track A)
+
+Gap fixed: `/workspaces` index and homepage preview already fall back from venue photos to `logo_url` heroes. Destination city cards (`/destinations/[id]`) and related-city thumbs on `/workspaces/[id]` still showed an empty "Photo pending" block when the row had a usable logo. Those views now use the same contain + "Logo" label fallback. ItemList JSON-LD still uses venue photos only — logos are not treated as listing photos. No invented images. Sitemap not resubmitted (no new routes).
+
+`4g-travel-tool.vercel.app` remains FLAG / pending — no redirect.
+
 ## 2026-09-09 ~09:00 IST — daily growth/conversion (Track A)
 
 Gap fixed: default Track A items (about/images on listing views, price/Wi-Fi pending UI, per-listing JSON-LD, admin env-based auth) already exist. Remaining conversion hole: `/community` had forum/meetup UI but no waitlist. Mounted the same `WaitlistInline` used on visa/compare/workspaces (email + optional city, no fabricated urgency). Sitemap not resubmitted (no new routes).
