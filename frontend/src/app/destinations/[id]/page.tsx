@@ -817,8 +817,11 @@ function rankDestinationListings(rows: Listing[]): Listing[] {
     .map((row) => row.listing);
 }
 
-function getCardImage(listing: Listing): string | null {
-  return firstVenueListingImage(listing.images);
+function getCardImage(listing: Listing): { url: string; kind: "photo" | "logo" } | null {
+  const photo = firstVenueListingImage(listing.images);
+  if (photo) return { url: photo, kind: "photo" };
+  if (isUsableImageUrl(listing.logo_url)) return { url: listing.logo_url!.trim(), kind: "logo" };
+  return null;
 }
 
 
@@ -827,7 +830,9 @@ function usefulTags(tags: string[] | null | undefined): string[] {
 }
 
 function DestinationListingCard({ listing }: { listing: Listing }) {
-  const img = getCardImage(listing);
+  const cardImage = getCardImage(listing);
+  const img = cardImage?.url ?? null;
+  const imageKind = cardImage?.kind ?? null;
   const about = usefulListingAbout(listing.about || listing.description, listing.company_name, 180);
   const listedStreet = usefulStreetAddress(listing.address, listing.city, listing.country);
   const listedWebsite = usefulListingWebsite(listing.website);
@@ -840,9 +845,9 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
         {img ? (
           <Image
             src={img}
-            alt={`${listing.company_name} in ${listing.city}`}
+            alt={imageKind === "logo" ? `${listing.company_name} logo` : `${listing.company_name} in ${listing.city}`}
             fill
-            className="object-cover"
+            className={imageKind === "logo" ? "object-contain bg-secondary p-6" : "object-cover"}
             sizes="(max-width: 768px) 100vw, 33vw"
             unoptimized
           />
@@ -852,6 +857,11 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
             <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/80">Photo pending</span>
           </div>
         )}
+        {imageKind === "logo" ? (
+          <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium text-foreground/80">
+            Logo
+          </span>
+        ) : null}
       </Link>
       <div className="flex flex-1 flex-col justify-between p-5">
         <div>
