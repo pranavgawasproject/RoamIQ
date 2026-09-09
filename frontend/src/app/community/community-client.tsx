@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
+import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { supabase, type Meetup, type ForumPost } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -640,6 +641,20 @@ export function CommunityClient() {
               >
                 {username ? "Edit profile settings" : "Setup profile"}
               </button>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-border bg-card/40">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 py-6 sm:py-8">
+            <div className="max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
+              <WaitlistInline
+                source="community-list-above-fold"
+                askCity
+                heading="Want meetups for the city you are heading to?"
+                description="This board is still filling in. Email plus an optional city is enough. We only write when a listed meetup or workspace exists for that place — no invented events."
+                compact
+              />
             </div>
           </div>
         </section>
