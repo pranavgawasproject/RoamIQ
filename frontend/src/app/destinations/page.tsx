@@ -134,6 +134,25 @@ export default async function DestinationsPage({
       position: index + 1,
       name: `${city.name}, ${city.country}`,
       url: `${BASE_URL}/destinations/${city.id}`,
+      item: {
+        "@type": "Place",
+        name: city.name,
+        url: `${BASE_URL}/destinations/${city.id}`,
+        additionalProperty: [
+          ...(city.cost_usd != null
+            ? [{ "@type": "PropertyValue", name: "Monthly cost USD", value: String(city.cost_usd) }]
+            : []),
+          ...(city.safety_score != null
+            ? [{ "@type": "PropertyValue", name: "Safety score", value: Number(city.safety_score).toFixed(1) }]
+            : []),
+          ...(city.fun_score != null
+            ? [{ "@type": "PropertyValue", name: "Fun score", value: Number(city.fun_score).toFixed(1) }]
+            : []),
+          ...(city.walkability_score != null
+            ? [{ "@type": "PropertyValue", name: "Walkability score", value: Number(city.walkability_score).toFixed(1) }]
+            : []),
+        ],
+      },
     })),
   };
 
