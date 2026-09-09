@@ -492,6 +492,20 @@ export default async function WorkspaceDetailPage({
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">A written description has not been verified for this listing yet. Photos, location, and any listed price or Wi-Fi figures above are from the live database — we do not generate placeholder copy.</p>
                 </div>
               )}
+              <div className="lg:hidden rounded-2xl border border-border bg-secondary/30 p-4">
+                <WaitlistInline
+                  source="workspace_detail_after_about"
+                  compact
+                  askCity={!listing.city}
+                  heading={listing.city ? `Email other ${listing.city} listings` : "Email similar listings"}
+                  description={
+                    listing.city
+                      ? `Most visitors leave this page after the description. Leave an email for other live ${listing.city} workspaces when a price or Wi-Fi figure exists. No invented numbers, no fake urgency.`
+                      : "Most visitors leave this page after the description. Leave an email for similar live workspaces when a price or Wi-Fi figure exists. No invented numbers, no fake urgency."
+                  }
+                  context={{ city: listing.city, type: listing.company_type, listing: listing.company_name }}
+                />
+              </div>
               {tags.length > 0 ? (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">Amenities</h2>
