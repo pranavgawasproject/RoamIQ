@@ -1,3 +1,11 @@
+## 2026-09-09 ~18:55 IST — daily growth/conversion (Track A)
+
+Gap fixed: default Track A items (about/images, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, waitlist CTAs) already exist. Remaining content-depth hole: related-city rows on `/workspaces/[id]` already selected `ratings` / `total_reviews` and ranked by them, but hid the score. Index and destination cards already show ratings. Related rows now render the live rating + review count when both exist, or a "Reviews pending" label — no invented scores. Related ItemList JSON-LD now mirrors `aggregateRating` only for those visible values. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-10 to 2026-09-09 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 21 impressions / pos ~3.0 — FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, durty nellys amsterdam, izzy's coffee and brunch, ngb living. Branded CTR capped until the custom domain is live.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-09 ~18:35 IST — daily growth/conversion (Track A)
 
 Gap fixed: default Track A items (about/images on listing views, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth) already exist. Remaining conversion hole: GSC clicks concentrate on `/workspaces/[id]` while the waitlist sat in the desktop sidebar — below the fold on mobile after About. Mounted a compact `WaitlistInline` immediately after About on small screens (`source=workspace_detail_after_about`), city-aware copy, no fabricated stats or urgency. Desktop sidebar + sticky waitlist unchanged. Sitemap not resubmitted (no new routes).
