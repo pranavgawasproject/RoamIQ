@@ -1,3 +1,11 @@
+## 2026-09-09 ~09:00 IST — daily growth/conversion (Track A)
+
+Gap fixed: default Track A items (about/images on listing views, price/Wi-Fi pending UI, per-listing JSON-LD, admin env-based auth) already exist. Remaining conversion hole: `/community` had forum/meetup UI but no waitlist. Mounted the same `WaitlistInline` used on visa/compare/workspaces (email + optional city, no fabricated urgency). Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-10 to 2026-09-08 (nomads-travel-indol.vercel.app): top query `4g-travel-tool.vercel.app` 2 clicks / 21 impressions / pos ~3.05 — FLAG only; no redirect (canonical already set on this property). Other clicks: cafe nenom, coliving athens, durty nellys amsterdam, izzy's coffee and brunch, ngb living. Branded CTR capped until the custom domain is live.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-08 ~18:35 IST — daily growth/conversion (Track A)
 
 Gap fixed: `/workspaces` cards already render about, venue photos, price/Wi-Fi/hours pending, and contact. Logo URLs existed in the DB and as a 32px chip but cards with no venue photo still showed an empty "Photo pending" hero. Cards now fall back to `logo_url` (contain, labeled "Logo"). ItemList JSON-LD still uses venue photos only — logos are not treated as listing photos.
