@@ -539,7 +539,10 @@ export default async function WorkspaceDetailPage({
                   <p className="mt-1 text-sm text-muted-foreground">Other live listings in the same city — prices and Wi-Fi only when the database has them. Ranked by photo, description, and listed price when those fields exist.</p>
                   <ul className="mt-4 divide-y divide-border rounded-2xl border border-border">
                     {related.map((item) => {
-                      const thumb = firstVenueListingImage(item.images);
+                      const venueThumb = firstVenueListingImage(item.images);
+                      const logoThumb = isUsableImageUrl(item.logo_url) ? item.logo_url!.trim() : null;
+                      const thumb = venueThumb || logoThumb;
+                      const thumbKind = venueThumb ? "photo" : logoThumb ? "logo" : null;
                       const snippet = usefulListingAbout(item.about || item.description, item.company_name, 140);
                       const aboutOk = Boolean(snippet);
                       const relatedWebsite = usefulListingWebsite(item.website);
@@ -550,7 +553,14 @@ export default async function WorkspaceDetailPage({
                           <div className="flex items-center gap-3">
                             <Link href={`/workspaces/${item.id}`} className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-secondary">
                               {thumb ? (
-                                <Image src={thumb.trim()} alt={item.company_name} fill className="object-cover" sizes="80px" unoptimized />
+                                <Image
+                                  src={thumb.trim()}
+                                  alt={thumbKind === "logo" ? `${item.company_name} logo` : item.company_name}
+                                  fill
+                                  className={thumbKind === "logo" ? "object-contain bg-secondary p-1.5" : "object-cover"}
+                                  sizes="80px"
+                                  unoptimized
+                                />
                               ) : (
                                 <div className="flex h-full w-full flex-col items-center justify-center gap-0.5 px-1">
                                   <Building2 className="h-4 w-4 text-muted-foreground/50" />
