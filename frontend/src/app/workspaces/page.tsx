@@ -452,7 +452,8 @@ export default async function WorkspacesPage({
     name: "Coworking spaces and digital nomad accommodations on RoamIQ",
     numberOfItems: count,
     itemListElement: listings.map((item, index) => {
-      const imageUrl = getCardImage(item);
+      const cardImage = getCardImage(item);
+      const imageUrl = cardImage?.url ?? null;
       const aboutSnippet = usefulAboutSnippet(item.about || item.description, item.company_name);
       const schemaType =
         item.company_type === "coliving" || item.company_type === "hostel" || item.company_type === "workation"
