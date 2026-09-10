@@ -1,3 +1,11 @@
+## 2026-09-10 ~19:00 IST — daily growth/conversion (Track A)
+
+Gap fixed: listing detail pages already render about, gallery, price/Wi-Fi pending states, and LocalBusiness JSON-LD. Remaining hole: crawlers and bounce traffic on `/workspaces/{id}` had no visible Q&A that restates the listed facts. Added `workspaceFaqJsonLd` (about, listed price, Wi-Fi, hours, official contact only when those fields are on the page) plus a matching "Listing facts" block and tag `keywords` on the Place schema. No invented answers. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-10 to 2026-09-08 (`https://nomads-travel-indol.vercel.app/`): homepage 4 clicks / 139 impressions / pos ~6.1. Individual workspace URLs now collect most remaining clicks. Top query still `4g-travel-tool.vercel.app` (2/22, pos ~3.05) — FLAG only; no redirect. Branded `roam iq` 1 click / 34 impressions. Branded CTR capped until the custom domain is live.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — URL Inspection on that host is a different GSC property; do not mark resolved.
+
 ## 2026-09-10 ~18:50 IST — daily growth/conversion (Track A)
 
 Gap fixed: default Track A items (about/images on listing views, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, homepage CTA city field) already exist. Remaining schema hole: homepage `/` is the highest-exit landing and the four preview cards already show about, photo/logo, price, Wi-Fi, hours, contact, tags, and ratings — but homepage JSON-LD only described the Organization/FAQ, not those visible rows. Preview now emits an ItemList of the same four Places (description/image/address/price/Wi-Fi/tags/hours/contact/aggregateRating only when those fields are visible). Rating chips now include the live review count, matching `/workspaces`. No invented data. Sitemap not resubmitted (no new routes).
