@@ -10,12 +10,18 @@ import { trackEvent } from "@/lib/site";
 const perks = [
   "Browse destinations & workspaces free \u2014 no account needed",
   "AI trip planner and multi-city cost comparison (beta)",
-  "Verified Wi-Fi speeds and listing details from the database",
+  "Listing details from the database when they exist \u2014 price and Wi-Fi stay pending until listed",
   "Weekly nomad intel in your inbox when you join the list",
 ];
 
+function encodeSource(source: string, city: string) {
+  const trimmed = city.replace(/\s+/g, " ").trim().slice(0, 48);
+  return trimmed ? `${source}|city=${trimmed}` : source;
+}
+
 export function CTA({ source = "homepage_cta" }: { source?: string }) {
   const [email, setEmail] = useState("");
+  const [city, setCity] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -26,14 +32,20 @@ export function CTA({ source = "homepage_cta" }: { source?: string }) {
     setStatus("loading");
     setErrorMsg("");
 
+    const storedSource = encodeSource(source, city);
+
     const { error } = await supabase
       .from("waitlist_signups")
-      .insert({ email: email.trim().toLowerCase(), source });
+      .insert({ email: email.trim().toLowerCase(), source: storedSource });
 
     if (error) {
       if (error.code === "23505") {
         setStatus("success");
-        trackEvent("waitlist_signup", { source, status: "already_subscribed" });
+        trackEvent("waitlist_signup", {
+          source,
+          status: "already_subscribed",
+          has_city: Boolean(city.trim()),
+        });
       } else {
         setStatus("error");
         setErrorMsg("Something went wrong. Please try again.");
@@ -42,8 +54,13 @@ export function CTA({ source = "homepage_cta" }: { source?: string }) {
     }
 
     setStatus("success");
-    trackEvent("waitlist_signup", { source, status: "created" });
+    trackEvent("waitlist_signup", {
+      source,
+      status: "created",
+      has_city: Boolean(city.trim()),
+    });
     setEmail("");
+    setCity("");
   }
 
   return (
@@ -81,8 +98,9 @@ export function CTA({ source = "homepage_cta" }: { source?: string }) {
                 with real data.
               </h2>
               <p className="mt-5 max-w-md text-lg leading-relaxed text-primary-foreground/80">
-                Explore visa rules, cost-of-living, and vetted workspaces for free.
-                Join the list if you want the AI planner and weekly nomad updates \u2014 no card required.
+                Explore visa rules, cost-of-living, and workspaces for free.
+                Join the list if you want planner updates \u2014 no card required,
+                and we only email when a listing already has a description, price, or photo.
               </p>
 
               <ul className="mt-7 grid gap-2 sm:grid-cols-2">
@@ -114,7 +132,7 @@ export function CTA({ source = "homepage_cta" }: { source?: string }) {
                   You&apos;re on the list \u2014 we&apos;ll be in touch soon.
                 </div>
               ) : (
-                <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+                <div className="mt-3 flex flex-col gap-3">
                   <input
                     id="cta-email"
                     type="email"
@@ -123,12 +141,25 @@ export function CTA({ source = "homepage_cta" }: { source?: string }) {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={status === "loading"}
                     placeholder="you@nomad.life"
-                    className="min-w-0 flex-1 rounded-xl border border-primary-foreground/20 bg-background/95 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-sunset disabled:opacity-60"
+                    className="min-w-0 w-full rounded-xl border border-primary-foreground/20 bg-background/95 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-sunset disabled:opacity-60"
+                  />
+                  <label htmlFor="cta-city" className="sr-only">
+                    City you are considering (optional)
+                  </label>
+                  <input
+                    id="cta-city"
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    disabled={status === "loading"}
+                    placeholder="City you are considering (optional)"
+                    autoComplete="address-level2"
+                    className="min-w-0 w-full rounded-xl border border-primary-foreground/20 bg-background/95 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-sunset disabled:opacity-60"
                   />
                   <Button
                     type="submit"
                     disabled={status === "loading"}
-                    className="h-12 shrink-0 rounded-xl bg-accent px-5 text-accent-foreground shadow-md hover:bg-accent/90 disabled:opacity-70"
+                    className="h-12 w-full rounded-xl bg-accent px-5 text-accent-foreground shadow-md hover:bg-accent/90 disabled:opacity-70"
                   >
                     {status === "loading" ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -149,6 +180,7 @@ export function CTA({ source = "homepage_cta" }: { source?: string }) {
               <div className="mt-5 flex items-center gap-3 border-t border-primary-foreground/15 pt-5">
                 <p className="text-xs text-primary-foreground/70">
                   Free during public beta \u2014 no credit card required. Browse without joining.
+                  Optional city is stored on the signup source so we can match listed workspaces later.
                 </p>
               </div>
             </form>
