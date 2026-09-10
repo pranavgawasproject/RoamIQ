@@ -489,9 +489,11 @@ export default async function WorkspacesPage({
         };
       }
       const listedWifi = usefulWifiSpeed(item.wifi_speed);
-      if (listedWifi) {
+      const visibleTags = usefulTags(item.tags);
+      if (listedWifi || visibleTags.length) {
         place.amenityFeature = [
-          { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi },
+          ...(listedWifi ? [{ "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi }] : []),
+          ...visibleTags.map((tag) => ({ "@type": "LocationFeatureSpecification", name: tag, value: true })),
         ];
       }
       const listedHours = usefulOpenHours(item.open_hours);
