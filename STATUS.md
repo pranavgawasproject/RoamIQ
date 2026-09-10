@@ -1,14 +1,10 @@
-## 2026-09-10 ~09:15 IST — daily growth/conversion (Track A)
+## 2026-09-10 ~09:10 IST — daily growth/conversion (Track A)
 
-Gap fixed: default Track A items (about/images, pending price/Wi-Fi UI, per-listing JSON-LD, admin env auth, waitlist CTAs) already exist. Remaining content-depth hole: related-city rows on `/workspaces/[id]` hid amenity tags even though the index already filters them with `usefulListingTags`. Related query now selects `tags`. Rows render up to three verified tag chips. Related ItemList JSON-LD adds `amenityFeature` for those visible tags plus listed Wi-Fi only. No invented amenities. A mistaken placeholder write to the listing page was immediately restored in the follow-up commit. Sitemap not resubmitted (no new routes).
+Gap fixed: default Track A items (about/images, pending price/Wi-Fi UI, per-listing JSON-LD, admin env auth) already exist. Remaining content-depth hole: homepage `/` workspace preview already showed about, photo/logo, price, Wi-Fi, hours, and contact, but hid live `tags` that the workspaces index already renders. Preview now selects tags and shows up to four chips when they exist. `/workspaces` ItemList JSON-LD now mirrors those same visible tags as Place amenityFeature (Wi-Fi amenity unchanged). No invented amenities; `has_24_7_access` / `has_standing_desks` still unused. Sitemap not resubmitted (no new routes).
 
-GSC 2026-08-10 to 2026-09-08 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 21 impressions / pos ~3.0 — FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, durty nellys amsterdam, innapartment taipei, izzy's coffee and brunch, ngb living. Branded queries (`roamiq`, `roamiq price`, `roamiq dashboard`) 0 clicks / 47 impressions. Branded CTR capped until the custom domain is live.
+GSC 2026-08-10 to 2026-09-09 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 21 impressions / pos ~3.05 — FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, durty nellys amsterdam, innapartment taipei, izzy's coffee and brunch, ngb living. Branded CTR capped until the custom domain is live.
 
-`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — property is not verified in this GSC account; do not mark resolved. Do not add a silent redirect.
-
-Listings null-rates (n=8701): about 2932 (33.7%), images array null 0, starting_price 3624 (41.6%), wifi_speed 425 (4.9%; most remaining values are bulk templates and stay hidden), contact_phone 6494, logo_url 6161, contact_email 7498.
-
-GA4: no Analytics connector in this run — skipped.
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
 
 ## 2026-09-10 ~09:05 IST — daily growth/conversion (Track A)
 
