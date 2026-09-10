@@ -1,3 +1,11 @@
+## 2026-09-10 ~18:50 IST — daily growth/conversion (Track A)
+
+Gap fixed: default Track A items (about/images on listing views, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, homepage CTA city field) already exist. Remaining schema hole: homepage `/` is the highest-exit landing and the four preview cards already show about, photo/logo, price, Wi-Fi, hours, contact, tags, and ratings — but homepage JSON-LD only described the Organization/FAQ, not those visible rows. Preview now emits an ItemList of the same four Places (description/image/address/price/Wi-Fi/tags/hours/contact/aggregateRating only when those fields are visible). Rating chips now include the live review count, matching `/workspaces`. No invented data. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-11 to 2026-09-10 (`https://nomads-travel-indol.vercel.app/`): top query remains `4g-travel-tool.vercel.app` — FLAG only; no redirect. Branded CTR capped until the custom domain is live.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-10 ~18:35 IST — daily growth/conversion (Track A)
 
 Gap fixed: default Track A items (about/images on listing views, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth) already exist. Remaining conversion hole: GA4 last 30d shows `/` at 180 sessions / ~80% bounce — the highest-exit landing. Mid-page waitlists already collect an optional city, but the homepage bottom `CTA` only stored email. CTA now collects an optional city (same source encoding as WaitlistInline), tracks `has_city`, and no longer claims "verified Wi-Fi" for rows that are still pending. No fabricated stats or urgency. Sitemap not resubmitted (no new routes).
