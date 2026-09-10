@@ -55,7 +55,9 @@ export function CityCard({ city }: { city: City }) {
 
           {(city.safety_score != null ||
             city.fun_score != null ||
-            city.walkability_score != null) && (
+            city.walkability_score != null ||
+            city.nightlife_score != null ||
+            city.air_score != null) && (
             <div className="mt-3 flex flex-wrap gap-1.5">
               {city.safety_score != null && (
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
@@ -70,6 +72,16 @@ export function CityCard({ city }: { city: City }) {
               {city.walkability_score != null && (
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
                   Walk {Number(city.walkability_score).toFixed(1)}
+                </span>
+              )}
+              {city.nightlife_score != null && (
+                <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
+                  Nightlife {Number(city.nightlife_score).toFixed(1)}
+                </span>
+              )}
+              {city.air_score != null && (
+                <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
+                  Air {Number(city.air_score).toFixed(1)}
                 </span>
               )}
             </div>
