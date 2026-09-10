@@ -22,6 +22,7 @@ import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
 import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
+import { workspaceFaqJsonLd } from "@/lib/listing-jsonld";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
 import { TrackedAnchor } from "@/components/site/tracked-anchor";
 
@@ -318,12 +319,19 @@ export default async function WorkspaceDetailPage({
       ...listedServices.map((item) => ({ "@type": "LocationFeatureSpecification", name: item, value: true })),
     ];
   }
+  if (tags.length > 0) {
+    localBusinessJsonLd.keywords = tags.join(", ");
+  }
+  const faqJsonLd = workspaceFaqJsonLd(listing, BASE_URL);
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteNav />
       <main className="flex-1 pt-28 sm:pt-32">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
+        {faqJsonLd ? (
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+        ) : null}
         {related.length > 0 && (
           <script
             type="application/ld+json"
@@ -571,6 +579,20 @@ export default async function WorkspaceDetailPage({
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">No verified service list yet. Meeting rooms, cleaning, and similar extras stay hidden until they exist in the listing row.</p>
                 </div>
               )}
+              {faqJsonLd && Array.isArray(faqJsonLd.mainEntity) && faqJsonLd.mainEntity.length > 0 ? (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold">Listing facts</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">Answers use only fields already shown on this page. Missing price, Wi-Fi, hours, or contact stay off this list.</p>
+                  <dl className="mt-4 space-y-4">
+                    {(faqJsonLd.mainEntity as Array<{ name?: string; acceptedAnswer?: { text?: string } }>).map((qa) => (
+                      <div key={String(qa.name)} className="rounded-2xl border border-border bg-card/60 p-4">
+                        <dt className="text-sm font-semibold text-foreground">{qa.name}</dt>
+                        <dd className="mt-1.5 text-sm leading-relaxed text-foreground/80">{qa.acceptedAnswer?.text}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              ) : null}
               {related.length > 0 && (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">More workspaces in {listing.city}</h2>
