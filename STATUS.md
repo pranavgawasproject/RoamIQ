@@ -1,3 +1,13 @@
+## 2026-09-10 ~10:15 IST — daily growth/conversion (Track A)
+
+Gap fixed: `/workspaces` ItemList JSON-LD was passing the whole `getCardImage()` object (`{url, kind}`) as `image`, which is invalid Schema.org. Cards already render the URL string; JSON-LD now uses the same visible URL only. No invented photos. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-10 to 2026-09-09 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 21 impressions / pos ~3.05 — FLAG only; no redirect. Branded: roamiq 0 clicks / 31 impressions; roamiq dashboard 0/3; roamiq price 0/13. Branded CTR capped until the custom domain is live.
+
+GA4 last 30d (property 541610896): `/` 177 sessions bounce ~80%; `/workspaces` 10 sessions bounce 90%; `/destinations` 9 sessions bounce ~78%.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-10 ~09:10 IST — daily growth/conversion (Track A)
 
 Gap fixed: default Track A items (about/images, pending price/Wi-Fi UI, per-listing JSON-LD, admin env auth) already exist. Remaining content-depth hole: homepage `/` workspace preview already showed about, photo/logo, price, Wi-Fi, hours, and contact, but hid live `tags` that the workspaces index already renders. Preview now selects tags and shows up to four chips when they exist. `/workspaces` ItemList JSON-LD now mirrors those same visible tags as Place amenityFeature (Wi-Fi amenity unchanged). No invented amenities; `has_24_7_access` / `has_standing_desks` still unused. Sitemap not resubmitted (no new routes).
