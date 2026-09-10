@@ -11,6 +11,7 @@ import {
   usefulListingAbout,
   usefulListingWebsite,
   usefulStartingPrice,
+  usefulListingTags,
   usefulOpenHours, usefulStreetAddress, usefulWifiSpeed,
 } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
@@ -34,7 +35,7 @@ export async function WorkspacesPreview() {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, company_name, company_type, address, city, country, starting_price, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, contact_phone, contact_email"
+      "id, company_name, company_type, address, city, country, starting_price, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email"
     )
     .eq("is_public", true)
     .eq("is_active", true)
@@ -64,7 +65,7 @@ export async function WorkspacesPreview() {
           <div className="max-w-2xl">
             <div className="text-sm font-medium uppercase tracking-widest text-accent">Live from the listings table</div>
             <h2 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-balance sm:text-5xl">Workspaces with a real description or photo — not a thin card.</h2>
-            <p className="mt-4 text-muted-foreground leading-relaxed">Homepage traffic rarely reaches /workspaces. These four rows are public listings that already have an about snippet or a usable image in the database. Missing descriptions, prices, and Wi-Fi stay labeled pending. Official site, phone, and email appear only when those fields pass the same filters as the workspaces index.</p>
+            <p className="mt-4 text-muted-foreground leading-relaxed">Homepage traffic rarely reaches /workspaces. These four rows are public listings that already have an about snippet or a usable image in the database. Missing descriptions, prices, and Wi-Fi stay labeled pending. Tags, official site, phone, and email appear only when those fields pass the same filters as the workspaces index.</p>
           </div>
           <div className="flex flex-col items-start gap-2 sm:items-end">
             <Link href="/workspaces" className="inline-flex items-center gap-1.5 text-sm font-medium text-forest hover:gap-2.5 hover:text-forest/80">Browse all workspaces<ArrowUpRight className="h-4 w-4" /></Link>
@@ -85,6 +86,7 @@ export async function WorkspacesPreview() {
             const listedPhone = usefulContactPhone(listing.contact_phone);
             const listedEmail = usefulContactEmail(listing.contact_email);
             const listedWebsite = usefulListingWebsite(listing.website);
+            const visibleTags = usefulListingTags(listing.tags);
             const destinationHref = destByCityCountry.get(destKey(listing.city, listing.country)) || null;
             const cityFilterHref = listing.city ? `/workspaces?city=${encodeURIComponent(listing.city)}` : null;
             return (
@@ -115,6 +117,15 @@ export async function WorkspacesPreview() {
                     <h3 className="font-serif text-base font-semibold tracking-tight line-clamp-1"><Link href={`/workspaces/${listing.id}`} className="hover:text-accent">{listing.company_name}</Link></h3>
                   </div>
                   {about ? (<p className="mt-1 text-sm text-foreground/70 line-clamp-2">{about}</p>) : (<p className="mt-1 text-sm text-muted-foreground">Description pending</p>)}
+                  {visibleTags.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {visibleTags.slice(0, 4).map((tag) => (
+                        <span key={tag} className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-foreground/70">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <div className="mt-2 flex items-center gap-1.5 text-xs text-foreground/70"><MapPin className="h-3 w-3 shrink-0" /><span className="min-w-0"><span className="line-clamp-1">{listing.city ? (destinationHref ? <Link href={destinationHref} className="hover:text-accent hover:underline underline-offset-2">{listing.city}</Link> : cityFilterHref ? <Link href={cityFilterHref} className="hover:text-accent hover:underline underline-offset-2">{listing.city}</Link> : listing.city) : null}{listing.city && listing.country ? ", " : ""}{listing.country ? <Link href={`/workspaces?country=${encodeURIComponent(listing.country)}`} className="hover:text-accent hover:underline underline-offset-2">{listing.country}</Link> : null}</span>{usefulStreetAddress(listing.address, listing.city, listing.country) ? (<span className="mt-0.5 block line-clamp-1 text-[11px] text-muted-foreground">{usefulStreetAddress(listing.address, listing.city, listing.country)}</span>) : null}{destinationHref ? (<span className="mt-0.5 block text-[11px]"><Link href={destinationHref} className="hover:text-accent hover:underline underline-offset-2">City guide: cost of living & visa</Link>{cityFilterHref ? <>{" · "}<Link href={cityFilterHref} className="hover:text-accent hover:underline underline-offset-2">More workspaces</Link></> : null}</span>) : null}</span></div>
                   <div className="mt-3 flex flex-wrap gap-2">
                       {!(listedPhone || listedEmail || listedWebsite) && (<span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border bg-secondary/30 px-2.5 py-1 text-[11px] font-medium text-muted-foreground"><Phone className="h-3 w-3" /> Contact pending</span>)}
