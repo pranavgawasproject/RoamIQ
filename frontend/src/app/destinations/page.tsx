@@ -170,6 +170,12 @@ export default async function DestinationsPage({
           ...(city.walkability_score != null
             ? [{ "@type": "PropertyValue", name: "Walkability score", value: Number(city.walkability_score).toFixed(1) }]
             : []),
+          ...(city.nightlife_score != null
+            ? [{ "@type": "PropertyValue", name: "Nightlife score", value: Number(city.nightlife_score).toFixed(1) }]
+            : []),
+          ...(city.air_score != null
+            ? [{ "@type": "PropertyValue", name: "Air quality score", value: Number(city.air_score).toFixed(1) }]
+            : []),
         ],
       },
     })),
