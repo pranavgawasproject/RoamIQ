@@ -1,3 +1,13 @@
+## 2026-09-10 ~18:35 IST — daily growth/conversion (Track A)
+
+Gap fixed: default Track A items (about/images on listing views, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth) already exist. Remaining conversion hole: GA4 last 30d shows `/` at 180 sessions / ~80% bounce — the highest-exit landing. Mid-page waitlists already collect an optional city, but the homepage bottom `CTA` only stored email. CTA now collects an optional city (same source encoding as WaitlistInline), tracks `has_city`, and no longer claims "verified Wi-Fi" for rows that are still pending. No fabricated stats or urgency. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-10 to 2026-09-09 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 22 impressions / pos ~3.05 — FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, durty nellys amsterdam, innapartment taipei, izzy's coffee and brunch, ngb living, roam iq (1/34). Branded CTR capped until the custom domain is live.
+
+GA4 last 30d (property 541610896): `/` 180 sessions bounce 80%; `/workspaces` 10 sessions bounce 90%; `/destinations` 9 sessions bounce ~78%; Chiang Mai 5 / 100% bounce.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-10 ~10:15 IST — daily growth/conversion (Track A)
 
 Gap fixed: `/workspaces` ItemList JSON-LD was passing the whole `getCardImage()` object (`{url, kind}`) as `image`, which is invalid Schema.org. Cards already render the URL string; JSON-LD now uses the same visible URL only. No invented photos. Sitemap not resubmitted (no new routes).
