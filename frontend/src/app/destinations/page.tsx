@@ -191,6 +191,12 @@ export default async function DestinationsPage({
           ...(city.mobile_data_cost_gb != null
             ? [{ "@type": "PropertyValue", name: "Mobile data USD per GB", value: String(city.mobile_data_cost_gb) }]
             : []),
+          ...(city.avg_temp != null
+            ? [{ "@type": "PropertyValue", name: "Average temperature C", value: String(city.avg_temp) }]
+            : []),
+          ...(city.air_quality
+            ? [{ "@type": "PropertyValue", name: "Air quality label", value: String(city.air_quality) }]
+            : []),
           ...(city.english_proficiency
             ? [{ "@type": "PropertyValue", name: "English proficiency", value: String(city.english_proficiency) }]
             : []),
