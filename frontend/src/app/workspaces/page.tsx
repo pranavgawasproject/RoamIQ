@@ -8,7 +8,7 @@ import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
 import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulOpenHours, usefulWifiSpeed } from "@/lib/listing-media";
-import { getDestinationForListingCity } from "@/lib/listing-destination";
+import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -206,7 +206,10 @@ function usefulTags(tags: string[] | null | undefined): string[] {
 
 }
 
-function ListingCard({ listing, destinationHref }: { listing: Listing; destinationHref?: string | null }) {
+function ListingCard({ listing, destination }: { listing: Listing; destination?: ListingDestinationMatch | null }) {
+  const destinationHref = destination?.id ? `/destinations/${destination.id}` : null;
+  const cityInternet = destination?.wifi_speed_p90 || destination?.internet_mbps || null;
+  const cityCost = destination?.cost_usd || null;
   const cardImage = getCardImage(listing);
   const imageUrl = cardImage?.url ?? null;
   const imageKind = cardImage?.kind ?? null;
@@ -369,11 +372,18 @@ function ListingCard({ listing, destinationHref }: { listing: Listing; destinati
           <div>
             {usefulStartingPrice(listing.starting_price) ? (
               <div className="font-serif text-lg font-semibold text-forest">{usefulStartingPrice(listing.starting_price)}</div>
+            ) : cityCost ? (
+              <div>
+                <div className="text-sm text-muted-foreground">Price not listed yet</div>
+                <div className="text-[11px] text-muted-foreground/80">City living cost ~${cityCost.toLocaleString()}/mo</div>
+              </div>
             ) : (
               <div className="text-sm text-muted-foreground">Price not listed yet</div>
             )}
             {usefulWifiSpeed(listing.wifi_speed) ? (
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"><Wifi className="h-3 w-3" /> {usefulWifiSpeed(listing.wifi_speed)}</div>
+            ) : cityInternet ? (
+              <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground/80"><Wifi className="h-3 w-3" /> City internet ~{cityInternet} Mbps · listing Wi-Fi pending</div>
             ) : (
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground/70"><Wifi className="h-3 w-3" /> Wi-Fi speed pending</div>
             )}
@@ -411,7 +421,7 @@ export default async function WorkspacesPage({
     Array.from(new Set(listings.map((l) => destKey(l.city, l.country)))).map(async (key) => {
       const [city, country] = key.split("||");
       const dest = await getDestinationForListingCity(city || null, country || null);
-      return [key, dest?.id ? `/destinations/${dest.id}` : null] as const;
+      return [key, dest] as const;
     }),
   );
   const destByCityCountry = new Map(destPairs);
@@ -674,7 +684,7 @@ export default async function WorkspacesPage({
               <>
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {listings.slice(0, 6).map((l) => (
-                    <ListingCard key={l.id} listing={l} destinationHref={destByCityCountry.get(destKey(l.city, l.country))} />
+                    <ListingCard key={l.id} listing={l} destination={destByCityCountry.get(destKey(l.city, l.country))} />
                   ))}
                 </div>
                 {listings.length > 6 && (
@@ -685,7 +695,7 @@ export default async function WorkspacesPage({
                 {listings.length > 6 && (
                   <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     {listings.slice(6).map((l) => (
-                      <ListingCard key={l.id} listing={l} destinationHref={destByCityCountry.get(destKey(l.city, l.country))} />
+                      <ListingCard key={l.id} listing={l} destination={destByCityCountry.get(destKey(l.city, l.country))} />
                     ))}
                   </div>
                 )}
