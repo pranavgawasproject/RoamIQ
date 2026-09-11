@@ -176,6 +176,12 @@ export default async function DestinationsPage({
           ...(city.air_score != null
             ? [{ "@type": "PropertyValue", name: "Air quality score", value: Number(city.air_score).toFixed(1) }]
             : []),
+          ...(city.english_proficiency
+            ? [{ "@type": "PropertyValue", name: "English proficiency", value: String(city.english_proficiency) }]
+            : []),
+          ...(city.quality_of_life_score != null
+            ? [{ "@type": "PropertyValue", name: "Quality of life score", value: Number(city.quality_of_life_score).toFixed(1) }]
+            : []),
         ],
       },
     })),
