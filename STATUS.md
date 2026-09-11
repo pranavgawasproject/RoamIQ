@@ -1,3 +1,11 @@
+## 2026-09-11 ~09:35 IST — daily growth/conversion (Track A)
+
+Gap fixed: `city-card.tsx` on main had been reduced to the string `PLACEHOLDER`, which would fail `/destinations` compilation. Restored the live destination card and kept English proficiency / quality-of-life chips only when those city-table values exist. ItemList JSON-LD already mirrored those visible fields. No invented scores. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-12 to 2026-09-10 (`https://nomads-travel-indol.vercel.app/`): homepage 3 clicks / 128 impressions / pos ~6.2. Workspace detail URLs collect most remaining clicks. Top query `4g-travel-tool.vercel.app` 2/21 / pos ~3.14 — FLAG only; no redirect. Branded `roam iq` 1/33. Branded CTR capped until the custom domain is live.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-11 ~09:05 IST â daily growth/conversion (Track A)
 
 Gap fixed: default Track A items (about/images on listing views, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth) already exist. Remaining content-depth hole: `/destinations` city cards already show visa, overall, cost, rent, desk, internet, safety, fun, walk, nightlife, and air when those city-table values exist, but hid live `english_proficiency` and `quality_of_life_score`. Cards now show those chips when the values exist. Destinations ItemList JSON-LD now mirrors the same visible English/QoL figures as Place additionalProperty â no invented scores. Sitemap not resubmitted (no new routes).
