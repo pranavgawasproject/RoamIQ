@@ -535,6 +535,17 @@ export default async function WorkspacesPage({
           reviewCount,
         };
       }
+      const dest = destByCityCountry.get(destKey(item.city, item.country));
+      if (dest?.id) {
+        const cityPlace = {
+          "@type": "City",
+          "@id": `${BASE_URL}/destinations/${dest.id}#city`,
+          name: dest.name,
+          url: `${BASE_URL}/destinations/${dest.id}`,
+        };
+        place.containedInPlace = cityPlace;
+        place.areaServed = cityPlace;
+      }
       return {
         "@type": "ListItem",
         position: index + 1,
