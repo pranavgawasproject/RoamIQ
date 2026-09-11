@@ -58,6 +58,8 @@ export function CityCard({ city }: { city: City }) {
             city.walkability_score != null ||
             city.nightlife_score != null ||
             city.air_score != null ||
+            city.avg_temp != null ||
+            Boolean(city.air_quality) ||
             Boolean(city.english_proficiency) ||
             city.quality_of_life_score != null) && (
             <div className="mt-3 flex flex-wrap gap-1.5">
@@ -86,6 +88,16 @@ export function CityCard({ city }: { city: City }) {
                   Air {Number(city.air_score).toFixed(1)}
                 </span>
               )}
+              {city.avg_temp != null && (
+                <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
+                  {Number(city.avg_temp).toFixed(0)}°C avg
+                </span>
+              )}
+              {city.air_quality ? (
+                <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
+                  Air {city.air_quality}
+                </span>
+              ) : null}
               {city.english_proficiency ? (
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
                   English {city.english_proficiency}
