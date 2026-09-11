@@ -322,6 +322,20 @@ export default async function WorkspaceDetailPage({
   if (tags.length > 0) {
     localBusinessJsonLd.keywords = tags.join(", ");
   }
+  if (destination?.id) {
+    const cityPlace = {
+      "@type": "City",
+      name: destination.name,
+      url: `${BASE_URL}/destinations/${destination.id}`,
+    };
+    localBusinessJsonLd.containedInPlace = cityPlace;
+    localBusinessJsonLd.areaServed = cityPlace;
+  } else if (listing.city) {
+    localBusinessJsonLd.areaServed = {
+      "@type": "City",
+      name: listing.city,
+    };
+  }
   const faqJsonLd = workspaceFaqJsonLd(listing, BASE_URL);
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -703,6 +717,17 @@ export default async function WorkspaceDetailPage({
                 ) : (
                   <div className="font-serif text-lg text-muted-foreground">Price not listed yet</div>
                 )}
+                {destination ? (
+                  <div className="mt-4 rounded-xl border border-border bg-secondary/40 p-3 text-sm">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">City context</p>
+                    <Link href={`/destinations/${destination.id}`} className="mt-1 block font-medium text-foreground underline-offset-4 hover:underline">
+                      {destination.name} guide
+                    </Link>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {[destination.avg_temp != null ? `${destination.avg_temp}°C avg` : null, destination.air_quality ? `air ${destination.air_quality}` : null, destination.cost_usd ? `~$${destination.cost_usd}/mo city cost` : null, destination.wifi_speed_p90 || destination.internet_mbps ? `${destination.wifi_speed_p90 || destination.internet_mbps} city internet` : null].filter(Boolean).join(" · ") || "City page has the cost, visa, and internet figures for this place."}
+                    </p>
+                  </div>
+                ) : null}
                 <div className="mt-5 space-y-3 text-sm">
                   {usefulWifiSpeed(listing.wifi_speed) ? (
                     <div className="flex items-center gap-2.5 text-foreground/80">
