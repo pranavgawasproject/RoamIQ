@@ -6,7 +6,12 @@ import { cn } from "@/lib/utils";
 
 export function CityCard({ city }: { city: City }) {
   const photo = city.image || cityPhotos[city.id];
-  const [gradient, gradientText] = cityGradient(city.id);
+  const [gradient] = cityGradient(city.id);
+  const english = city.english_proficiency?.trim();
+  const qol =
+    city.quality_of_life_score != null && Number.isFinite(Number(city.quality_of_life_score))
+      ? Number(city.quality_of_life_score).toFixed(1)
+      : null;
 
   return (
     <Link
@@ -58,8 +63,8 @@ export function CityCard({ city }: { city: City }) {
             city.walkability_score != null ||
             city.nightlife_score != null ||
             city.air_score != null ||
-            Boolean(city.english_proficiency) ||
-            city.quality_of_life_score != null) && (
+            english ||
+            qol) && (
             <div className="mt-3 flex flex-wrap gap-1.5">
               {city.safety_score != null && (
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
@@ -86,14 +91,14 @@ export function CityCard({ city }: { city: City }) {
                   Air {Number(city.air_score).toFixed(1)}
                 </span>
               )}
-              {city.english_proficiency ? (
+              {english && (
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
-                  English {city.english_proficiency}
+                  English {english}
                 </span>
-              ) : null}
-              {city.quality_of_life_score != null && (
+              )}
+              {qol && (
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
-                  QoL {Number(city.quality_of_life_score).toFixed(1)}
+                  QoL {qol}
                 </span>
               )}
             </div>
