@@ -233,6 +233,8 @@ export default async function CityDetailPage({
       ...(typedCity.coffee_price_usd ? [{ "@type": "PropertyValue", name: "Coffee / Espresso Price USD", value: `$${typedCity.coffee_price_usd}` }] : []),
       ...(typedCity.english_proficiency ? [{ "@type": "PropertyValue", name: "English Proficiency", value: typedCity.english_proficiency }] : []),
       ...(typedCity.quality_of_life_score ? [{ "@type": "PropertyValue", name: "Quality of Life Score", value: `${typedCity.quality_of_life_score}` }] : []),
+      ...(typedCity.avg_temp != null ? [{ "@type": "PropertyValue", name: "Average Temperature C", value: `${typedCity.avg_temp}` }] : []),
+      ...(typedCity.air_quality ? [{ "@type": "PropertyValue", name: "Air Quality", value: typedCity.air_quality }] : []),
       ...(typedVisa?.dn_visa_cost ? [{ "@type": "PropertyValue", name: "Nomad Visa Cost", value: typedVisa.dn_visa_cost }] : []),
       ...(typedVisa?.processing_time ? [{ "@type": "PropertyValue", name: "Visa Processing Time", value: typedVisa.processing_time }] : []),
       ...(typedVisa?.application_method ? [{ "@type": "PropertyValue", name: "Visa Application Method", value: typedVisa.application_method }] : []),
@@ -367,6 +369,7 @@ export default async function CityDetailPage({
                 <Stat label="Overall score" value={Number(typedCity.overall_score).toFixed(1)} />
                 <Stat label="Cost / month" value={`$${typedCity.cost_usd.toLocaleString()}`} />
                 <Stat label="Avg temp" value={`${typedCity.avg_temp}°C`} />
+                {typedCity.air_quality ? <Stat label="Air quality" value={typedCity.air_quality} /> : null}
                 <Stat label="Visa difficulty" value={typedCity.visa_difficulty} />
               </div>
               <div className="mt-5 flex flex-wrap gap-2">
