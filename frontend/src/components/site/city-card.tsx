@@ -6,12 +6,7 @@ import { cn } from "@/lib/utils";
 
 export function CityCard({ city }: { city: City }) {
   const photo = city.image || cityPhotos[city.id];
-  const [gradient] = cityGradient(city.id);
-  const english = city.english_proficiency?.trim();
-  const qol =
-    city.quality_of_life_score != null && Number.isFinite(Number(city.quality_of_life_score))
-      ? Number(city.quality_of_life_score).toFixed(1)
-      : null;
+  const [gradient, gradientText] = cityGradient(city.id);
 
   return (
     <Link
@@ -63,8 +58,8 @@ export function CityCard({ city }: { city: City }) {
             city.walkability_score != null ||
             city.nightlife_score != null ||
             city.air_score != null ||
-            english ||
-            qol) && (
+            Boolean(city.english_proficiency) ||
+            city.quality_of_life_score != null) && (
             <div className="mt-3 flex flex-wrap gap-1.5">
               {city.safety_score != null && (
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
@@ -91,14 +86,14 @@ export function CityCard({ city }: { city: City }) {
                   Air {Number(city.air_score).toFixed(1)}
                 </span>
               )}
-              {english && (
+              {city.english_proficiency ? (
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
-                  English {english}
+                  English {city.english_proficiency}
                 </span>
-              )}
-              {qol && (
+              ) : null}
+              {city.quality_of_life_score != null && (
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur-sm">
-                  QoL {qol}
+                  QoL {Number(city.quality_of_life_score).toFixed(1)}
                 </span>
               )}
             </div>
@@ -117,6 +112,11 @@ export function CityCard({ city }: { city: City }) {
                   1-Bed: ${city.one_bed_rent_usd}/mo
                 </div>
               )}
+              {city.meal_price_usd != null && (
+                <div className="text-[10px] font-medium text-white/75">
+                  Meal: ${Number(city.meal_price_usd).toFixed(0)}
+                </div>
+              )}
             </div>
             <div className="text-right">
               <div className="flex items-center justify-end gap-1 text-[10px] uppercase tracking-wider text-white/60">
@@ -128,6 +128,16 @@ export function CityCard({ city }: { city: City }) {
               {city.coworking_desk_usd && (
                 <div className="text-[10px] font-medium text-white/75">
                   Desk: ${city.coworking_desk_usd}/mo
+                </div>
+              )}
+              {city.coffee_price_usd != null && (
+                <div className="text-[10px] font-medium text-white/75">
+                  Coffee: ${Number(city.coffee_price_usd).toFixed(2)}
+                </div>
+              )}
+              {city.mobile_data_cost_gb != null && (
+                <div className="text-[10px] font-medium text-white/75">
+                  Data: ${Number(city.mobile_data_cost_gb).toFixed(2)}/GB
                 </div>
               )}
             </div>
