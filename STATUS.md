@@ -1,3 +1,15 @@
+## 2026-09-11 ~09:05 IST — daily growth/conversion (Track A)
+
+Gap fixed: default Track A items (about/images on listing views, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, listing FAQ) already exist. Remaining content-depth hole: `/destinations` city cards already showed cost, 1-bed, desk, internet, visa, and live scores, but hid `meal_price_usd`, `coffee_price_usd`, and `mobile_data_cost_gb` (all 28/28 cities populated). Cards now show those figures when present. Destinations ItemList JSON-LD now mirrors meal/coffee/mobile-data plus the already-visible English proficiency and QoL scores. No invented prices. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-12 to 2026-09-09 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 21 impressions / pos ~3.14 — FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, durty nellys amsterdam, innapartment taipei, izzy's coffee and brunch, ngb living, roam iq (1/33). Branded CTR capped until the custom domain is live.
+
+GA4 last 30d (property 541610896): `/` 180 sessions bounce 80%; `/workspaces` 10 sessions bounce 90%; `/destinations` 9 sessions bounce ~78%; Chiang Mai 5 / 100% bounce.
+
+Supabase `listings` (`davvpymbybvniexmkgcu`, n=8712): about empty 2932; images null 0; starting_price empty 3624; wifi_speed empty 436; contact_phone empty 6501; logo_url empty 6172; contact_email empty 7508.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — URL Inspection on that host is a different GSC property; do not mark resolved.
+
 ## 2026-09-11 ~09:35 IST — daily growth/conversion (Track A)
 
 Gap fixed: `city-card.tsx` on main had been reduced to the string `PLACEHOLDER`, which would fail `/destinations` compilation. Restored the live destination card and kept English proficiency / quality-of-life chips only when those city-table values exist. ItemList JSON-LD already mirrored those visible fields. No invented scores. Sitemap not resubmitted (no new routes).
