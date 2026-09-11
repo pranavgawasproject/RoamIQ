@@ -478,6 +478,14 @@ export default async function WorkspaceDetailPage({
                     {destination ? (
                       <Link href={`/destinations/${destination.id}`} className="font-medium text-foreground underline-offset-4 hover:underline">
                         Explore {destination.name} cost of living & visa data on RoamIQ
+                        {destination.avg_temp != null || destination.air_quality ? (
+                          <span className="text-muted-foreground">
+                            {" "}
+                            ({destination.avg_temp != null ? `${destination.avg_temp}°C avg` : null}
+                            {destination.avg_temp != null && destination.air_quality ? " · " : null}
+                            {destination.air_quality ? `air ${destination.air_quality}` : null})
+                          </span>
+                        ) : null}
                       </Link>
                     ) : (
                       <Link href={`/destinations?search=${encodeURIComponent(listing.city)}`} className="font-medium text-foreground underline-offset-4 hover:underline">
