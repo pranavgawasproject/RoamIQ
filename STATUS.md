@@ -1,3 +1,11 @@
+## 2026-09-11 ~18:45 IST — daily growth/conversion (Track A)
+
+Gap fixed: default listing Track A items (about/images, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth) already ship. City avg temp and air-quality labels were added to destination cards earlier today but listing cards and listing detail still hid them, so /workspaces landings (GA4 ~90% bounce) stayed thinner than the matched city guide. `getDestinationForListingCity` now returns `avg_temp` and `air_quality`. Workspace cards and the listing-detail city-guide line show those city-level figures only, labeled as city climate — never as listing weather. No invented climate data. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-12 to 2026-09-10 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 21 impressions / pos ~3.14 — FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, durty nellys amsterdam, innapartment taipei, izzy's coffee and brunch, ngb living, roam iq (1/33). Branded CTR capped until the custom domain is live.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-11 ~18:35 IST — daily growth/conversion (Track A)
 
 Gap fixed: default listing Track A items (about/images, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth) already ship. Remaining content-depth hole: destination **detail** already showed `avg_temp`, but `/destinations` city cards and ItemList JSON-LD hid it, and the stored `air_quality` label was unused on both list and detail. Cards now show avg °C and the air-quality label when present; list + city JSON-LD mirror only those visible fields. No invented climate data. Sitemap not resubmitted (no new routes).
