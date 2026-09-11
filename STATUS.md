@@ -1,3 +1,11 @@
+## 2026-09-11 ~19:10 IST — daily growth/conversion (Track A)
+
+Gap fixed: listing detail JSON-LD already set `containedInPlace` / `areaServed` to the matched destination City, but the `/workspaces` ItemList schema did not — cards already link that city (climate chips + city guide). List JSON-LD now attaches the same City URL when `getDestinationForListingCity` matches. No invented climate or prices. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-12 to 2026-09-10 (`https://nomads-travel-indol.vercel.app/`): branded `roam iq` 1 click / 33 impressions / pos ~8.0. Non-brand clicks include cafe nenom, coliving athens, durty nellys amsterdam, innapartment taipei, izzy's coffee and brunch, ngb living. Query `4g-travel-tool.vercel.app` 2 clicks / 21 impressions / pos ~3.14 — duplicate-index FLAG only; no redirect. Branded CTR capped until the custom domain is live (human-owned).
+
+Commit: https://github.com/pranavgawasproject/RoamIQ/commit/17ed9972928bb41f6c6d3a6c3efef11267a66aa5
+
 ## 2026-09-11 ~19:00 IST — daily growth/conversion (Track A)
 
 Gap fixed: listing detail already rendered about, photos, price/Wi-Fi pending states, and LocalBusiness JSON-LD, but schema and the sidebar ignored the matched destination even though the city-guide line is visible. Listing JSON-LD now sets `containedInPlace` / `areaServed` to the destination City URL when a match exists. Sidebar adds a City context box with only already-known destination fields (temp, air, city cost, city internet) — no invented listing weather or prices. Sitemap not resubmitted (no new routes).
