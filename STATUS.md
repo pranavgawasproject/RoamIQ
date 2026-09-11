@@ -1,3 +1,11 @@
+## 2026-09-11 ~09:05 IST â daily growth/conversion (Track A)
+
+Gap fixed: default Track A items (about/images on listing views, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth) already exist. Remaining content-depth hole: `/destinations` city cards already show visa, overall, cost, rent, desk, internet, safety, fun, walk, nightlife, and air when those city-table values exist, but hid live `english_proficiency` and `quality_of_life_score`. Cards now show those chips when the values exist. Destinations ItemList JSON-LD now mirrors the same visible English/QoL figures as Place additionalProperty â no invented scores. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-12 to 2026-09-10 (`https://nomads-travel-indol.vercel.app/`): top query remains `4g-travel-tool.vercel.app` (2 clicks / 21 impressions / pos ~3.14) â FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, durty nellys amsterdam, innapartment taipei, izzy's coffee and brunch, ngb living, roam iq (1/33). Branded CTR capped until the custom domain is live.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending â URL Inspection on that host is a different GSC property; do not mark resolved.
+
 ## 2026-09-10 ~19:00 IST — daily growth/conversion (Track A)
 
 Gap fixed: listing detail pages already render about, gallery, price/Wi-Fi pending states, and LocalBusiness JSON-LD. Remaining hole: crawlers and bounce traffic on `/workspaces/{id}` had no visible Q&A that restates the listed facts. Added `workspaceFaqJsonLd` (about, listed price, Wi-Fi, hours, official contact only when those fields are on the page) plus a matching "Listing facts" block and tag `keywords` on the Place schema. No invented answers. Sitemap not resubmitted (no new routes).
