@@ -210,6 +210,8 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
   const destinationHref = destination?.id ? `/destinations/${destination.id}` : null;
   const cityInternet = destination?.wifi_speed_p90 || destination?.internet_mbps || null;
   const cityCost = destination?.cost_usd || null;
+  const cityTemp = destination?.avg_temp;
+  const cityAir = destination?.air_quality || null;
   const cardImage = getCardImage(listing);
   const imageUrl = cardImage?.url ?? null;
   const imageKind = cardImage?.kind ?? null;
@@ -391,6 +393,14 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"><Clock className="h-3 w-3" /> {usefulOpenHours(listing.open_hours)[0]}</div>
             ) : (
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground/70"><Clock className="h-3 w-3" /> Hours not listed yet</div>
+            )}
+            {(cityTemp != null || cityAir) && (
+              <div className="mt-0.5 text-[11px] text-muted-foreground/80">
+                City climate
+                {cityTemp != null ? ` · ${cityTemp}°C avg` : ""}
+                {cityAir ? ` · air ${cityAir}` : ""}
+                {" · listing-level weather not stored"}
+              </div>
             )}
           </div>
           {showRating ? (
