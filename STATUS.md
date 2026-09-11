@@ -1,3 +1,13 @@
+## 2026-09-11 ~18:35 IST — daily growth/conversion (Track A)
+
+Gap fixed: default listing Track A items (about/images, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth) already ship. Remaining content-depth hole: destination **detail** already showed `avg_temp`, but `/destinations` city cards and ItemList JSON-LD hid it, and the stored `air_quality` label was unused on both list and detail. Cards now show avg °C and the air-quality label when present; list + city JSON-LD mirror only those visible fields. No invented climate data. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-12 to 2026-09-11 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 21 impressions / pos ~3.14 — FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, durty nellys amsterdam, innapartment taipei, izzy's coffee and brunch, ngb living, roam iq (1/33). Branded CTR capped until the custom domain is live.
+
+GA4 last 30d (property 541610896): `/` 183 sessions bounce ~80%; `/workspaces` 10 sessions bounce 90%; `/destinations` 9 sessions bounce ~78%; `/destinations/chiang-mai` 5 / 100% bounce.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-11 ~10:10 IST — daily growth/conversion (Track A)
 
 Gap fixed: about/images, pending Wi-Fi/price UI, per-listing JSON-LD, and admin env auth already ship. Remaining hole: listing cards still looked thin when `starting_price` / `wifi_speed` were empty even if the matched `/destinations` city had live internet and monthly cost. `getDestinationForListingCity` now returns those city-table numbers. Workspace cards show labeled city-level fallbacks only ("City internet ~X Mbps · listing Wi-Fi pending", "City living cost ~$Y/mo") and never treat city averages as listing Wi-Fi or price. Schema is unchanged. Sitemap not resubmitted (no new routes).
