@@ -1,3 +1,11 @@
+## 2026-09-11 ~19:00 IST — daily growth/conversion (Track A)
+
+Gap fixed: listing detail already rendered about, photos, price/Wi-Fi pending states, and LocalBusiness JSON-LD, but schema and the sidebar ignored the matched destination even though the city-guide line is visible. Listing JSON-LD now sets `containedInPlace` / `areaServed` to the destination City URL when a match exists. Sidebar adds a City context box with only already-known destination fields (temp, air, city cost, city internet) — no invented listing weather or prices. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-12 to 2026-09-11 (`https://nomads-travel-indol.vercel.app/`): branded query `roam iq` 1 click / 33 impressions / pos ~8.0. Non-brand long-tails include cafe/coliving names. Query `4g-travel-tool.vercel.app` still 2 clicks / 21 impressions / pos ~3.1 — duplicate-index FLAG only; do not add a redirect without checking the existing canonical. Branded CTR remains capped until the custom domain is live (human-owned).
+
+Commit: https://github.com/pranavgawasproject/RoamIQ/commit/54731a6de4c25b916129040fd92f95fcdfbd94b4
+
 ## 2026-09-11 ~18:45 IST — daily growth/conversion (Track A)
 
 Gap fixed: default listing Track A items (about/images, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth) already ship. City avg temp and air-quality labels were added to destination cards earlier today but listing cards and listing detail still hid them, so /workspaces landings (GA4 ~90% bounce) stayed thinner than the matched city guide. `getDestinationForListingCity` now returns `avg_temp` and `air_quality`. Workspace cards and the listing-detail city-guide line show those city-level figures only, labeled as city climate — never as listing weather. No invented climate data. Sitemap not resubmitted (no new routes).
