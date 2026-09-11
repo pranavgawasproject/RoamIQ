@@ -1,3 +1,11 @@
+## 2026-09-11 ~10:10 IST — daily growth/conversion (Track A)
+
+Gap fixed: about/images, pending Wi-Fi/price UI, per-listing JSON-LD, and admin env auth already ship. Remaining hole: listing cards still looked thin when `starting_price` / `wifi_speed` were empty even if the matched `/destinations` city had live internet and monthly cost. `getDestinationForListingCity` now returns those city-table numbers. Workspace cards show labeled city-level fallbacks only ("City internet ~X Mbps · listing Wi-Fi pending", "City living cost ~$Y/mo") and never treat city averages as listing Wi-Fi or price. Schema is unchanged. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-14 to 2026-09-10 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 17 impressions / pos ~3.06 — FLAG only; no redirect. Other clicks: cafe nenom, coliving athens, durty nellys amsterdam, innapartment taipei, izzy's coffee and brunch, ngb living, roam iq (1/33). Branded CTR capped until the custom domain is live.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-11 ~09:05 IST — daily growth/conversion (Track A)
 
 Gap fixed: default Track A items (about/images on listing views, price/Wi-Fi pending UI, per-listing JSON-LD, admin env auth, listing FAQ) already exist. Remaining content-depth hole: `/destinations` city cards already showed cost, 1-bed, desk, internet, visa, and live scores, but hid `meal_price_usd`, `coffee_price_usd`, and `mobile_data_cost_gb` (all 28/28 cities populated). Cards now show those figures when present. Destinations ItemList JSON-LD now mirrors meal/coffee/mobile-data plus the already-visible English proficiency and QoL scores. No invented prices. Sitemap not resubmitted (no new routes).
