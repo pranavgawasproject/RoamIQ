@@ -661,6 +661,9 @@ export default async function WorkspacesPage({
                     ))}
                   </div>
                 )}
+                <div className="mt-10 rounded-2xl border border-border bg-card/80 p-5 sm:p-6">
+                  <WaitlistInline source="workspaces-list-after-pagination" askCity heading="Reached the end of this page?" description="Pagination is a common exit. Leave an email and optional city if you want a shortlist of listings that already show a price or Wi-Fi figure. No invented numbers." compact context={waitlistContext} />
+                </div>
                 <div className="mt-12 flex items-center justify-between">
                   {page > 1 ? (
                     <Link href={buildHref(page - 1)} className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-secondary"><ArrowLeft className="h-4 w-4" /> Previous</Link>
