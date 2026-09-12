@@ -9,6 +9,7 @@ import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
 import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulOpenHours, usefulWifiSpeed } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
+import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -491,98 +492,11 @@ export default async function WorkspacesPage({
     name: "Coworking spaces and digital nomad accommodations on RoamIQ",
     numberOfItems: count,
     itemListElement: listings.map((item, index) => {
-      const cardImage = getCardImage(item);
-      const imageUrl = cardImage?.url ?? null;
-      const aboutSnippet = usefulAboutSnippet(item.about || item.description, item.company_name);
-      const schemaType =
-        item.company_type === "coliving" || item.company_type === "hostel" || item.company_type === "workation"
-          ? "LodgingBusiness"
-          : item.company_type === "cafe"
-            ? "CafeOrCoffeeShop"
-            : "LocalBusiness";
-      const place: Record<string, unknown> = {
-        "@type": schemaType,
-        "@id": `${BASE_URL}/workspaces/${item.id}#place`,
-        name: item.company_name,
-        url: `${BASE_URL}/workspaces/${item.id}`,
-      };
-      // Only fields already visible on the card — never invent prices, wifi, or copy.
-      if (aboutSnippet) place.description = aboutSnippet;
-      if (imageUrl) place.image = imageUrl;
-      const listedStreet = usefulStreetAddress(item.address, item.city, item.country);
-      if (listedStreet || item.city || item.country) {
-        place.address = {
-          "@type": "PostalAddress",
-          ...(listedStreet ? { streetAddress: listedStreet } : {}),
-          ...(item.city ? { addressLocality: item.city } : {}),
-          ...(item.state ? { addressRegion: item.state } : {}),
-          ...(item.country ? { addressCountry: item.country } : {}),
-        };
-      }
-      const listedPrice = usefulStartingPrice(item.starting_price);
-      if (listedPrice) {
-        place.priceRange = listedPrice;
-        place.makesOffer = {
-          "@type": "Offer",
-          url: `${BASE_URL}/workspaces/${item.id}`,
-          priceSpecification: { "@type": "PriceSpecification", description: listedPrice },
-        };
-      }
-      const listedWifi = usefulWifiSpeed(item.wifi_speed);
-      const visibleTags = usefulTags(item.tags);
-      if (listedWifi || visibleTags.length) {
-        place.amenityFeature = [
-          ...(listedWifi ? [{ "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi }] : []),
-          ...visibleTags.map((tag) => ({ "@type": "LocationFeatureSpecification", name: tag, value: true })),
-        ];
-      }
-      const listedHours = usefulOpenHours(item.open_hours);
-      if (listedHours.length === 1) place.openingHours = listedHours[0];
-      else if (listedHours.length > 1) place.openingHours = listedHours;
-      const listedPhone = usefulContactPhone(item.contact_phone);
-      const listedEmail = usefulContactEmail(item.contact_email);
-      const listedWebsite = usefulListingWebsite(item.website);
-      if (listedPhone) place.telephone = listedPhone;
-      if (listedEmail) place.email = listedEmail;
-      if (listedWebsite) place.sameAs = [listedWebsite];
-      const ratingValue = Number(item.ratings);
-      const reviewCount = Number(item.total_reviews);
-      if (ratingValue > 0 && reviewCount > 0) {
-        place.aggregateRating = {
-          "@type": "AggregateRating",
-          ratingValue,
-          reviewCount,
-        };
-      }
       const dest = destByCityCountry.get(destKey(item.city, item.country));
-      if (dest?.id) {
-        const cityProps = [
-          dest.visa_difficulty ? { "@type": "PropertyValue", name: "Visa difficulty", value: dest.visa_difficulty } : null,
-          dest.safety_score != null ? { "@type": "PropertyValue", name: "Safety score", value: Number(dest.safety_score).toFixed(1) } : null,
-          dest.walkability_score != null ? { "@type": "PropertyValue", name: "Walkability score", value: Number(dest.walkability_score).toFixed(1) } : null,
-          dest.coworking_desk_usd != null ? { "@type": "PropertyValue", name: "City coworking desk (USD/mo)", value: dest.coworking_desk_usd } : null,
-          dest.one_bed_rent_usd != null ? { "@type": "PropertyValue", name: "City 1-bed rent (USD/mo)", value: dest.one_bed_rent_usd } : null,
-        ].filter(Boolean);
-        const cityPlace = {
-          "@type": "City",
-          "@id": `${BASE_URL}/destinations/${dest.id}#city`,
-          name: dest.name,
-          url: `${BASE_URL}/destinations/${dest.id}`,
-          ...(cityProps.length ? { additionalProperty: cityProps } : {}),
-        };
-        place.containedInPlace = cityPlace;
-        place.areaServed = cityPlace;
-      }
-      return {
-        "@type": "ListItem",
-        position: index + 1,
-        name: item.company_name,
-        url: `${BASE_URL}/workspaces/${item.id}`,
-        item: place,
-        ...(imageUrl ? { image: imageUrl } : {}),
-        ...(aboutSnippet ? { description: aboutSnippet } : {}),
-        ...(usefulTags(item.tags).length ? { keywords: usefulTags(item.tags).join(", ") } : {}),
-      };
+      const listItem = workspaceListItemJsonLd(item, index + 1, BASE_URL, dest);
+      const visibleTags = usefulTags(item.tags);
+      if (visibleTags.length) listItem.keywords = visibleTags.join(", ");
+      return listItem;
     }),
   };
   const jsonLd = {
