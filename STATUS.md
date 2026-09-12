@@ -1,3 +1,7 @@
+## 2026-09-12 (late) — listing contact CTA + ContactPoint
+
+Track A: workspace detail primary button now uses listed email (`Ask about availability`) when no official website exists — only the DB email, no invented contact. LocalBusiness JSON-LD adds a ContactPoint when phone or email is already rendered. Workspaces index adds a waitlist block after the card grid (pagination exit). Sitemap not resubmitted (no new routes).
+
 ## 2026-09-12 — city desk and rent fallbacks
 
 ## 2026-09-12 (evening) — listing ItemList JSON-LD helper
