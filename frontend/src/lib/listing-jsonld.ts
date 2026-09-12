@@ -60,9 +60,10 @@ export function workspaceListItemJsonLd(
   destination?: ListingJsonLdDestination | null,
 ): Record<string, unknown> {
   const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 180);
-  // Cards render venue photos, never logos, in the hero. Schema must match visible media.
-  const imageUrl = firstVenueListingImage(listing.images);
+  // Cards use venue photos first, then a usable logo in the hero. Schema follows that same visible media.
+  const photoUrl = firstVenueListingImage(listing.images);
   const logoUrl = isUsableImageUrl(listing.logo_url) ? listing.logo_url!.trim() : null;
+  const imageUrl = photoUrl || logoUrl;
   const place: Record<string, unknown> = {
     "@type": listingSchemaType(listing.company_type),
     "@id": `${baseUrl}/workspaces/${listing.id}#place`,
