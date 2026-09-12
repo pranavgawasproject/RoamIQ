@@ -215,8 +215,8 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
   const citySafety = destination?.safety_score;
   const cityVisa = destination?.visa_difficulty || null;
   const cityWalk = destination?.walkability_score ?? null;
-  const citySafety = destination?.safety_score;
-  const cityVisa = destination?.visa_difficulty || null;
+  const cityDesk = destination?.coworking_desk_usd ?? null;
+  const cityRent = destination?.one_bed_rent_usd ?? null;
   const cardImage = getCardImage(listing);
   const imageUrl = cardImage?.url ?? null;
   const imageKind = cardImage?.kind ?? null;
@@ -379,10 +379,16 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
           <div>
             {usefulStartingPrice(listing.starting_price) ? (
               <div className="font-serif text-lg font-semibold text-forest">{usefulStartingPrice(listing.starting_price)}</div>
-            ) : cityCost ? (
+            ) : cityCost || cityDesk || cityRent ? (
               <div>
                 <div className="text-sm text-muted-foreground">Price not listed yet</div>
-                <div className="text-[11px] text-muted-foreground/80">City living cost ~${cityCost.toLocaleString()}/mo</div>
+                <div className="text-[11px] text-muted-foreground/80">
+                  {[
+                    cityDesk ? `city coworking desk ~$${cityDesk.toLocaleString()}/mo` : null,
+                    cityRent ? `1-bed rent ~$${cityRent.toLocaleString()}/mo` : null,
+                    cityCost ? `city living cost ~$${cityCost.toLocaleString()}/mo` : null,
+                  ].filter(Boolean).join(" · ")}
+                </div>
               </div>
             ) : (
               <div className="text-sm text-muted-foreground">Price not listed yet</div>
@@ -554,6 +560,8 @@ export default async function WorkspacesPage({
           dest.visa_difficulty ? { "@type": "PropertyValue", name: "Visa difficulty", value: dest.visa_difficulty } : null,
           dest.safety_score != null ? { "@type": "PropertyValue", name: "Safety score", value: Number(dest.safety_score).toFixed(1) } : null,
           dest.walkability_score != null ? { "@type": "PropertyValue", name: "Walkability score", value: Number(dest.walkability_score).toFixed(1) } : null,
+          dest.coworking_desk_usd != null ? { "@type": "PropertyValue", name: "City coworking desk (USD/mo)", value: dest.coworking_desk_usd } : null,
+          dest.one_bed_rent_usd != null ? { "@type": "PropertyValue", name: "City 1-bed rent (USD/mo)", value: dest.one_bed_rent_usd } : null,
         ].filter(Boolean);
         const cityPlace = {
           "@type": "City",
