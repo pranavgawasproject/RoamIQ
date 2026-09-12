@@ -323,10 +323,19 @@ export default async function WorkspaceDetailPage({
     localBusinessJsonLd.keywords = tags.join(", ");
   }
   if (destination?.id) {
+    const cityProps = [
+      destination.visa_difficulty
+        ? { "@type": "PropertyValue", name: "Visa difficulty", value: destination.visa_difficulty }
+        : null,
+      destination.safety_score != null
+        ? { "@type": "PropertyValue", name: "Safety score", value: Number(destination.safety_score).toFixed(1) }
+        : null,
+    ].filter(Boolean);
     const cityPlace = {
       "@type": "City",
       name: destination.name,
       url: `${BASE_URL}/destinations/${destination.id}`,
+      ...(cityProps.length ? { additionalProperty: cityProps } : {}),
     };
     localBusinessJsonLd.containedInPlace = cityPlace;
     localBusinessJsonLd.areaServed = cityPlace;
@@ -492,12 +501,15 @@ export default async function WorkspaceDetailPage({
                     {destination ? (
                       <Link href={`/destinations/${destination.id}`} className="font-medium text-foreground underline-offset-4 hover:underline">
                         Explore {destination.name} cost of living & visa data on RoamIQ
-                        {destination.avg_temp != null || destination.air_quality ? (
+                        {destination.avg_temp != null || destination.air_quality || destination.visa_difficulty || destination.safety_score != null ? (
                           <span className="text-muted-foreground">
                             {" "}
-                            ({destination.avg_temp != null ? `${destination.avg_temp}°C avg` : null}
-                            {destination.avg_temp != null && destination.air_quality ? " · " : null}
-                            {destination.air_quality ? `air ${destination.air_quality}` : null})
+                            ({[
+                              destination.avg_temp != null ? `${destination.avg_temp}°C avg` : null,
+                              destination.air_quality ? `air ${destination.air_quality}` : null,
+                              destination.visa_difficulty ? `visa ${destination.visa_difficulty}` : null,
+                              destination.safety_score != null ? `safety ${Number(destination.safety_score).toFixed(1)}` : null,
+                            ].filter(Boolean).join(" · ")})
                           </span>
                         ) : null}
                       </Link>
@@ -724,7 +736,7 @@ export default async function WorkspaceDetailPage({
                       {destination.name} guide
                     </Link>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {[destination.avg_temp != null ? `${destination.avg_temp}°C avg` : null, destination.air_quality ? `air ${destination.air_quality}` : null, destination.cost_usd ? `~$${destination.cost_usd}/mo city cost` : null, destination.wifi_speed_p90 || destination.internet_mbps ? `${destination.wifi_speed_p90 || destination.internet_mbps} city internet` : null].filter(Boolean).join(" · ") || "City page has the cost, visa, and internet figures for this place."}
+                      {[destination.avg_temp != null ? `${destination.avg_temp}°C avg` : null, destination.air_quality ? `air ${destination.air_quality}` : null, destination.visa_difficulty ? `visa ${destination.visa_difficulty}` : null, destination.safety_score != null ? `safety ${Number(destination.safety_score).toFixed(1)}` : null, destination.cost_usd ? `~$${destination.cost_usd}/mo city cost` : null, destination.wifi_speed_p90 || destination.internet_mbps ? `${destination.wifi_speed_p90 || destination.internet_mbps} city internet` : null].filter(Boolean).join(" · ") || "City page has the cost, visa, and internet figures for this place."}
                     </p>
                   </div>
                 ) : null}

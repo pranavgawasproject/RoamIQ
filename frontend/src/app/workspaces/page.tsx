@@ -212,6 +212,10 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
   const cityCost = destination?.cost_usd || null;
   const cityTemp = destination?.avg_temp;
   const cityAir = destination?.air_quality || null;
+  const citySafety = destination?.safety_score;
+  const cityVisa = destination?.visa_difficulty || null;
+  const citySafety = destination?.safety_score;
+  const cityVisa = destination?.visa_difficulty || null;
   const cardImage = getCardImage(listing);
   const imageUrl = cardImage?.url ?? null;
   const imageKind = cardImage?.kind ?? null;
@@ -402,6 +406,13 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
                 {" · listing-level weather not stored"}
               </div>
             )}
+            {(cityVisa || citySafety != null) && (
+              <div className="mt-0.5 text-[11px] text-muted-foreground/80">
+                City guide
+                {cityVisa ? ` · visa ${cityVisa}` : ""}
+                {citySafety != null ? ` · safety ${Number(citySafety).toFixed(1)}` : ""}
+              </div>
+            )}
           </div>
           {showRating ? (
             <div className="flex items-center gap-1 text-sm font-medium">
@@ -537,11 +548,16 @@ export default async function WorkspacesPage({
       }
       const dest = destByCityCountry.get(destKey(item.city, item.country));
       if (dest?.id) {
+        const cityProps = [
+          dest.visa_difficulty ? { "@type": "PropertyValue", name: "Visa difficulty", value: dest.visa_difficulty } : null,
+          dest.safety_score != null ? { "@type": "PropertyValue", name: "Safety score", value: Number(dest.safety_score).toFixed(1) } : null,
+        ].filter(Boolean);
         const cityPlace = {
           "@type": "City",
           "@id": `${BASE_URL}/destinations/${dest.id}#city`,
           name: dest.name,
           url: `${BASE_URL}/destinations/${dest.id}`,
+          ...(cityProps.length ? { additionalProperty: cityProps } : {}),
         };
         place.containedInPlace = cityPlace;
         place.areaServed = cityPlace;
