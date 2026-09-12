@@ -214,6 +214,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
   const cityAir = destination?.air_quality || null;
   const citySafety = destination?.safety_score;
   const cityVisa = destination?.visa_difficulty || null;
+  const cityWalk = destination?.walkability_score ?? null;
   const citySafety = destination?.safety_score;
   const cityVisa = destination?.visa_difficulty || null;
   const cardImage = getCardImage(listing);
@@ -406,11 +407,12 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
                 {" · listing-level weather not stored"}
               </div>
             )}
-            {(cityVisa || citySafety != null) && (
+            {(cityVisa || citySafety != null || cityWalk != null) && (
               <div className="mt-0.5 text-[11px] text-muted-foreground/80">
                 City guide
                 {cityVisa ? ` · visa ${cityVisa}` : ""}
                 {citySafety != null ? ` · safety ${Number(citySafety).toFixed(1)}` : ""}
+                {cityWalk != null ? ` · walk ${Number(cityWalk).toFixed(1)}` : ""}
               </div>
             )}
           </div>
@@ -551,6 +553,7 @@ export default async function WorkspacesPage({
         const cityProps = [
           dest.visa_difficulty ? { "@type": "PropertyValue", name: "Visa difficulty", value: dest.visa_difficulty } : null,
           dest.safety_score != null ? { "@type": "PropertyValue", name: "Safety score", value: Number(dest.safety_score).toFixed(1) } : null,
+          dest.walkability_score != null ? { "@type": "PropertyValue", name: "Walkability score", value: Number(dest.walkability_score).toFixed(1) } : null,
         ].filter(Boolean);
         const cityPlace = {
           "@type": "City",
