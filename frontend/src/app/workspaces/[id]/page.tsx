@@ -308,6 +308,15 @@ export default async function WorkspaceDetailPage({
   else if (listedHours.length > 1) localBusinessJsonLd.openingHours = listedHours;
   if (listedPhone) localBusinessJsonLd.telephone = listedPhone;
   if (listedEmail) localBusinessJsonLd.email = listedEmail;
+  if (listedPhone || listedEmail) {
+    localBusinessJsonLd.contactPoint = {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      ...(listedPhone ? { telephone: listedPhone } : {}),
+      ...(listedEmail ? { email: listedEmail } : {}),
+      availableLanguage: "en",
+    };
+  }
   const listedWifi = usefulWifiSpeed(listing.wifi_speed);
   const listedInclusions = usefulListingInclusions(listing.inclusions);
   const listedServices = usefulListingServices(listing.services);
@@ -834,6 +843,15 @@ export default async function WorkspaceDetailPage({
                   <a href={listedWebsite} target="_blank" rel="noopener noreferrer" className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
                     Visit website <ExternalLink className="h-4 w-4" />
                   </a>
+                ) : listedEmail ? (
+                  <TrackedAnchor
+                    eventName="contact_workspace"
+                    eventParams={{ method: "email_availability", listing_id: listing.id, city: listing.city || undefined }}
+                    href={`mailto:${listedEmail}?subject=${encodeURIComponent(`Availability at ${listing.company_name}`)}`}
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+                  >
+                    Ask about availability <Mail className="h-4 w-4" />
+                  </TrackedAnchor>
                 ) : (
                   <p className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">
                     Official website not listed yet
