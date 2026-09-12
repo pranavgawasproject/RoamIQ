@@ -33,6 +33,17 @@ type ListingLike = {
   contact_email?: string | null;
 };
 
+
+export type ListingJsonLdDestination = {
+  id: string;
+  name: string;
+  visa_difficulty?: string | null;
+  safety_score?: number | null;
+  walkability_score?: number | null;
+  coworking_desk_usd?: number | null;
+  one_bed_rent_usd?: number | null;
+};
+
 function listingSchemaType(companyType?: string | null): "LodgingBusiness" | "CafeOrCoffeeShop" | "LocalBusiness" {
   if (companyType === "coliving" || companyType === "hostel" || companyType === "workation") {
     return "LodgingBusiness";
@@ -46,6 +57,7 @@ export function workspaceListItemJsonLd(
   listing: ListingLike,
   position: number,
   baseUrl: string,
+  destination?: ListingJsonLdDestination | null,
 ): Record<string, unknown> {
   const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 180);
   // Cards render venue photos, never logos, in the hero. Schema must match visible media.
@@ -102,6 +114,35 @@ export function workspaceListItemJsonLd(
       ratingValue,
       reviewCount,
     };
+  }
+
+  if (destination?.id) {
+    const cityProps = [
+      destination.visa_difficulty
+        ? { "@type": "PropertyValue", name: "Visa difficulty", value: destination.visa_difficulty }
+        : null,
+      destination.safety_score != null
+        ? { "@type": "PropertyValue", name: "Safety score", value: Number(destination.safety_score).toFixed(1) }
+        : null,
+      destination.walkability_score != null
+        ? { "@type": "PropertyValue", name: "Walkability score", value: Number(destination.walkability_score).toFixed(1) }
+        : null,
+      destination.coworking_desk_usd != null
+        ? { "@type": "PropertyValue", name: "City coworking desk (USD/mo)", value: destination.coworking_desk_usd }
+        : null,
+      destination.one_bed_rent_usd != null
+        ? { "@type": "PropertyValue", name: "City 1-bed rent (USD/mo)", value: destination.one_bed_rent_usd }
+        : null,
+    ].filter(Boolean);
+    const cityPlace = {
+      "@type": "City",
+      "@id": `${baseUrl}/destinations/${destination.id}#city`,
+      name: destination.name,
+      url: `${baseUrl}/destinations/${destination.id}`,
+      ...(cityProps.length ? { additionalProperty: cityProps } : {}),
+    };
+    place.containedInPlace = cityPlace;
+    place.areaServed = cityPlace;
   }
   const item: Record<string, unknown> = {
     "@type": "ListItem",
