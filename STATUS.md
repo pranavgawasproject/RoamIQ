@@ -1,5 +1,10 @@
 ## 2026-09-12 — city desk and rent fallbacks
 
+## 2026-09-12 (evening) — listing ItemList JSON-LD helper
+
+Track A: `/workspaces` ItemList schema now uses `workspaceListItemJsonLd` (same visible-only fields as cards) and attaches city destination properties (visa, safety, walkability, desk, 1-bed rent) when a destination match exists. No invented prices or Wi-Fi.
+
+
 Track A: destination match now includes live `coworking_desk_usd` and `one_bed_rent_usd`. When a listing has no `starting_price`, workspace cards and the listing sidebar show those city figures as labeled city-level context (not as the listing price). City JSON-LD additionalProperty repeats only values already visible. No invented prices. Sitemap not resubmitted (no new routes).
 
 GSC 2026-08-12 to 2026-09-11 (`https://nomads-travel-indol.vercel.app/`): 15 clicks / ~4.7k impressions in the sampled query rows; branded `roam iq` 1 click / 34 impressions / pos ~7.9. Top query still `4g-travel-tool.vercel.app` (2 clicks / 21 impressions / pos ~3.14) — duplicate-index FLAG only; no redirect. Branded CTR capped until the custom domain is live (human-owned).
