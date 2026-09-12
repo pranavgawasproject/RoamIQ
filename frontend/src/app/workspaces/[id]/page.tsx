@@ -333,6 +333,12 @@ export default async function WorkspaceDetailPage({
       destination.walkability_score != null
         ? { "@type": "PropertyValue", name: "Walkability score", value: Number(destination.walkability_score).toFixed(1) }
         : null,
+      destination.coworking_desk_usd != null
+        ? { "@type": "PropertyValue", name: "City coworking desk (USD/mo)", value: destination.coworking_desk_usd }
+        : null,
+      destination.one_bed_rent_usd != null
+        ? { "@type": "PropertyValue", name: "City 1-bed rent (USD/mo)", value: destination.one_bed_rent_usd }
+        : null,
     ].filter(Boolean);
     const cityPlace = {
       "@type": "City",
@@ -731,7 +737,18 @@ export default async function WorkspaceDetailPage({
                 {usefulStartingPrice(listing.starting_price) ? (
                   <div className="font-serif text-2xl font-semibold text-forest">{usefulStartingPrice(listing.starting_price)}</div>
                 ) : (
-                  <div className="font-serif text-lg text-muted-foreground">Price not listed yet</div>
+                  <div>
+                    <div className="font-serif text-lg text-muted-foreground">Price not listed yet</div>
+                    {(destination?.coworking_desk_usd || destination?.one_bed_rent_usd || destination?.cost_usd) ? (
+                      <p className="mt-1 text-[11px] text-muted-foreground/80">
+                        {[
+                          destination?.coworking_desk_usd ? `city coworking desk ~$${Number(destination.coworking_desk_usd).toLocaleString()}/mo` : null,
+                          destination?.one_bed_rent_usd ? `1-bed rent ~$${Number(destination.one_bed_rent_usd).toLocaleString()}/mo` : null,
+                          destination?.cost_usd ? `city living cost ~$${Number(destination.cost_usd).toLocaleString()}/mo` : null,
+                        ].filter(Boolean).join(" · ")}
+                      </p>
+                    ) : null}
+                  </div>
                 )}
                 {destination ? (
                   <div className="mt-4 rounded-xl border border-border bg-secondary/40 p-3 text-sm">
@@ -741,7 +758,7 @@ export default async function WorkspaceDetailPage({
                     </Link>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {[destination.avg_temp != null ? `${destination.avg_temp}°C avg` : null, destination.air_quality ? `air ${destination.air_quality}` : null, destination.visa_difficulty ? `visa ${destination.visa_difficulty}` : null, destination.safety_score != null ? `safety ${Number(destination.safety_score).toFixed(1)}` : null,
-                              destination.walkability_score != null ? `walk ${Number(destination.walkability_score).toFixed(1)}` : null, destination.cost_usd ? `~$${destination.cost_usd}/mo city cost` : null, destination.wifi_speed_p90 || destination.internet_mbps ? `${destination.wifi_speed_p90 || destination.internet_mbps} city internet` : null].filter(Boolean).join(" · ") || "City page has the cost, visa, and internet figures for this place."}
+                              destination.walkability_score != null ? `walk ${Number(destination.walkability_score).toFixed(1)}` : null, destination.cost_usd ? `~$${destination.cost_usd}/mo city cost` : null, destination.wifi_speed_p90 || destination.internet_mbps ? `${destination.wifi_speed_p90 || destination.internet_mbps} city internet` : null, destination.coworking_desk_usd ? `desk ~$${Number(destination.coworking_desk_usd).toLocaleString()}/mo` : null, destination.one_bed_rent_usd ? `1-bed ~$${Number(destination.one_bed_rent_usd).toLocaleString()}/mo` : null].filter(Boolean).join(" · ") || "City page has the cost, visa, and internet figures for this place."}
                     </p>
                   </div>
                 ) : null}
