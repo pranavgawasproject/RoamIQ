@@ -476,3 +476,30 @@ export function usefulListingInclusions(raw: string | null | undefined): string 
   if (/pending|not (listed|verified)|n\/?a|tbd|coming soon/i.test(cleaned)) return null;
   return cleaned;
 }
+
+/**
+ * Official map URL when stored on the listing. Prefers google_map when it is
+ * an http(s) URL; otherwise builds a maps query from listed coordinates.
+ * Never invents a location.
+ */
+export function usefulListingMapUrl(
+  googleMap: string | null | undefined,
+  latitude?: number | null,
+  longitude?: number | null
+): string | null {
+  if (googleMap && typeof googleMap === "string") {
+    const trimmed = googleMap.trim();
+    if (/^https?:\/\//i.test(trimmed) && trimmed.length < 2000) return trimmed;
+  }
+  if (
+    typeof latitude === "number" &&
+    Number.isFinite(latitude) &&
+    typeof longitude === "number" &&
+    Number.isFinite(longitude) &&
+    Math.abs(latitude) <= 90 &&
+    Math.abs(longitude) <= 180
+  ) {
+    return `https://maps.google.com/?q=${latitude},${longitude}`;
+  }
+  return null;
+}

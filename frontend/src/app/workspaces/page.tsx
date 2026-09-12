@@ -7,7 +7,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulOpenHours, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
@@ -83,7 +83,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, address, starting_price, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email",
+        "id, company_name, company_title, company_type, city, state, country, address, starting_price, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude",
         { count: "planned" }
       )
       .eq("is_public", true)
@@ -373,6 +373,16 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
                 className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
               >
                 <Mail className="h-3 w-3" /> Email
+              </a>
+            )}
+            {usefulListingMapUrl(listing.google_map, listing.latitude, listing.longitude) && (
+              <a
+                href={usefulListingMapUrl(listing.google_map, listing.latitude, listing.longitude)!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+              >
+                <MapPin className="h-3 w-3" /> Map
               </a>
             )}
         </div>

@@ -9,6 +9,7 @@ import {
   usefulStartingPrice,
   usefulStreetAddress,
   usefulWifiSpeed,
+  usefulListingMapUrl,
 } from "@/lib/listing-media";
 
 type ListingLike = {
@@ -31,6 +32,9 @@ type ListingLike = {
   website?: string | null;
   contact_phone?: string | null;
   contact_email?: string | null;
+  google_map?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 };
 
 
@@ -107,6 +111,16 @@ export function workspaceListItemJsonLd(
   if (listedPhone) place.telephone = listedPhone;
   if (listedEmail) place.email = listedEmail;
   if (listedWebsite) place.sameAs = [listedWebsite];
+  const mapUrl = usefulListingMapUrl(listing.google_map, listing.latitude, listing.longitude);
+  if (mapUrl) place.hasMap = mapUrl;
+  if (
+    typeof listing.latitude === "number" &&
+    Number.isFinite(listing.latitude) &&
+    typeof listing.longitude === "number" &&
+    Number.isFinite(listing.longitude)
+  ) {
+    place.geo = { "@type": "GeoCoordinates", latitude: listing.latitude, longitude: listing.longitude };
+  }
   const ratingValue = Number(listing.ratings);
   const reviewCount = Number(listing.total_reviews);
   if (ratingValue > 0 && reviewCount > 0) {
