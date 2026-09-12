@@ -1,3 +1,7 @@
+## 2026-09-12 (evening) — listing map on workspaces cards
+
+Track A: `/workspaces` cards now select `google_map` / lat-lng and show a Map chip when those fields exist. ItemList JSON-LD adds `hasMap` and `geo` only for the same visible coordinates/URL. No invented locations. Sitemap not resubmitted (no new routes).
+
 ## 2026-09-12 (late) — ItemList image matches visible card media
 
 Track A: `workspaceListItemJsonLd` now sets `image` from the venue photo or, when the card hero falls back to `logo_url`, from that logo. About/images stay visible-only; no invented prices or Wi-Fi. Sitemap not resubmitted (no new routes).
