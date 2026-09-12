@@ -9,6 +9,8 @@ export type ListingDestinationMatch = {
   cost_usd?: number | null;
   avg_temp?: number | null;
   air_quality?: string | null;
+  safety_score?: number | null;
+  visa_difficulty?: string | null;
 };
 
 function asFiniteNumber(value: unknown): number | null {
@@ -26,7 +28,7 @@ export async function getDestinationForListingCity(
   try {
     const { data, error } = await supabase
       .from("cities")
-      .select("id, name, country, internet_mbps, wifi_speed_p90, cost_usd, avg_temp, air_quality")
+      .select("id, name, country, internet_mbps, wifi_speed_p90, cost_usd, avg_temp, air_quality, safety_score, visa_difficulty")
       .ilike("name", cityName)
       .limit(8);
     if (error || !data?.length) return null;
@@ -40,7 +42,9 @@ export async function getDestinationForListingCity(
     const chosen = countryMatch || pool[0];
     if (!chosen?.id) return null;
     const airQuality = String(chosen.air_quality || "").trim();
+    const visaDifficulty = String(chosen.visa_difficulty || "").trim();
     const avgTempRaw = chosen.avg_temp == null || chosen.avg_temp === "" ? null : Number(chosen.avg_temp);
+    const safetyRaw = chosen.safety_score == null || chosen.safety_score === "" ? null : Number(chosen.safety_score);
     return {
       id: String(chosen.id),
       name: String(chosen.name || cityName),
@@ -50,6 +54,8 @@ export async function getDestinationForListingCity(
       cost_usd: asFiniteNumber(chosen.cost_usd),
       avg_temp: Number.isFinite(avgTempRaw as number) ? (avgTempRaw as number) : null,
       air_quality: airQuality || null,
+      safety_score: Number.isFinite(safetyRaw as number) ? (safetyRaw as number) : null,
+      visa_difficulty: visaDifficulty || null,
     };
   } catch {
     return null;
