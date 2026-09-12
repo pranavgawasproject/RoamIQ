@@ -11,6 +11,7 @@ export type ListingDestinationMatch = {
   air_quality?: string | null;
   safety_score?: number | null;
   visa_difficulty?: string | null;
+  walkability_score?: number | null;
 };
 
 function asFiniteNumber(value: unknown): number | null {
@@ -28,7 +29,7 @@ export async function getDestinationForListingCity(
   try {
     const { data, error } = await supabase
       .from("cities")
-      .select("id, name, country, internet_mbps, wifi_speed_p90, cost_usd, avg_temp, air_quality, safety_score, visa_difficulty")
+      .select("id, name, country, internet_mbps, wifi_speed_p90, cost_usd, avg_temp, air_quality, safety_score, visa_difficulty, walkability_score")
       .ilike("name", cityName)
       .limit(8);
     if (error || !data?.length) return null;
@@ -56,6 +57,7 @@ export async function getDestinationForListingCity(
       air_quality: airQuality || null,
       safety_score: Number.isFinite(safetyRaw as number) ? (safetyRaw as number) : null,
       visa_difficulty: visaDifficulty || null,
+      walkability_score: asFiniteNumber(chosen.walkability_score),
     };
   } catch {
     return null;
