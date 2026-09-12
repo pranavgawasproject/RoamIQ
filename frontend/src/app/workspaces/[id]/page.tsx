@@ -330,6 +330,9 @@ export default async function WorkspaceDetailPage({
       destination.safety_score != null
         ? { "@type": "PropertyValue", name: "Safety score", value: Number(destination.safety_score).toFixed(1) }
         : null,
+      destination.walkability_score != null
+        ? { "@type": "PropertyValue", name: "Walkability score", value: Number(destination.walkability_score).toFixed(1) }
+        : null,
     ].filter(Boolean);
     const cityPlace = {
       "@type": "City",
@@ -509,6 +512,7 @@ export default async function WorkspaceDetailPage({
                               destination.air_quality ? `air ${destination.air_quality}` : null,
                               destination.visa_difficulty ? `visa ${destination.visa_difficulty}` : null,
                               destination.safety_score != null ? `safety ${Number(destination.safety_score).toFixed(1)}` : null,
+                              destination.walkability_score != null ? `walk ${Number(destination.walkability_score).toFixed(1)}` : null,
                             ].filter(Boolean).join(" · ")})
                           </span>
                         ) : null}
@@ -736,7 +740,8 @@ export default async function WorkspaceDetailPage({
                       {destination.name} guide
                     </Link>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {[destination.avg_temp != null ? `${destination.avg_temp}°C avg` : null, destination.air_quality ? `air ${destination.air_quality}` : null, destination.visa_difficulty ? `visa ${destination.visa_difficulty}` : null, destination.safety_score != null ? `safety ${Number(destination.safety_score).toFixed(1)}` : null, destination.cost_usd ? `~$${destination.cost_usd}/mo city cost` : null, destination.wifi_speed_p90 || destination.internet_mbps ? `${destination.wifi_speed_p90 || destination.internet_mbps} city internet` : null].filter(Boolean).join(" · ") || "City page has the cost, visa, and internet figures for this place."}
+                      {[destination.avg_temp != null ? `${destination.avg_temp}°C avg` : null, destination.air_quality ? `air ${destination.air_quality}` : null, destination.visa_difficulty ? `visa ${destination.visa_difficulty}` : null, destination.safety_score != null ? `safety ${Number(destination.safety_score).toFixed(1)}` : null,
+                              destination.walkability_score != null ? `walk ${Number(destination.walkability_score).toFixed(1)}` : null, destination.cost_usd ? `~$${destination.cost_usd}/mo city cost` : null, destination.wifi_speed_p90 || destination.internet_mbps ? `${destination.wifi_speed_p90 || destination.internet_mbps} city internet` : null].filter(Boolean).join(" · ") || "City page has the cost, visa, and internet figures for this place."}
                     </p>
                   </div>
                 ) : null}
