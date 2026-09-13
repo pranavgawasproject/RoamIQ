@@ -7,7 +7,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingRegion, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks, usefulListingUnits } from "@/lib/listing-media";
+import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks, usefulListingUnits } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
@@ -83,7 +83,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, address, starting_price, units, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude, inclusions, services, social_links",
+        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, units, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude, inclusions, services, social_links",
         { count: "planned" }
       )
       .eq("is_public", true)
@@ -235,6 +235,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
   const cityHref = destinationHref || cityFilterHref;
   const countryHref = listing.country ? `/workspaces?country=${encodeURIComponent(listing.country)}` : null;
   const regionLabel = usefulListingRegion(listing.state, listing.city);
+  const continentLabel = usefulListingContinent(listing.continent);
   return (
     <article className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-forest/5 hover:-translate-y-0.5">
       <Link href={`/workspaces/${listing.id}`} className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
@@ -327,6 +328,12 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
                 ) : (
                   listing.country
                 )}
+              </>
+            ) : null}
+            {continentLabel ? (
+              <>
+                {listing.city || regionLabel || listing.country ? ", " : ""}
+                <span>{continentLabel}</span>
               </>
             ) : null}
             </span>
