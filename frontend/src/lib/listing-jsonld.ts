@@ -13,6 +13,7 @@ import {
   usefulListingMapUrl,
   usefulListingTags,
   usefulListingSocialLinks,
+  usefulListingCapacity,
 } from "@/lib/listing-media";
 
 type ListingLike = {
@@ -41,6 +42,7 @@ type ListingLike = {
   longitude?: number | null;
   tags?: string[] | null;
   social_links?: Record<string, string> | null;
+  capacity?: string | null;
 };
 
 
@@ -134,6 +136,18 @@ export function workspaceListItemJsonLd(
   const listedHours = usefulOpenHours(listing.open_hours);
   if (listedHours.length === 1) place.openingHours = listedHours[0];
   else if (listedHours.length > 1) place.openingHours = listedHours;
+  const listedCapacity = usefulListingCapacity(listing.capacity);
+  if (listedCapacity) {
+    place.amenityFeature = [
+      ...(Array.isArray(place.amenityFeature) ? place.amenityFeature : []),
+      { "@type": "LocationFeatureSpecification", name: "Capacity", value: listedCapacity },
+    ];
+    const seats = listedCapacity.match(/(\d[\d,]*)/);
+    if (seats) {
+      const n = Number(seats[1].replace(/,/g, ""));
+      if (Number.isFinite(n) && n > 0 && n < 100000) place.maximumAttendeeCapacity = n;
+    }
+  }
   const listedPhone = usefulContactPhone(listing.contact_phone);
   const listedEmail = usefulContactEmail(listing.contact_email);
   const listedWebsite = usefulListingWebsite(listing.website);
