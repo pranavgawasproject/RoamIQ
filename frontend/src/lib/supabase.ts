@@ -132,6 +132,7 @@ export type Listing = {
   description?: string | null;
   contact_phone?: string | null;
   contact_email?: string | null;
+  social_links?: Record<string, string> | null;
 };
 
 export type Meetup = {

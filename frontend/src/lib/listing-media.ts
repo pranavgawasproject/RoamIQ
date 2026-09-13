@@ -311,6 +311,51 @@ export function usefulListingWebsite(url: string | null | undefined): string | n
   return cleaned;
 }
 
+const SOCIAL_NETWORKS: { key: string; label: string; hosts: string[] }[] = [
+  { key: "instagram", label: "Instagram", hosts: ["instagram.com", "www.instagram.com"] },
+  { key: "facebook", label: "Facebook", hosts: ["facebook.com", "www.facebook.com", "m.facebook.com", "fb.com", "www.fb.com"] },
+  { key: "twitter", label: "X", hosts: ["twitter.com", "www.twitter.com", "x.com", "www.x.com"] },
+  { key: "x", label: "X", hosts: ["x.com", "www.x.com", "twitter.com", "www.twitter.com"] },
+  { key: "linkedin", label: "LinkedIn", hosts: ["linkedin.com", "www.linkedin.com"] },
+  { key: "youtube", label: "YouTube", hosts: ["youtube.com", "www.youtube.com", "youtu.be"] },
+  { key: "tiktok", label: "TikTok", hosts: ["tiktok.com", "www.tiktok.com"] },
+  { key: "whatsapp", label: "WhatsApp", hosts: ["api.whatsapp.com", "wa.me", "whatsapp.com", "www.whatsapp.com"] },
+];
+
+export type ListingSocialLink = { network: string; label: string; url: string };
+
+function hostAllowed(host: string, allowed: string[]): boolean {
+  return allowed.some((h) => host === h || host.endsWith(`.${h.replace(/^www\./, "")}`));
+}
+
+/**
+ * Official social profiles already stored on the listing row.
+ * Only http(s) URLs on known networks — no invented handles.
+ */
+export function usefulListingSocialLinks(raw: unknown): ListingSocialLink[] {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return [];
+  const out: ListingSocialLink[] = [];
+  const seen = new Set<string>();
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof value !== "string") continue;
+    const cleaned = value.trim();
+    if (!/^https?:\/\//i.test(cleaned)) continue;
+    let host = "";
+    try {
+      host = new URL(cleaned).hostname.toLowerCase();
+    } catch {
+      continue;
+    }
+    const network = SOCIAL_NETWORKS.find((n) => n.key === key.toLowerCase() && hostAllowed(host, n.hosts));
+    if (!network) continue;
+    if (seen.has(cleaned) || seen.has(network.label)) continue;
+    seen.add(cleaned);
+    seen.add(network.label);
+    out.push({ network: network.key, label: network.label, url: cleaned });
+  }
+  return out;
+}
+
 /**
  * open_hours is stored as a JSON object on most filled rows
  * (e.g. {"typical": "Mon-Fri 07:00-19:00"}). Render those keys as labels;

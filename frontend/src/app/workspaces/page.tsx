@@ -7,7 +7,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl } from "@/lib/listing-media";
+import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
@@ -83,7 +83,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, address, starting_price, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude",
+        "id, company_name, company_title, company_type, city, state, country, address, starting_price, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude, social_links",
         { count: "planned" }
       )
       .eq("is_public", true)
@@ -228,6 +228,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
   const listedPhone = usefulContactPhone(listing.contact_phone);
   const listedEmail = usefulContactEmail(listing.contact_email);
   const listedWebsite = usefulListingWebsite(listing.website);
+  const listedSocial = usefulListingSocialLinks(listing.social_links);
   const typeHref = listing.company_type ? `/workspaces?type=${encodeURIComponent(listing.company_type)}` : null;
   const cityFilterHref = listing.city ? `/workspaces?city=${encodeURIComponent(listing.city)}` : null;
   const cityHref = destinationHref || cityFilterHref;
@@ -344,7 +345,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
           </span>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          {!(listedPhone || listedEmail || listedWebsite) && (
+          {!(listedPhone || listedEmail || listedWebsite || listedSocial.length) && (
             <span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border bg-secondary/30 px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
               <Phone className="h-3 w-3" /> Contact pending
             </span>
@@ -375,6 +376,17 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
                 <Mail className="h-3 w-3" /> Email
               </a>
             )}
+            {listedSocial.slice(0, 3).map((s) => (
+              <a
+                key={s.url}
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+              >
+                <ExternalLink className="h-3 w-3" /> {s.label}
+              </a>
+            ))}
             {usefulListingMapUrl(listing.google_map, listing.latitude, listing.longitude) && (
               <a
                 href={usefulListingMapUrl(listing.google_map, listing.latitude, listing.longitude)!}

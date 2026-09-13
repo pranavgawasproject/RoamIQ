@@ -20,7 +20,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { workspaceFaqJsonLd } from "@/lib/listing-jsonld";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
@@ -261,11 +261,13 @@ export default async function WorkspaceDetailPage({
   const listedPhone = usefulContactPhone(listing.contact_phone);
   const listedEmail = usefulContactEmail(listing.contact_email);
   const listedWebsite = usefulListingWebsite(listing.website);
+  const listedSocial = usefulListingSocialLinks(listing.social_links);
   if (listing.company_type) localBusinessJsonLd.additionalType = String(listing.company_type);
   if (images.length > 1) localBusinessJsonLd.image = images;
   else if (primaryImage) localBusinessJsonLd.image = primaryImage;
   if (listedLogo) localBusinessJsonLd.logo = listedLogo;
-  if (listedWebsite) localBusinessJsonLd.sameAs = [listedWebsite];
+  const sameAs = [...(listedWebsite ? [listedWebsite] : []), ...listedSocial.map((s) => s.url)];
+  if (sameAs.length) localBusinessJsonLd.sameAs = sameAs;
   if (listedStreet || locationParts.length) {
     localBusinessJsonLd.address = {
       "@type": "PostalAddress",
@@ -856,6 +858,24 @@ export default async function WorkspaceDetailPage({
                   <p className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">
                     Official website not listed yet
                   </p>
+                )}
+                {listedSocial.length > 0 ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {listedSocial.map((s) => (
+                      <a
+                        key={s.url}
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground/80 hover:bg-secondary"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        {s.label}
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-3 text-xs text-muted-foreground/80">Social profiles not listed yet</p>
                 )}
                 {(listing.google_map || (listing.latitude != null && listing.longitude != null)) && (
                   <a href={listing.google_map || `https://maps.google.com/?q=${listing.latitude},${listing.longitude}`} target="_blank" rel="noopener noreferrer" className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-medium hover:bg-secondary transition-colors">
