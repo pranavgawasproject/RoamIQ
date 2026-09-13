@@ -1,3 +1,13 @@
+## 2026-09-13 — list ItemList ContactPoint + visible tags
+
+Track A: `workspaceListItemJsonLd` now emits `contactPoint` when a card already shows Call/Email, and copies visible listing tags into `amenityFeature` / `keywords`. Schema stays visible-only. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-15 to 2026-09-11 (`https://nomads-travel-indol.vercel.app/`): sample query rows include `4g-travel-tool.vercel.app` 2 clicks / 17 impressions / pos ~3.1 (FLAG only, no redirect). Branded `roam iq` 1 click / 33 impressions / pos ~8.0. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4 last 30d (property `541610896`): `/` 178 sessions / ~80% bounce; `/workspaces` 9 / ~89%; `/destinations` 9 / ~78%.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-12 (evening) — listing map on workspaces cards
 
 Track A: `/workspaces` cards now select `google_map` / lat-lng and show a Map chip when those fields exist. ItemList JSON-LD adds `hasMap` and `geo` only for the same visible coordinates/URL. No invented locations. Sitemap not resubmitted (no new routes).
@@ -15,7 +25,6 @@ Track A: workspace detail primary button now uses listed email (`Ask about avail
 ## 2026-09-12 (evening) — listing ItemList JSON-LD helper
 
 Track A: `/workspaces` ItemList schema now uses `workspaceListItemJsonLd` (same visible-only fields as cards) and attaches city destination properties (visa, safety, walkability, desk, 1-bed rent) when a destination match exists. No invented prices or Wi-Fi.
-
 
 Track A: destination match now includes live `coworking_desk_usd` and `one_bed_rent_usd`. When a listing has no `starting_price`, workspace cards and the listing sidebar show those city figures as labeled city-level context (not as the listing price). City JSON-LD additionalProperty repeats only values already visible. No invented prices. Sitemap not resubmitted (no new routes).
 
