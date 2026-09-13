@@ -1,3 +1,9 @@
+# RoamIQ project status
+
+## 2026-09-13 (evening IST) — homepage preview shows listing region
+
+Track A: homepage `WorkspacesPreview` now renders `usefulListingRegion(state, city)` next to city/country (same visible-only helper as `/workspaces` cards) and gates ItemList `addressRegion` the same way. Waitlist copy on the homepage preview and the workspaces above-fold block now speaks to venue-name search landings (GSC cafe/coliving queries) without fabricated stats or urgency. Sitemap not resubmitted (no new routes).
+
 ## 2026-09-13 — listing region on workspaces cards
 
 Track A: `/workspaces` cards now show `state` between city and country when it is a real region (not a placeholder and not a repeat of the city name). Listing detail uses the same helper. ItemList/LocalBusiness `addressRegion` only emits that visible region. No invented locations. Sitemap not resubmitted (no new routes).
