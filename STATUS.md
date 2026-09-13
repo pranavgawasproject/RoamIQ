@@ -1,12 +1,14 @@
-## 2026-09-13 — listing capacity on workspaces cards
+## 2026-09-13 — listing region on workspaces cards
 
-Track A: `/workspaces` now selects `capacity` and renders it on cards when the stored value is real (same helper as listing detail). ItemList JSON-LD adds a Capacity amenity and `maximumAttendeeCapacity` only when a visible numeric seat count exists. No invented sizes. Sitemap not resubmitted (no new routes).
+Track A: `/workspaces` cards now show `state` between city and country when it is a real region (not a placeholder and not a repeat of the city name). Listing detail uses the same helper. ItemList/LocalBusiness `addressRegion` only emits that visible region. No invented locations. Sitemap not resubmitted (no new routes).
 
-GSC 2026-08-14 to 2026-09-12 (https://nomads-travel-indol.vercel.app/): query sample ~10 clicks / 2305 impressions across 482 rows; branded "roam iq" 1 click / 34 impressions / pos ~7.9. `4g-travel-tool.vercel.app` still appears (2 clicks / 17 impressions / pos ~3.1) — FLAG only, no redirect. Branded CTR capped until the custom domain is live (human-owned).
+GSC 2026-08-14 to 2026-09-13 (`https://nomads-travel-indol.vercel.app/`): 15 clicks / 4,887 impressions / CTR 0.31% / avg position 13.0. Top query still `4g-travel-tool.vercel.app` (2 clicks / 17 impressions / pos ~3.06) — FLAG only; no redirect. Branded `roam iq` 1 click / 34 impressions / pos ~7.9. Branded CTR capped until the custom domain is live (human-owned).
 
-GA4 last 30d (from prior STATUS, property 541610896): homepage ~178 sessions / high bounce; /workspaces ~9 sessions.
+GA4 2026-08-14 to 2026-09-13 (property 541610896): `/` 180 sessions bounce 80.6%; `/workspaces` 9 sessions bounce 88.9% (1 engaged). Several listing-detail landings bounced at 100% on tiny samples.
 
-4g-travel-tool.vercel.app duplicate-index status: FLAG / pending — do not mark resolved.
+Listings table (n=10,331): about 9,791; images nonempty 8,268; starting_price 5,088; wifi_speed 8,276; contact_phone 3,785; logo_url 2,936; contact_email 2,359.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — inspecting that host is a different GSC property; do not mark resolved.
 
 ## 2026-09-13 — listing price units on workspaces cards
 
