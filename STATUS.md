@@ -1,3 +1,7 @@
+## 2026-09-13 — listing price units on workspaces cards
+
+Track A: `/workspaces` cards and listing detail now select `units` and show `per day` / `per month` under a listed `starting_price` when that column is one of those two stored labels. ItemList/LocalBusiness JSON-LD adds `unitText` only for the same visible unit. No invented prices or periods. Sitemap not resubmitted (no new routes).
+
 ## 2026-09-13 — list inclusions and services on workspace cards
 
 Track A: /workspaces now selects inclusions and services and renders them on cards when those fields already pass the existing filters (no invented amenities). ItemList JSON-LD adds the same visible inclusions/services as amenityFeature. Sitemap not resubmitted (no new routes).

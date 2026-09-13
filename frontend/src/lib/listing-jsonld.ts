@@ -7,6 +7,7 @@ import {
   usefulListingWebsite,
   usefulOpenHours,
   usefulStartingPrice,
+  usefulListingUnits,
   usefulStreetAddress,
   usefulWifiSpeed,
   usefulListingMapUrl,
@@ -23,6 +24,7 @@ type ListingLike = {
   country?: string | null;
   address?: string | null;
   starting_price?: string | null;
+  units?: string | null;
   wifi_speed?: string | null;
   open_hours?: string | null;
   ratings?: number | string | null;
@@ -92,12 +94,17 @@ export function workspaceListItemJsonLd(
     };
   }
   const listedPrice = usefulStartingPrice(listing.starting_price);
+  const listedUnits = usefulListingUnits(listing.units);
   if (listedPrice) {
-    place.priceRange = listedPrice;
+    place.priceRange = listedUnits ? `${listedPrice} ${listedUnits}` : listedPrice;
     place.makesOffer = {
       "@type": "Offer",
       url: `${baseUrl}/workspaces/${listing.id}`,
-      priceSpecification: { "@type": "PriceSpecification", description: listedPrice },
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        description: listedPrice,
+        ...(listedUnits ? { unitText: listedUnits } : {}),
+      },
     };
   }
   const listedWifi = usefulWifiSpeed(listing.wifi_speed);

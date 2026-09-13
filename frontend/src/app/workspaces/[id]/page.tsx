@@ -20,7 +20,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListingUnits, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { workspaceFaqJsonLd } from "@/lib/listing-jsonld";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
@@ -67,7 +67,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_type, city, country, address, starting_price, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags"
+        "id, company_name, company_type, city, country, address, starting_price, units, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -746,7 +746,12 @@ export default async function WorkspaceDetailPage({
             <div className="space-y-5">
               <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
                 {usefulStartingPrice(listing.starting_price) ? (
-                  <div className="font-serif text-2xl font-semibold text-forest">{usefulStartingPrice(listing.starting_price)}</div>
+                  <div>
+                    <div className="font-serif text-2xl font-semibold text-forest">{usefulStartingPrice(listing.starting_price)}</div>
+                    {usefulListingUnits(listing.units) ? (
+                      <div className="text-xs text-muted-foreground">{usefulListingUnits(listing.units)}</div>
+                    ) : null}
+                  </div>
                 ) : (
                   <div>
                     <div className="font-serif text-lg text-muted-foreground">Price not listed yet</div>
