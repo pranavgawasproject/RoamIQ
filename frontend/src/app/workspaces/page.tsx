@@ -663,7 +663,7 @@ export default async function WorkspacesPage({
               })}
             </div>
             <div className="mt-8 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
-              <WaitlistInline source="workspaces-list-above-fold" askCity heading="This index is long — leave a city if you already know where you are going" description="Most /workspaces landings leave without a next click. Email plus an optional city is enough. We only write when a listed price or Wi-Fi value exists. No extra page." compact context={waitlistContext} />
+              <WaitlistInline source="workspaces-list-above-fold" askCity heading="Landed from a venue name search?" description="Most /workspaces landings leave without a next click. Email plus an optional city is enough if the card you wanted is thin. We only write when a listed price or Wi-Fi value exists. No extra page." compact context={waitlistContext} />
             </div>
           </div>
         </section>
