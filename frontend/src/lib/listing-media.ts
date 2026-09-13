@@ -267,6 +267,26 @@ export function usefulStreetAddress(
 }
 
 /**
+ * Region/state from the listing row when it adds location detail beyond city.
+ * Skips placeholders and values that merely repeat the city name.
+ */
+export function usefulListingRegion(
+  state: string | null | undefined,
+  city?: string | null
+): string | null {
+  if (!state || typeof state !== "string") return null;
+  const cleaned = state.replace(/\s+/g, " ").trim();
+  if (cleaned.length < 2 || cleaned.length > 80) return null;
+  const lower = cleaned.toLowerCase();
+  if (["n/a", "na", "tbd", "null", "undefined", "-", "—", "none", "unknown", "pending"].includes(lower)) {
+    return null;
+  }
+  const cityNorm = (city || "").replace(/\s+/g, " ").trim().toLowerCase();
+  if (cityNorm && lower === cityNorm) return null;
+  return cleaned;
+}
+
+/**
  * Show a phone only when it looks like a reachable number.
  * Registry IDs, truncated fragments, and all-zero strings stay pending.
  * Never invent a replacement number.
