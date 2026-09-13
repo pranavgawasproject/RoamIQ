@@ -102,6 +102,8 @@ export function workspaceListItemJsonLd(
   }
   const listedWifi = usefulWifiSpeed(listing.wifi_speed);
   const visibleTags = usefulListingTags(listing.tags);
+  const listedInclusions = usefulListingInclusions(listing.inclusions);
+  const listedServices = usefulListingServices(listing.services);
   const amenityFeature = [
     ...(listedWifi
       ? [{ "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi }]
@@ -109,6 +111,14 @@ export function workspaceListItemJsonLd(
     ...visibleTags.map((tag) => ({
       "@type": "LocationFeatureSpecification",
       name: tag,
+      value: true,
+    })),
+    ...(listedInclusions
+      ? [{ "@type": "LocationFeatureSpecification", name: "Included", value: listedInclusions }]
+      : []),
+    ...listedServices.map((item) => ({
+      "@type": "LocationFeatureSpecification",
+      name: item,
       value: true,
     })),
   ];

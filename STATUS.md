@@ -1,3 +1,13 @@
+## 2026-09-13 — list inclusions and services on workspace cards
+
+Track A: /workspaces now selects inclusions and services and renders them on cards when those fields already pass the existing filters (no invented amenities). ItemList JSON-LD adds the same visible inclusions/services as amenityFeature. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-14 to 2026-09-12 (https://nomads-travel-indol.vercel.app/): query sample still led by 4g-travel-tool.vercel.app (2 clicks / 17 impressions / pos ~3.1) — FLAG only, no redirect. Branded roam iq 1 click / 34 impressions / pos ~7.9. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4 last 30d (property 541610896): homepage ~178 sessions / high bounce; /workspaces ~9 sessions. Homepage remains the main exit.
+
+4g-travel-tool.vercel.app duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-13 — list ItemList ContactPoint + visible tags
 
 Track A: `workspaceListItemJsonLd` now emits `contactPoint` when a card already shows Call/Email, and copies visible listing tags into `amenityFeature` / `keywords`. Schema stays visible-only. Sitemap not resubmitted (no new routes).

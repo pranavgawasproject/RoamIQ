@@ -7,7 +7,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks } from "@/lib/listing-media";
+import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
@@ -83,7 +83,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, address, starting_price, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude, social_links",
+        "id, company_name, company_title, company_type, city, state, country, address, starting_price, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude, inclusions, services, social_links",
         { count: "planned" }
       )
       .eq("is_public", true)
@@ -175,6 +175,7 @@ async function getListings(params: {
         if (firstVenueListingImage(listing.images)) score += 20;
         if (usefulStartingPrice(listing.starting_price)) score += 10;
         if (usefulWifiSpeed(listing.wifi_speed)) score += 10;
+        if (usefulListingInclusions(listing.inclusions) || usefulListingServices(listing.services).length) score += 6;
         if (usefulListingWebsite(listing.website) || usefulContactPhone(listing.contact_phone) || usefulContactEmail(listing.contact_email)) score += 15;
         score += Number(listing.ratings ?? 0);
         return { listing, score, index };
@@ -428,6 +429,16 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
             ) : (
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground/70"><Clock className="h-3 w-3" /> Hours not listed yet</div>
             )}
+            {usefulListingInclusions(listing.inclusions) ? (
+              <div className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">Included: {usefulListingInclusions(listing.inclusions)}</div>
+            ) : null}
+            {usefulListingServices(listing.services).length > 0 ? (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {usefulListingServices(listing.services).slice(0, 4).map((item) => (
+                  <span key={item} className="rounded-full bg-secondary px-2 py-0.5 text-[10px] text-foreground/80">{item}</span>
+                ))}
+              </div>
+            ) : null}
             {(cityTemp != null || cityAir) && (
               <div className="mt-0.5 text-[11px] text-muted-foreground/80">
                 City climate
