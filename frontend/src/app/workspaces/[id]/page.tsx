@@ -20,7 +20,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListingUnits, usefulStreetAddress, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListingUnits, usefulStreetAddress, usefulWifiSpeed , usefulListingCapacity } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { workspaceFaqJsonLd } from "@/lib/listing-jsonld";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
@@ -67,7 +67,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_type, city, country, address, starting_price, units, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags"
+        "id, company_name, company_type, city, country, address, starting_price, units, wifi_speed, open_hours, capacity, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -800,10 +800,10 @@ export default async function WorkspaceDetailPage({
                       <Clock className="h-4 w-4 shrink-0" /> Hours not listed yet
                     </div>
                   )}
-                  {listing.capacity ? (
+                  {usefulListingCapacity(listing.capacity) ? (
                     <div className="flex items-center gap-2.5 text-foreground/80">
                       <Users className="h-4 w-4 text-muted-foreground" />
-                      {listing.capacity}
+                      {usefulListingCapacity(listing.capacity)}
                     </div>
                   ) : (
                     <div className="flex items-center gap-2.5 text-muted-foreground/80">
