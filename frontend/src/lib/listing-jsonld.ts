@@ -10,6 +10,7 @@ import {
   usefulStreetAddress,
   usefulWifiSpeed,
   usefulListingMapUrl,
+  usefulListingTags,
 } from "@/lib/listing-media";
 
 type ListingLike = {
@@ -35,6 +36,7 @@ type ListingLike = {
   google_map?: string | null;
   latitude?: number | null;
   longitude?: number | null;
+  tags?: string[] | null;
 };
 
 
@@ -97,11 +99,19 @@ export function workspaceListItemJsonLd(
     };
   }
   const listedWifi = usefulWifiSpeed(listing.wifi_speed);
-  if (listedWifi) {
-    place.amenityFeature = [
-      { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi },
-    ];
-  }
+  const visibleTags = usefulListingTags(listing.tags);
+  const amenityFeature = [
+    ...(listedWifi
+      ? [{ "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi }]
+      : []),
+    ...visibleTags.map((tag) => ({
+      "@type": "LocationFeatureSpecification",
+      name: tag,
+      value: true,
+    })),
+  ];
+  if (amenityFeature.length) place.amenityFeature = amenityFeature;
+  if (visibleTags.length) place.keywords = visibleTags.join(", ");
   const listedHours = usefulOpenHours(listing.open_hours);
   if (listedHours.length === 1) place.openingHours = listedHours[0];
   else if (listedHours.length > 1) place.openingHours = listedHours;
@@ -111,6 +121,14 @@ export function workspaceListItemJsonLd(
   if (listedPhone) place.telephone = listedPhone;
   if (listedEmail) place.email = listedEmail;
   if (listedWebsite) place.sameAs = [listedWebsite];
+  if (listedPhone || listedEmail) {
+    place.contactPoint = {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      ...(listedPhone ? { telephone: listedPhone } : {}),
+      ...(listedEmail ? { email: listedEmail } : {}),
+    };
+  }
   const mapUrl = usefulListingMapUrl(listing.google_map, listing.latitude, listing.longitude);
   if (mapUrl) place.hasMap = mapUrl;
   if (
