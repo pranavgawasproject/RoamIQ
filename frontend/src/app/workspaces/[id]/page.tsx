@@ -20,7 +20,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListingUnits, usefulStreetAddress, usefulWifiSpeed , usefulListingCapacity } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListingUnits, usefulStreetAddress, usefulListingRegion, usefulWifiSpeed } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { workspaceFaqJsonLd } from "@/lib/listing-jsonld";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
@@ -67,7 +67,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_type, city, country, address, starting_price, units, wifi_speed, open_hours, capacity, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags"
+        "id, company_name, company_type, city, country, address, starting_price, units, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -203,7 +203,8 @@ export default async function WorkspaceDetailPage({
   const destination = await getDestinationForListingCity(listing.city, listing.country);
   const images: string[] = listingGalleryImages(listing.images, listing.logo_url);
   const tags: string[] = usefulListingTags(listing.tags);
-  const locationParts = [listing.city, listing.state, listing.country].filter(Boolean);
+  const listedRegion = usefulListingRegion(listing.state, listing.city);
+  const locationParts = [listing.city, listedRegion, listing.country].filter(Boolean);
   const pageUrl = `${BASE_URL}/workspaces/${listing.id}`;
   const primaryImage = images[0] || undefined;
   const listedLogo = isUsableImageUrl(listing.logo_url) ? listing.logo_url.trim() : null;
@@ -273,7 +274,7 @@ export default async function WorkspaceDetailPage({
       "@type": "PostalAddress",
       ...(listedStreet ? { streetAddress: listedStreet } : {}),
       ...(listing.city ? { addressLocality: listing.city } : {}),
-      ...(listing.state ? { addressRegion: listing.state } : {}),
+      ...(listedRegion ? { addressRegion: listedRegion } : {}),
       ...(listing.country ? { addressCountry: listing.country } : {}),
     };
   }
@@ -551,7 +552,7 @@ export default async function WorkspaceDetailPage({
                     {listing.city ? (
                       <Link href={`/workspaces?city=${encodeURIComponent(listing.city)}`} className="hover:text-accent underline-offset-2 hover:underline">{listing.city}</Link>
                     ) : null}
-                    {listing.state ? `, ${listing.state}` : ""}
+                    {listedRegion ? `, ${listedRegion}` : ""}
                     {listing.country ? `, ${listing.country}` : ""}
                   </span>
                   {listing.ratings > 0 && Number(listing.total_reviews) > 0 ? (
@@ -800,10 +801,10 @@ export default async function WorkspaceDetailPage({
                       <Clock className="h-4 w-4 shrink-0" /> Hours not listed yet
                     </div>
                   )}
-                  {usefulListingCapacity(listing.capacity) ? (
+                  {listing.capacity ? (
                     <div className="flex items-center gap-2.5 text-foreground/80">
                       <Users className="h-4 w-4 text-muted-foreground" />
-                      {usefulListingCapacity(listing.capacity)}
+                      {listing.capacity}
                     </div>
                   ) : (
                     <div className="flex items-center gap-2.5 text-muted-foreground/80">
