@@ -286,6 +286,33 @@ export function usefulListingRegion(
   return cleaned;
 }
 
+const KNOWN_CONTINENTS = new Set([
+  "africa",
+  "antarctica",
+  "asia",
+  "europe",
+  "north america",
+  "south america",
+  "oceania",
+  "australia",
+]);
+
+/**
+ * Continent from the listing row when it is a real named region.
+ * Skips placeholders such as "Other". Never invents a continent.
+ */
+export function usefulListingContinent(continent: string | null | undefined): string | null {
+  if (!continent || typeof continent !== "string") return null;
+  const cleaned = continent.replace(/\s+/g, " ").trim();
+  if (cleaned.length < 4 || cleaned.length > 40) return null;
+  const lower = cleaned.toLowerCase();
+  if (["n/a", "na", "tbd", "null", "undefined", "-", "—", "none", "unknown", "pending", "other"].includes(lower)) {
+    return null;
+  }
+  if (!KNOWN_CONTINENTS.has(lower)) return null;
+  return cleaned;
+}
+
 /**
  * Show a phone only when it looks like a reachable number.
  * Registry IDs, truncated fragments, and all-zero strings stay pending.
