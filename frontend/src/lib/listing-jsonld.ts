@@ -9,11 +9,11 @@ import {
   usefulStartingPrice,
   usefulListingUnits,
   usefulStreetAddress,
+  usefulListingRegion,
   usefulWifiSpeed,
   usefulListingMapUrl,
   usefulListingTags,
   usefulListingSocialLinks,
-  usefulListingCapacity,
 } from "@/lib/listing-media";
 
 type ListingLike = {
@@ -42,7 +42,6 @@ type ListingLike = {
   longitude?: number | null;
   tags?: string[] | null;
   social_links?: Record<string, string> | null;
-  capacity?: string | null;
 };
 
 
@@ -86,12 +85,13 @@ export function workspaceListItemJsonLd(
   if (imageUrl) place.image = imageUrl;
   if (logoUrl) place.logo = logoUrl;
   const street = usefulStreetAddress(listing.address, listing.city, listing.country);
-  if (street || listing.city || listing.state || listing.country) {
+  const region = usefulListingRegion(listing.state, listing.city);
+  if (street || listing.city || region || listing.country) {
     place.address = {
       "@type": "PostalAddress",
       ...(street ? { streetAddress: street } : {}),
       ...(listing.city ? { addressLocality: listing.city } : {}),
-      ...(listing.state ? { addressRegion: listing.state } : {}),
+      ...(region ? { addressRegion: region } : {}),
       ...(listing.country ? { addressCountry: listing.country } : {}),
     };
   }
@@ -136,18 +136,6 @@ export function workspaceListItemJsonLd(
   const listedHours = usefulOpenHours(listing.open_hours);
   if (listedHours.length === 1) place.openingHours = listedHours[0];
   else if (listedHours.length > 1) place.openingHours = listedHours;
-  const listedCapacity = usefulListingCapacity(listing.capacity);
-  if (listedCapacity) {
-    place.amenityFeature = [
-      ...(Array.isArray(place.amenityFeature) ? place.amenityFeature : []),
-      { "@type": "LocationFeatureSpecification", name: "Capacity", value: listedCapacity },
-    ];
-    const seats = listedCapacity.match(/(\d[\d,]*)/);
-    if (seats) {
-      const n = Number(seats[1].replace(/,/g, ""));
-      if (Number.isFinite(n) && n > 0 && n < 100000) place.maximumAttendeeCapacity = n;
-    }
-  }
   const listedPhone = usefulContactPhone(listing.contact_phone);
   const listedEmail = usefulContactEmail(listing.contact_email);
   const listedWebsite = usefulListingWebsite(listing.website);
