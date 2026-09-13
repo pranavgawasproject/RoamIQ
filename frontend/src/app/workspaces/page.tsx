@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, MapPin, Wifi, ArrowRight, ArrowLeft, Building2, Phone, Mail, ExternalLink, Clock } from "lucide-react";
+import { Star, MapPin, Wifi, ArrowRight, ArrowLeft, Building2, Phone, Mail, ExternalLink, Clock, Users } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks, usefulListingUnits } from "@/lib/listing-media";
+import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
@@ -83,7 +83,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, address, starting_price, units, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude, inclusions, services, social_links",
+        "id, company_name, company_title, company_type, city, state, country, address, starting_price, units, wifi_speed, open_hours, capacity, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude, inclusions, services, social_links",
         { count: "planned" }
       )
       .eq("is_public", true)
@@ -433,6 +433,11 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"><Clock className="h-3 w-3" /> {usefulOpenHours(listing.open_hours)[0]}</div>
             ) : (
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground/70"><Clock className="h-3 w-3" /> Hours not listed yet</div>
+            )}
+            {usefulListingCapacity(listing.capacity) ? (
+              <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"><Users className="h-3 w-3" /> {usefulListingCapacity(listing.capacity)}</div>
+            ) : (
+              <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground/70"><Users className="h-3 w-3" /> Capacity pending</div>
             )}
             {usefulListingInclusions(listing.inclusions) ? (
               <div className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">Included: {usefulListingInclusions(listing.inclusions)}</div>
