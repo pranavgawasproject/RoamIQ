@@ -20,7 +20,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListingUnits, usefulStreetAddress, usefulListingRegion, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListingUnits, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulWifiSpeed } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { workspaceFaqJsonLd } from "@/lib/listing-jsonld";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
@@ -204,7 +204,8 @@ export default async function WorkspaceDetailPage({
   const images: string[] = listingGalleryImages(listing.images, listing.logo_url);
   const tags: string[] = usefulListingTags(listing.tags);
   const listedRegion = usefulListingRegion(listing.state, listing.city);
-  const locationParts = [listing.city, listedRegion, listing.country].filter(Boolean);
+  const listedContinent = usefulListingContinent(listing.continent);
+  const locationParts = [listing.city, listedRegion, listing.country, listedContinent].filter(Boolean);
   const pageUrl = `${BASE_URL}/workspaces/${listing.id}`;
   const primaryImage = images[0] || undefined;
   const listedLogo = isUsableImageUrl(listing.logo_url) ? listing.logo_url.trim() : null;
@@ -554,6 +555,7 @@ export default async function WorkspaceDetailPage({
                     ) : null}
                     {listedRegion ? `, ${listedRegion}` : ""}
                     {listing.country ? `, ${listing.country}` : ""}
+                    {listedContinent ? `, ${listedContinent}` : ""}
                   </span>
                   {listing.ratings > 0 && Number(listing.total_reviews) > 0 ? (
                     <span className="inline-flex items-center gap-1 font-medium">
