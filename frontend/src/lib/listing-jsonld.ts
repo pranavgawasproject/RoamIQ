@@ -14,6 +14,9 @@ import {
   usefulListingMapUrl,
   usefulListingTags,
   usefulListingSocialLinks,
+  usefulListingInclusions,
+  usefulListingServices,
+  usefulListingContinent,
 } from "@/lib/listing-media";
 
 type ListingLike = {
@@ -42,6 +45,9 @@ type ListingLike = {
   longitude?: number | null;
   tags?: string[] | null;
   social_links?: Record<string, string> | null;
+  inclusions?: string | null;
+  services?: string | null;
+  continent?: string | null;
 };
 
 
@@ -94,6 +100,10 @@ export function workspaceListItemJsonLd(
       ...(region ? { addressRegion: region } : {}),
       ...(listing.country ? { addressCountry: listing.country } : {}),
     };
+  }
+  const continent = usefulListingContinent(listing.continent);
+  if (continent) {
+    place.containedInPlace = { "@type": "Place", name: continent };
   }
   const listedPrice = usefulStartingPrice(listing.starting_price);
   const listedUnits = usefulListingUnits(listing.units);
