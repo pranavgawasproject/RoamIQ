@@ -1,3 +1,13 @@
+## 2026-09-13 — listing capacity on workspaces cards
+
+Track A: `/workspaces` now selects `capacity` and renders it on cards when the stored value is real (same helper as listing detail). ItemList JSON-LD adds a Capacity amenity and `maximumAttendeeCapacity` only when a visible numeric seat count exists. No invented sizes. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-14 to 2026-09-12 (https://nomads-travel-indol.vercel.app/): query sample ~10 clicks / 2305 impressions across 482 rows; branded "roam iq" 1 click / 34 impressions / pos ~7.9. `4g-travel-tool.vercel.app` still appears (2 clicks / 17 impressions / pos ~3.1) — FLAG only, no redirect. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4 last 30d (from prior STATUS, property 541610896): homepage ~178 sessions / high bounce; /workspaces ~9 sessions.
+
+4g-travel-tool.vercel.app duplicate-index status: FLAG / pending — do not mark resolved.
+
 ## 2026-09-13 — listing price units on workspaces cards
 
 Track A: `/workspaces` cards and listing detail now select `units` and show `per day` / `per month` under a listed `starting_price` when that column is one of those two stored labels. ItemList/LocalBusiness JSON-LD adds `unitText` only for the same visible unit. No invented prices or periods. Sitemap not resubmitted (no new routes).
