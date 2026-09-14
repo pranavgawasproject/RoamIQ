@@ -17,6 +17,7 @@ import {
   Phone,
   Mail,
   ExternalLink,
+  MapPin,
 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
@@ -24,7 +25,7 @@ import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed, usefulListingTitle, usefulListingUnits, usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl } from "@/lib/listing-media";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
@@ -169,7 +170,7 @@ export default async function CityDetailPage({
           .maybeSingle(),
         supabase
           .from("listings")
-          .select("id, company_name, company_type, address, city, country, starting_price, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email")
+          .select("id, company_name, company_title, company_type, address, city, country, starting_price, units, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email, inclusions, services, social_links, google_map, latitude, longitude")
           .eq("city", city.name)
           .eq("is_public", true)
           .eq("is_active", true)
@@ -813,6 +814,8 @@ function rankDestinationListings(rows: Listing[]): Listing[] {
       }
       if (usefulStartingPrice(listing.starting_price)) score += 3;
       if (usefulWifiSpeed(listing.wifi_speed)) score += 2;
+      if (usefulListingInclusions(listing.inclusions) || usefulListingServices(listing.services).length) score += 2;
+      if (usefulListingSocialLinks(listing.social_links).length || usefulListingMapUrl(listing.google_map, listing.latitude, listing.longitude)) score += 2;
       return { listing, score };
     })
     .sort((a, b) => b.score - a.score)
@@ -841,6 +844,12 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
   const listedWebsite = usefulListingWebsite(listing.website);
   const listedPhone = usefulContactPhone(listing.contact_phone);
   const listedEmail = usefulContactEmail(listing.contact_email);
+  const listedTitle = usefulListingTitle(listing.company_title, listing.company_name);
+  const listedSocial = usefulListingSocialLinks(listing.social_links);
+  const listedMap = usefulListingMapUrl(listing.google_map, listing.latitude, listing.longitude);
+  const listedUnits = usefulListingUnits(listing.units);
+  const listedInclusions = usefulListingInclusions(listing.inclusions);
+  const listedServices = usefulListingServices(listing.services);
   const visibleTags = usefulTags(listing.tags);
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-forest/40 hover:shadow-md">
@@ -892,6 +901,9 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
               </Link>
             </h3>
           </div>
+          {listedTitle ? (
+            <p className="mt-1 text-xs text-muted-foreground line-clamp-1">{listedTitle}</p>
+          ) : null}
           <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
             {listedStreet ? `${listedStreet} · ` : ""}
             {listing.city}, {listing.country}
@@ -928,8 +940,28 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
                   <Mail className="h-3 w-3" /> Email
                 </a>
               )}
+              {listedSocial.slice(0, 3).map((item) => (
+                <a
+                  key={item.url}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+                >
+                  <ExternalLink className="h-3 w-3" /> {item.label}
+                </a>
+              ))}
+              {listedMap && (
+                <a
+                  href={listedMap}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+                >
+                  <MapPin className="h-3 w-3" /> Map
+                </a>
+              )}
             </div>
-          )}
           {about ? (
             <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-foreground/70">
               {about}
@@ -947,10 +979,13 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
             </div>
           )}
         </div>
-        <div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-xs">
-          <span className="font-semibold text-forest">
-            {usefulStartingPrice(listing.starting_price) || "Price not listed yet"}
-          </span>
+        <div className="mt-4 space-y-1 border-t border-border pt-3 text-xs">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-semibold text-forest">
+              {usefulStartingPrice(listing.starting_price) || "Price not listed yet"}
+            </span>
+            {listedUnits ? <span className="text-muted-foreground">{listedUnits}</span> : null}
+          </div>
           {usefulWifiSpeed(listing.wifi_speed) ? (
             <span className="flex items-center gap-1 text-muted-foreground font-medium">
               <Wifi className="h-3 w-3 text-forest" /> {usefulWifiSpeed(listing.wifi_speed)}
@@ -967,6 +1002,16 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
               <Clock className="h-3 w-3" /> Hours pending
             </span>
           )}
+          {listedInclusions ? (
+            <p className="line-clamp-2 text-[11px] text-muted-foreground">Included: {listedInclusions}</p>
+          ) : null}
+          {listedServices.length > 0 ? (
+            <div className="flex flex-wrap gap-1">
+              {listedServices.slice(0, 4).map((item) => (
+                <span key={item} className="rounded-full bg-secondary px-2 py-0.5 text-[10px] text-foreground/80">{item}</span>
+              ))}
+            </div>
+          ) : null}
         </div>
       </div>
     </article>
