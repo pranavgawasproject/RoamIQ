@@ -67,7 +67,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_type, city, country, address, starting_price, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags"
+        "id, company_name, company_title, company_type, city, country, address, starting_price, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -397,11 +397,13 @@ export default async function WorkspaceDetailPage({
                       : typeKey === "coliving" || typeKey === "hostel" || typeKey === "workation"
                         ? "LodgingBusiness"
                         : "LocalBusiness";
+                  const relatedTitle = usefulListingTitle(item.company_title, item.company_name);
                   const place: Record<string, unknown> = {
                     "@type": relatedType,
                     name: item.company_name,
                     url: relatedUrl,
                   };
+                  if (relatedTitle) place.alternateName = relatedTitle;
                   if (snippet) place.description = snippet;
                   if (thumb) place.image = thumb;
                   const relatedStreet = usefulStreetAddress(item.address, item.city, item.country);
@@ -689,6 +691,9 @@ export default async function WorkspaceDetailPage({
                             </Link>
                             <div className="min-w-0 flex-1">
                               <Link href={`/workspaces/${item.id}`} className="truncate font-medium hover:text-accent">{item.company_name}</Link>
+                              {usefulListingTitle(item.company_title, item.company_name) ? (
+                                <p className="mt-0.5 truncate text-xs text-muted-foreground">{usefulListingTitle(item.company_title, item.company_name)}</p>
+                              ) : null}
                               {aboutOk ? (
                                 <p className="mt-0.5 line-clamp-2 text-xs text-foreground/70">{snippet}</p>
                               ) : (
