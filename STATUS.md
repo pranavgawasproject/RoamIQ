@@ -1,3 +1,13 @@
+## 2026-09-14 — related workspace cards company title
+
+Track A: Workspace detail "More workspaces in {city}" now selects listing `company_title` and renders it under the name when `usefulListingTitle` adds information beyond `company_name`. Related ItemList JSON-LD sets `alternateName` only when that subtitle is visible. Placeholders stay hidden. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-15 to 2026-09-13 (`https://nomads-travel-indol.vercel.app/`): query sample still led by `4g-travel-tool.vercel.app` (2 clicks / 17 impressions / pos ~3.06) — FLAG only; no redirect. Branded `roam iq` 1 click / 35 impressions / pos ~7.91. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4: connector property listing incomplete this run; prior note stands — homepage is the main landing; `/workspaces` is a small, high-bounce sample.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — that host is not a GSC property on this account; do not mark resolved.
+
 ## 2026-09-14 — homepage preview company title
 
 Track A: Homepage featured workspace cards now select listing `company_title` and render it as a subtitle when `usefulListingTitle` says it adds information beyond `company_name`. ItemList JSON-LD sets `alternateName` only when that subtitle is visible. Placeholders stay hidden. Sitemap not resubmitted (no new routes).
