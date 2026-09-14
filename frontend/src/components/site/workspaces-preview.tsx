@@ -12,7 +12,7 @@ import {
   usefulListingWebsite,
   usefulStartingPrice,
   usefulListingTags,
-  usefulOpenHours, usefulStreetAddress, usefulListingRegion, usefulWifiSpeed,
+  usefulOpenHours, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingUnits, usefulListingCapacity, usefulWifiSpeed,
 } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 
@@ -35,7 +35,7 @@ export async function WorkspacesPreview() {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, company_name, company_type, address, city, state, country, starting_price, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email"
+      "id, company_name, company_type, address, city, state, country, continent, starting_price, units, capacity, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email"
     )
     .eq("is_public", true)
     .eq("is_active", true)
@@ -81,6 +81,15 @@ export async function WorkspacesPreview() {
           ...(usefulListingRegion(item.state, item.city) ? { addressRegion: usefulListingRegion(item.state, item.city) } : {}),
           ...(item.country ? { addressCountry: item.country } : {}),
         };
+      }
+      const continent = usefulListingContinent(item.continent);
+      if (continent) {
+        place.containedInPlace = { "@type": "Place", name: continent };
+      }
+      const listedCapacitySchema = usefulListingCapacity(item.capacity);
+      const capacityNumber = listedCapacitySchema ? parseInt(listedCapacitySchema.replace(/[^0-9]/g, ""), 10) : NaN;
+      if (Number.isFinite(capacityNumber) && capacityNumber > 0) {
+        place.maximumAttendeeCapacity = capacityNumber;
       }
       const listedPrice = usefulStartingPrice(item.starting_price);
       if (listedPrice) {
@@ -172,6 +181,9 @@ export async function WorkspacesPreview() {
             const destinationHref = destByCityCountry.get(destKey(listing.city, listing.country)) || null;
             const cityFilterHref = listing.city ? `/workspaces?city=${encodeURIComponent(listing.city)}` : null;
             const regionLabel = usefulListingRegion(listing.state, listing.city);
+            const continentLabel = usefulListingContinent(listing.continent);
+            const listedUnits = usefulListingUnits(listing.units);
+            const listedCapacity = usefulListingCapacity(listing.capacity);
             return (
               <article key={listing.id} className="flex flex-col overflow-hidden rounded-3xl border border-border bg-card">
                 <Link href={`/workspaces/${listing.id}`} className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
@@ -209,7 +221,7 @@ export async function WorkspacesPreview() {
                       ))}
                     </div>
                   )}
-                  <div className="mt-2 flex items-center gap-1.5 text-xs text-foreground/70"><MapPin className="h-3 w-3 shrink-0" /><span className="min-w-0"><span className="line-clamp-1">{listing.city ? (destinationHref ? <Link href={destinationHref} className="hover:text-accent hover:underline underline-offset-2">{listing.city}</Link> : cityFilterHref ? <Link href={cityFilterHref} className="hover:text-accent hover:underline underline-offset-2">{listing.city}</Link> : listing.city) : null}{regionLabel ? <>{listing.city ? ", " : ""}<span>{regionLabel}</span></> : null}{(listing.city || regionLabel) && listing.country ? ", " : ""}{listing.country ? <Link href={`/workspaces?country=${encodeURIComponent(listing.country)}`} className="hover:text-accent hover:underline underline-offset-2">{listing.country}</Link> : null}</span>{usefulStreetAddress(listing.address, listing.city, listing.country) ? (<span className="mt-0.5 block line-clamp-1 text-[11px] text-muted-foreground">{usefulStreetAddress(listing.address, listing.city, listing.country)}</span>) : null}{destinationHref ? (<span className="mt-0.5 block text-[11px]"><Link href={destinationHref} className="hover:text-accent hover:underline underline-offset-2">City guide: cost of living & visa</Link>{cityFilterHref ? <>{" · "}<Link href={cityFilterHref} className="hover:text-accent hover:underline underline-offset-2">More workspaces</Link></> : null}</span>) : null}</span></div>
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-foreground/70"><MapPin className="h-3 w-3 shrink-0" /><span className="min-w-0"><span className="line-clamp-1">{listing.city ? (destinationHref ? <Link href={destinationHref} className="hover:text-accent hover:underline underline-offset-2">{listing.city}</Link> : cityFilterHref ? <Link href={cityFilterHref} className="hover:text-accent hover:underline underline-offset-2">{listing.city}</Link> : listing.city) : null}{regionLabel ? <>{listing.city ? ", " : ""}<span>{regionLabel}</span></> : null}{(listing.city || regionLabel) && listing.country ? ", " : ""}{listing.country ? <Link href={`/workspaces?country=${encodeURIComponent(listing.country)}`} className="hover:text-accent hover:underline underline-offset-2">{listing.country}</Link> : null}{continentLabel ? <>{(listing.city || regionLabel || listing.country) ? ", " : ""}<span>{continentLabel}</span></> : null}</span>{usefulStreetAddress(listing.address, listing.city, listing.country) ? (<span className="mt-0.5 block line-clamp-1 text-[11px] text-muted-foreground">{usefulStreetAddress(listing.address, listing.city, listing.country)}</span>) : null}{destinationHref ? (<span className="mt-0.5 block text-[11px]"><Link href={destinationHref} className="hover:text-accent hover:underline underline-offset-2">City guide: cost of living & visa</Link>{cityFilterHref ? <>{" · "}<Link href={cityFilterHref} className="hover:text-accent hover:underline underline-offset-2">More workspaces</Link></> : null}</span>) : null}</span></div>
                   <div className="mt-3 flex flex-wrap gap-2">
                       {!(listedPhone || listedEmail || listedWebsite) && (<span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border bg-secondary/30 px-2.5 py-1 text-[11px] font-medium text-muted-foreground"><Phone className="h-3 w-3" /> Contact pending</span>)}
                       {listedWebsite && (<a href={listedWebsite} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"><ExternalLink className="h-3 w-3" /> Official site</a>)}
@@ -219,6 +231,8 @@ export async function WorkspacesPreview() {
                   <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
                     <div>
                       <div className={usefulStartingPrice(listing.starting_price) ? "text-sm font-semibold text-forest" : "text-xs text-muted-foreground"}>{usefulStartingPrice(listing.starting_price) || "Price not listed yet"}</div>
+                      {listedUnits ? <div className="text-[11px] text-muted-foreground">{listedUnits}</div> : null}
+                      {listedCapacity ? <div className="text-[11px] text-muted-foreground">{listedCapacity}</div> : null}
                       <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground"><Wifi className="h-3 w-3" />{listedWifi || "Wi-Fi speed pending"}</div>
                       {usefulOpenHours(listing.open_hours)[0] ? (
                         <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground"><Clock className="h-3 w-3" />{usefulOpenHours(listing.open_hours)[0]}</div>
