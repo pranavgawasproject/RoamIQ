@@ -1,3 +1,7 @@
+## 2026-09-14 — listing state/region on destination workspace cards
+
+Track A: Destination city pages now select listing `state` and render it via `usefulListingRegion` on workspace cards (city, region, country · continent) when the helper accepts the stored value. Duplicate city-as-state rows stay hidden. No invented geography. Sitemap not resubmitted (no new routes).
+
 ## 2026-09-14 — listing capacity + continent on destination workspace cards
 
 Track A: Destination city pages now select listing `capacity` and `continent` and render them on workspace cards (continent after city/country; capacity under price/units) when helpers accept the stored value. Placeholders stay hidden. ItemList JSON-LD already emits those fields when present on the listing object. No invented sizes or geography. Sitemap not resubmitted (no new routes).

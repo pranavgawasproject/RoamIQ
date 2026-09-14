@@ -25,7 +25,7 @@ import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed, usefulListingTitle, usefulListingUnits, usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl, usefulListingCapacity, usefulListingContinent } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed, usefulListingTitle, usefulListingUnits, usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl, usefulListingCapacity, usefulListingContinent, usefulListingRegion } from "@/lib/listing-media";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
@@ -170,7 +170,7 @@ export default async function CityDetailPage({
           .maybeSingle(),
         supabase
           .from("listings")
-          .select("id, company_name, company_title, company_type, address, city, country, continent, starting_price, units, capacity, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email, inclusions, services, social_links, google_map, latitude, longitude")
+          .select("id, company_name, company_title, company_type, address, city, state, country, continent, starting_price, units, capacity, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email, inclusions, services, social_links, google_map, latitude, longitude")
           .eq("city", city.name)
           .eq("is_public", true)
           .eq("is_active", true)
@@ -851,6 +851,7 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
   const listedUnits = usefulListingUnits(listing.units);
   const listedCapacity = usefulListingCapacity(listing.capacity);
   const continentLabel = usefulListingContinent(listing.continent);
+  const regionLabel = usefulListingRegion(listing.state, listing.city);
   const listedInclusions = usefulListingInclusions(listing.inclusions);
   const listedServices = usefulListingServices(listing.services);
   const visibleTags = usefulTags(listing.tags);
@@ -909,7 +910,7 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
           ) : null}
           <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
             {listedStreet ? `${listedStreet} · ` : ""}
-            {listing.city}, {listing.country}
+            {listing.city}{regionLabel ? `, ${regionLabel}` : ""}, {listing.country}
             {continentLabel ? ` · ${continentLabel}` : ""}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
