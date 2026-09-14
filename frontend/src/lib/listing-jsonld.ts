@@ -17,6 +17,7 @@ import {
   usefulListingInclusions,
   usefulListingServices,
   usefulListingContinent,
+  usefulListingCapacity,
 } from "@/lib/listing-media";
 
 type ListingLike = {
@@ -29,6 +30,7 @@ type ListingLike = {
   address?: string | null;
   starting_price?: string | null;
   units?: string | null;
+  capacity?: string | null;
   wifi_speed?: string | null;
   open_hours?: string | null;
   ratings?: number | string | null;
@@ -107,6 +109,11 @@ export function workspaceListItemJsonLd(
   }
   const listedPrice = usefulStartingPrice(listing.starting_price);
   const listedUnits = usefulListingUnits(listing.units);
+  const listedCapacity = usefulListingCapacity(listing.capacity);
+  const capacityNumber = listedCapacity ? (() => { const m = listedCapacity.match(/(\d{1,5})/); return m ? Number(m[1]) : null; })() : null;
+  if (capacityNumber && Number.isFinite(capacityNumber) && capacityNumber > 0) {
+    place.maximumAttendeeCapacity = capacityNumber;
+  }
   if (listedPrice) {
     place.priceRange = listedUnits ? `${listedPrice} ${listedUnits}` : listedPrice;
     place.makesOffer = {
@@ -242,6 +249,7 @@ export function workspaceFaqJsonLd(
   const website = usefulListingWebsite(listing.website);
   const phone = usefulContactPhone(listing.contact_phone);
   const email = usefulContactEmail(listing.contact_email);
+  const capacity = usefulListingCapacity(listing.capacity);
 
   const mainEntity: Record<string, unknown>[] = [];
   if (about) {
@@ -263,6 +271,13 @@ export function workspaceFaqJsonLd(
       "@type": "Question",
       name: `What Wi-Fi speed is listed for ${name}?`,
       acceptedAnswer: { "@type": "Answer", text: wifi },
+    });
+  }
+  if (capacity) {
+    mainEntity.push({
+      "@type": "Question",
+      name: `What capacity is listed for ${name}?`,
+      acceptedAnswer: { "@type": "Answer", text: capacity },
     });
   }
   if (hours.length > 0) {
