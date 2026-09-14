@@ -108,6 +108,7 @@ export type Listing = {
   city: string;
   state: string;
   country: string;
+  continent?: string | null;
   latitude?: number | null;
   longitude?: number | null;
   images: string[] | null;

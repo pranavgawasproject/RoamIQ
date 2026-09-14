@@ -1,3 +1,15 @@
+## 2026-09-14 — listing capacity + continent on destination workspace cards
+
+Track A: Destination city pages now select listing `capacity` and `continent` and render them on workspace cards (continent after city/country; capacity under price/units) when helpers accept the stored value. Placeholders stay hidden. ItemList JSON-LD already emits those fields when present on the listing object. No invented sizes or geography. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-14 to 2026-09-13 (`https://nomads-travel-indol.vercel.app/`): top query sample led by `4g-travel-tool.vercel.app` (2 clicks / 17 impressions / pos ~3.06) — FLAG only; no redirect. Branded `roam iq` 1 click / 36 impressions / pos ~7.89. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4: connector not available this run; prior 28d note stands — homepage is the main landing; `/workspaces` is a small, high-bounce sample.
+
+Listings table (n=10,331): about non-empty 9,791; images_null 0 (column present on all rows); starting_price null 5,243; wifi_speed null 2,055; contact_phone null 6,547; logo_url null 7,395; contact_email null 7,984.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — that host is not a GSC property on this account; do not mark resolved.
+
 ## 2026-09-14 — listing capacity on workspaces cards
 
 Track A: `/workspaces` cards and listing detail now select `capacity` and show it under price/units when `usefulListingCapacity` accepts the stored value (real seat/size text; placeholders stay hidden). ItemList/LocalBusiness JSON-LD adds `maximumAttendeeCapacity` only when that visible text contains a parseable positive integer. No invented sizes. Sitemap not resubmitted (no new routes).

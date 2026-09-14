@@ -25,7 +25,7 @@ import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed, usefulListingTitle, usefulListingUnits, usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed, usefulListingTitle, usefulListingUnits, usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl, usefulListingCapacity, usefulListingContinent } from "@/lib/listing-media";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
@@ -170,7 +170,7 @@ export default async function CityDetailPage({
           .maybeSingle(),
         supabase
           .from("listings")
-          .select("id, company_name, company_title, company_type, address, city, country, starting_price, units, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email, inclusions, services, social_links, google_map, latitude, longitude")
+          .select("id, company_name, company_title, company_type, address, city, country, continent, starting_price, units, capacity, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email, inclusions, services, social_links, google_map, latitude, longitude")
           .eq("city", city.name)
           .eq("is_public", true)
           .eq("is_active", true)
@@ -816,6 +816,7 @@ function rankDestinationListings(rows: Listing[]): Listing[] {
       if (usefulWifiSpeed(listing.wifi_speed)) score += 2;
       if (usefulListingInclusions(listing.inclusions) || usefulListingServices(listing.services).length) score += 2;
       if (usefulListingSocialLinks(listing.social_links).length || usefulListingMapUrl(listing.google_map, listing.latitude, listing.longitude)) score += 2;
+      if (usefulListingCapacity(listing.capacity)) score += 1;
       return { listing, score };
     })
     .sort((a, b) => b.score - a.score)
@@ -848,6 +849,8 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
   const listedSocial = usefulListingSocialLinks(listing.social_links);
   const listedMap = usefulListingMapUrl(listing.google_map, listing.latitude, listing.longitude);
   const listedUnits = usefulListingUnits(listing.units);
+  const listedCapacity = usefulListingCapacity(listing.capacity);
+  const continentLabel = usefulListingContinent(listing.continent);
   const listedInclusions = usefulListingInclusions(listing.inclusions);
   const listedServices = usefulListingServices(listing.services);
   const visibleTags = usefulTags(listing.tags);
@@ -907,6 +910,7 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
           <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
             {listedStreet ? `${listedStreet} · ` : ""}
             {listing.city}, {listing.country}
+            {continentLabel ? ` · ${continentLabel}` : ""}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
               {!(listedWebsite || listedPhone || listedEmail) && (
@@ -986,6 +990,9 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
             </span>
             {listedUnits ? <span className="text-muted-foreground">{listedUnits}</span> : null}
           </div>
+          {listedCapacity ? (
+            <p className="text-[11px] text-muted-foreground">{listedCapacity}</p>
+          ) : null}
           {usefulWifiSpeed(listing.wifi_speed) ? (
             <span className="flex items-center gap-1 text-muted-foreground font-medium">
               <Wifi className="h-3 w-3 text-forest" /> {usefulWifiSpeed(listing.wifi_speed)}
