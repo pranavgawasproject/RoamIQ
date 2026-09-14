@@ -1,3 +1,15 @@
+## 2026-09-14 — listing continent, units, and capacity on homepage workspace preview
+
+Track A: Homepage featured workspace cards now select listing `continent`, `units`, and `capacity` and render them the same way as `/workspaces` cards (named continent after city/region/country; units and capacity under price when helpers accept the stored value). ItemList JSON-LD adds `containedInPlace` and `maximumAttendeeCapacity` only when those values are visible and parseable. Placeholders stay hidden. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-15 to 2026-09-14 (`https://nomads-travel-indol.vercel.app/`): query sample still led by `4g-travel-tool.vercel.app` (2 clicks / 17 impressions / pos ~3.06) — FLAG only; no redirect. Branded `roam iq` 1 click / 35 impressions / pos ~7.91. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4 ~28d (property 541610896): `/` 163 sessions bounce 81.0%; `/workspaces` 9 sessions bounce 88.9% (1 engaged).
+
+Listings table (n=10,331): about 9,791; images column present 10,331; starting_price null 5,243; wifi_speed null 2,055; contact_phone null 6,547; logo_url null 7,395; contact_email null 7,984.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — that host is not a GSC property on this account; do not mark resolved.
+
 ## 2026-09-14 — listing state/region on destination workspace cards
 
 Track A: Destination city pages now select listing `state` and render it via `usefulListingRegion` on workspace cards (city, region, country · continent) when the helper accepts the stored value. Duplicate city-as-state rows stay hidden. No invented geography. Sitemap not resubmitted (no new routes).
