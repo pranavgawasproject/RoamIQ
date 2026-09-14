@@ -13,6 +13,7 @@ import {
   usefulStartingPrice,
   usefulListingTags,
   usefulOpenHours, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingUnits, usefulListingCapacity, usefulWifiSpeed,
+  usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl,
 } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 
@@ -35,7 +36,7 @@ export async function WorkspacesPreview() {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, company_name, company_type, address, city, state, country, continent, starting_price, units, capacity, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email"
+      "id, company_name, company_type, address, city, state, country, continent, starting_price, units, capacity, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email, inclusions, services, social_links, google_map, latitude, longitude"
     )
     .eq("is_public", true)
     .eq("is_active", true)
@@ -102,10 +103,14 @@ export async function WorkspacesPreview() {
       }
       const listedWifi = usefulWifiSpeed(item.wifi_speed);
       const visibleTags = usefulListingTags(item.tags);
-      if (listedWifi || visibleTags.length) {
+      const listedInclusions = usefulListingInclusions(item.inclusions);
+      const listedServices = usefulListingServices(item.services);
+      if (listedWifi || visibleTags.length || listedInclusions || listedServices.length) {
         place.amenityFeature = [
           ...(listedWifi ? [{ "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi }] : []),
           ...visibleTags.map((tag) => ({ "@type": "LocationFeatureSpecification", name: tag, value: true })),
+          ...(listedInclusions ? [{ "@type": "LocationFeatureSpecification", name: "Included", value: listedInclusions }] : []),
+          ...listedServices.map((svc) => ({ "@type": "LocationFeatureSpecification", name: svc, value: true })),
         ];
       }
       const listedHours = usefulOpenHours(item.open_hours);
@@ -116,7 +121,11 @@ export async function WorkspacesPreview() {
       const listedWebsite = usefulListingWebsite(item.website);
       if (listedPhone) place.telephone = listedPhone;
       if (listedEmail) place.email = listedEmail;
-      if (listedWebsite) place.sameAs = [listedWebsite];
+      const listedSocial = usefulListingSocialLinks(item.social_links);
+      const listedMap = usefulListingMapUrl(item.google_map, item.latitude, item.longitude);
+      const sameAs = [...(listedWebsite ? [listedWebsite] : []), ...listedSocial.map((s) => s.url)];
+      if (sameAs.length) place.sameAs = sameAs;
+      if (listedMap) place.hasMap = listedMap;
       const ratingValue = Number(item.ratings);
       const reviewCount = Number(item.total_reviews);
       if (ratingValue > 0 && reviewCount > 0) {
@@ -156,7 +165,7 @@ export async function WorkspacesPreview() {
           <div className="max-w-2xl">
             <div className="text-sm font-medium uppercase tracking-widest text-accent">Live from the listings table</div>
             <h2 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-balance sm:text-5xl">Workspaces with a real description or photo — not a thin card.</h2>
-            <p className="mt-4 text-muted-foreground leading-relaxed">Homepage traffic rarely reaches /workspaces. These four rows are public listings that already have an about snippet or a usable image in the database. Missing descriptions, prices, and Wi-Fi stay labeled pending. Tags, official site, phone, and email appear only when those fields pass the same filters as the workspaces index.</p>
+            <p className="mt-4 text-muted-foreground leading-relaxed">Homepage traffic rarely reaches /workspaces. These four rows are public listings that already have an about snippet or a usable image in the database. Missing descriptions, prices, and Wi-Fi stay labeled pending. Tags, official site, phone, email, social links, map, inclusions, and services appear only when those fields pass the same filters as the workspaces index.</p>
           </div>
           <div className="flex flex-col items-start gap-2 sm:items-end">
             <Link href="/workspaces" className="inline-flex items-center gap-1.5 text-sm font-medium text-forest hover:gap-2.5 hover:text-forest/80">Browse all workspaces<ArrowUpRight className="h-4 w-4" /></Link>
@@ -177,6 +186,10 @@ export async function WorkspacesPreview() {
             const listedPhone = usefulContactPhone(listing.contact_phone);
             const listedEmail = usefulContactEmail(listing.contact_email);
             const listedWebsite = usefulListingWebsite(listing.website);
+            const listedSocial = usefulListingSocialLinks(listing.social_links);
+            const listedMap = usefulListingMapUrl(listing.google_map, listing.latitude, listing.longitude);
+            const listedInclusions = usefulListingInclusions(listing.inclusions);
+            const listedServices = usefulListingServices(listing.services);
             const visibleTags = usefulListingTags(listing.tags);
             const destinationHref = destByCityCountry.get(destKey(listing.city, listing.country)) || null;
             const cityFilterHref = listing.city ? `/workspaces?city=${encodeURIComponent(listing.city)}` : null;
@@ -227,6 +240,10 @@ export async function WorkspacesPreview() {
                       {listedWebsite && (<a href={listedWebsite} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"><ExternalLink className="h-3 w-3" /> Official site</a>)}
                       {listedPhone && (<a href={`tel:${listedPhone.replace(/[^+\d]/g, "")}`} className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"><Phone className="h-3 w-3" /> Call</a>)}
                       {listedEmail && (<a href={`mailto:${listedEmail}`} className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"><Mail className="h-3 w-3" /> Email</a>)}
+                      {listedSocial.map((s) => (
+                        <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"><ExternalLink className="h-3 w-3" /> {s.label}</a>
+                      ))}
+                      {listedMap && (<a href={listedMap} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"><MapPin className="h-3 w-3" /> Map</a>)}
                     </div>
                   <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
                     <div>
@@ -239,6 +256,14 @@ export async function WorkspacesPreview() {
                       ) : (
                         <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground/70"><Clock className="h-3 w-3" />Hours not listed yet</div>
                       )}
+                      {listedInclusions ? <div className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">Included: {listedInclusions}</div> : null}
+                      {listedServices.length > 0 ? (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {listedServices.slice(0, 4).map((item) => (
+                            <span key={item} className="rounded-full bg-secondary px-2 py-0.5 text-[10px] text-foreground/80">{item}</span>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                     {showRating ? (<div className="flex items-center gap-1 text-xs font-medium"><Star className="h-3 w-3 fill-sunset text-sunset" />{ratingValue.toFixed(1)}<span className="text-[11px] font-normal text-muted-foreground">({reviewCount})</span></div>) : (<div className="text-[11px] text-muted-foreground">Reviews pending</div>)}
                   </div>
