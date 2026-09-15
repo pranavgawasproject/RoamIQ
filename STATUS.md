@@ -1,3 +1,11 @@
+## 2026-09-15 — workspaces map-link filter (mapped)
+
+Track A: `/workspaces` can now filter to cards that already show a usable map link (`?mapped=1`). The gate is `usefulListingMapUrl` (official `google_map` URL or finite lat/lng), the same helper the card Map link already uses. Unfiltered page-1 ranking also boosts rows that already display a map link. No fabricated pins. Sitemap not resubmitted (same route, new query only).
+
+GSC 2026-08-15 to 2026-09-13 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 17 impressions / pos ~3.06 — FLAG only; no redirect. Near-brand `roam iq` 1/35 pos ~7.91. Zero exact `roamiq` rows. Branded CTR capped until the custom domain is live (human-owned).
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — that host is not a GSC property on this account; do not mark resolved.
+
 ## 2026-09-15 — workspaces street-address filter (addressed)
 
 Track A: `/workspaces` can now filter to cards that already show a useful street address (`?addressed=1`). The gate is `usefulStreetAddress` (same helper the card already uses), so city-only or placeholder addresses stay out. Unfiltered page-1 ranking also boosts rows that already display a street line. No fabricated copy. Sitemap not resubmitted (same route, new query only).
