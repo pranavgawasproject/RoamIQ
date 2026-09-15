@@ -1,3 +1,13 @@
+## 2026-09-15 — workspaces index units and capacity when price is pending
+
+Track A: `/workspaces` cards already showed `units` and `capacity` only inside the priced branch, so pending-price cards hid those fields. They now render under the price block whenever `usefulListingUnits` / `usefulListingCapacity` return a value (same filters as related cards and homepage preview). No fabricated copy. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-16 to 2026-09-13 (`https://nomads-travel-indol.vercel.app/`): query sample 10 clicks / 278 impressions (top 50 rows). Top query `4g-travel-tool.vercel.app` 2/16 pos ~3 — FLAG only; no redirect. Near-brand `roam iq` 1/35 pos ~7.9. Zero exact `roamiq` rows. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4: not queried this run (no GA4 Composio tool in this session). Prior snapshot still applies: homepage is the main landing; `/workspaces` bounce stays high.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — URL inspect 403 (not part of this GSC property); do not mark resolved.
+
 ## 2026-09-15 — related workspace cards units and capacity
 
 Track A: Workspace detail "More workspaces in {city}" now renders listing `units` under the price and `capacity` when `usefulListingUnits` / `usefulListingCapacity` return a value. Related ItemList JSON-LD sets `priceRange` with units and `maximumAttendeeCapacity` only when those values are visible. Placeholders stay hidden. Sitemap not resubmitted (no new routes).
