@@ -20,7 +20,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListingUnits, usefulListingCapacity, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulWifiSpeed } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListingUnits, usefulListingCapacity, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulWifiSpeed, usefulListingMapUrl } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { workspaceFaqJsonLd } from "@/lib/listing-jsonld";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
@@ -60,6 +60,8 @@ function relatedListingScore(item: Listing): number {
     score += Math.min(10, Number(item.ratings));
   }
   if (usefulListingTags(item.tags).length > 0) score += 4;
+  if (usefulListingSocialLinks(item.social_links).length > 0) score += 2;
+  if (usefulListingMapUrl(item.google_map, item.latitude, item.longitude)) score += 2;
   return score;
 }
 
@@ -69,7 +71,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, country, address, starting_price, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags, inclusions, services"
+        "id, company_name, company_title, company_type, city, country, address, starting_price, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags, inclusions, services, social_links, google_map, latitude, longitude"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -458,7 +460,14 @@ export default async function WorkspaceDetailPage({
                   const relatedWebsite = usefulListingWebsite(item.website);
                   const relatedPhone = usefulContactPhone(item.contact_phone);
                   const relatedEmail = usefulContactEmail(item.contact_email);
-                  if (relatedWebsite) place.sameAs = [relatedWebsite];
+                  const relatedSocial = usefulListingSocialLinks(item.social_links);
+                  const relatedMap = usefulListingMapUrl(item.google_map, item.latitude, item.longitude);
+                  const sameAs = [
+                    ...(relatedWebsite ? [relatedWebsite] : []),
+                    ...relatedSocial.map((s) => s.url),
+                    ...(relatedMap ? [relatedMap] : []),
+                  ];
+                  if (sameAs.length) place.sameAs = sameAs;
                   if (relatedPhone) place.telephone = relatedPhone;
                   if (relatedEmail) place.email = relatedEmail;
                   const relatedWifi = usefulWifiSpeed(item.wifi_speed);
@@ -692,6 +701,8 @@ export default async function WorkspaceDetailPage({
                       const relatedPhone = usefulContactPhone(item.contact_phone);
                       const relatedEmail = usefulContactEmail(item.contact_email);
                       const relatedTags = usefulListingTags(item.tags);
+                      const relatedSocial = usefulListingSocialLinks(item.social_links);
+                      const relatedMap = usefulListingMapUrl(item.google_map, item.latitude, item.longitude);
                       return (
                         <li key={item.id} className="px-4 py-3 hover:bg-secondary/50 transition-colors">
                           <div className="flex items-center gap-3">
@@ -761,6 +772,27 @@ export default async function WorkspaceDetailPage({
                                   {relatedEmail && (
                                     <a href={`mailto:${relatedEmail}`} className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2 py-0.5 text-[10px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest">
                                       <Mail className="h-3 w-3" /> Email
+                                    </a>
+                                  )}
+                                  {relatedSocial.slice(0, 3).map((s) => (
+                                    <a
+                                      key={s.url}
+                                      href={s.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2 py-0.5 text-[10px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+                                    >
+                                      <ExternalLink className="h-3 w-3" /> {s.label}
+                                    </a>
+                                  ))}
+                                  {relatedMap && (
+                                    <a
+                                      href={relatedMap}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2 py-0.5 text-[10px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+                                    >
+                                      <MapPin className="h-3 w-3" /> Map
                                     </a>
                                   )}
                                   {relatedTags.slice(0, 3).map((tag) => (
