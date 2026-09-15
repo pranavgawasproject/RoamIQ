@@ -416,12 +416,23 @@ export default async function WorkspaceDetailPage({
                     };
                   }
                   const listedPrice = usefulStartingPrice(item.starting_price);
+                  const listedUnits = usefulListingUnits(item.units);
+                  const listedCapacity = usefulListingCapacity(item.capacity);
+                  const capacityNumber = listedCapacity
+                    ? (() => {
+                        const m = listedCapacity.match(/(\d{1,5})/);
+                        return m ? Number(m[1]) : null;
+                      })()
+                    : null;
+                  if (capacityNumber && Number.isFinite(capacityNumber) && capacityNumber > 0) {
+                    place.maximumAttendeeCapacity = capacityNumber;
+                  }
                   if (listedPrice) {
-                    place.priceRange = listedPrice;
+                    place.priceRange = listedUnits ? `${listedPrice} ${listedUnits}` : listedPrice;
                     place.makesOffer = {
                       "@type": "Offer",
                       url: relatedUrl,
-                      priceSpecification: { "@type": "PriceSpecification", description: listedPrice },
+                      priceSpecification: { "@type": "PriceSpecification", description: listedUnits ? `${listedPrice} ${listedUnits}` : listedPrice },
                     };
                   }
                   const listedWifi = usefulWifiSpeed(item.wifi_speed);
@@ -737,8 +748,14 @@ export default async function WorkspaceDetailPage({
                                   ))}
                                 </div>
                             </div>
-                            <Link href={`/workspaces/${item.id}`} className="shrink-0 text-sm text-muted-foreground hover:text-accent">
-                              {usefulStartingPrice(item.starting_price) || "Price not listed yet"}
+                            <Link href={`/workspaces/${item.id}`} className="shrink-0 text-right text-sm text-muted-foreground hover:text-accent">
+                              <div>{usefulStartingPrice(item.starting_price) || "Price not listed yet"}</div>
+                              {usefulListingUnits(item.units) ? (
+                                <div className="text-[10px] text-muted-foreground/80">{usefulListingUnits(item.units)}</div>
+                              ) : null}
+                              {usefulListingCapacity(item.capacity) ? (
+                                <div className="text-[10px] text-muted-foreground/80">{usefulListingCapacity(item.capacity)}</div>
+                              ) : null}
                             </Link>
                           </div>
                         </li>
