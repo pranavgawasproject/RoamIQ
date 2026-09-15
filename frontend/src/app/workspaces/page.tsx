@@ -7,7 +7,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity } from "@/lib/listing-media";
+import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
@@ -248,8 +248,9 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
           </div>
         )}
         {(() => {
-          const gallery = listingGalleryImages(listing.images, listing.logo_url);
-          const photoCount = gallery.filter((u) => isVenuePhotoUrl(u)).length;
+          const photoCount = Array.isArray(listing.images)
+            ? listing.images.filter((u) => isVenuePhotoUrl(u)).length
+            : 0;
           if (imageKind === "logo") {
             return (
               <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium text-foreground/80">
@@ -265,21 +266,6 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
           );
         })()}
       </Link>
-      {(() => {
-        const extras = listingGalleryImages(listing.images, listing.logo_url)
-          .filter((u) => isVenuePhotoUrl(u) && u !== imageUrl)
-          .slice(0, 3);
-        if (!extras.length) return null;
-        return (
-          <div className="grid grid-cols-3 gap-px bg-border">
-            {extras.map((src) => (
-              <Link key={src} href={`/workspaces/${listing.id}`} className="relative aspect-[4/3] overflow-hidden bg-secondary">
-                <Image src={src} alt="" fill className="object-cover" sizes="120px" unoptimized />
-              </Link>
-            ))}
-          </div>
-        );
-      })()}
       <div className="flex flex-1 flex-col p-5">
         {typeHref && (
           <div className="mb-2">
@@ -432,16 +418,16 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
             {usefulStartingPrice(listing.starting_price) ? (
               <div>
                 <div className="font-serif text-lg font-semibold text-forest">{usefulStartingPrice(listing.starting_price)}</div>
+              </div>
+            ) : cityCost || cityDesk || cityRent ? (
+              <div>
+                <div className="text-sm text-muted-foreground">Price not listed yet</div>
                 {usefulListingUnits(listing.units) ? (
                   <div className="text-[11px] text-muted-foreground">{usefulListingUnits(listing.units)}</div>
                 ) : null}
                 {usefulListingCapacity(listing.capacity) ? (
                   <div className="text-[11px] text-muted-foreground">{usefulListingCapacity(listing.capacity)}</div>
                 ) : null}
-              </div>
-            ) : cityCost || cityDesk || cityRent ? (
-              <div>
-                <div className="text-sm text-muted-foreground">Price not listed yet</div>
                 <div className="text-[11px] text-muted-foreground/80">
                   {[
                     cityDesk ? `city coworking desk ~$${cityDesk.toLocaleString()}/mo` : null,
@@ -451,8 +437,22 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
                 </div>
               </div>
             ) : (
-              <div className="text-sm text-muted-foreground">Price not listed yet</div>
+              <div>
+                <div className="text-sm text-muted-foreground">Price not listed yet</div>
+                {usefulListingUnits(listing.units) ? (
+                  <div className="text-[11px] text-muted-foreground">{usefulListingUnits(listing.units)}</div>
+                ) : null}
+                {usefulListingCapacity(listing.capacity) ? (
+                  <div className="text-[11px] text-muted-foreground">{usefulListingCapacity(listing.capacity)}</div>
+                ) : null}
+              </div>
             )}
+            {usefulListingUnits(listing.units) ? (
+              <div className="text-[11px] text-muted-foreground">{usefulListingUnits(listing.units)}</div>
+            ) : null}
+            {usefulListingCapacity(listing.capacity) ? (
+              <div className="text-[11px] text-muted-foreground">{usefulListingCapacity(listing.capacity)}</div>
+            ) : null}
             {usefulWifiSpeed(listing.wifi_speed) ? (
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"><Wifi className="h-3 w-3" /> {usefulWifiSpeed(listing.wifi_speed)}</div>
             ) : cityInternet ? (
