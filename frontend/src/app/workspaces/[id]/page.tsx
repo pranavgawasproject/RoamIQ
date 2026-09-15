@@ -54,6 +54,8 @@ function relatedListingScore(item: Listing): number {
   if (usefulWifiSpeed(item.wifi_speed)) score += 8;
   if (usefulListingWebsite(item.website)) score += 6;
   if (usefulContactPhone(item.contact_phone) || usefulContactEmail(item.contact_email)) score += 6;
+  if (usefulListingInclusions(item.inclusions)) score += 3;
+  if (usefulListingServices(item.services).length > 0) score += 3;
   if (Number(item.ratings) > 0 && Number(item.total_reviews) > 0) {
     score += Math.min(10, Number(item.ratings));
   }
@@ -67,7 +69,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, country, address, starting_price, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags"
+        "id, company_name, company_title, company_type, city, country, address, starting_price, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags, inclusions, services"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -461,11 +463,21 @@ export default async function WorkspaceDetailPage({
                   if (relatedEmail) place.email = relatedEmail;
                   const relatedWifi = usefulWifiSpeed(item.wifi_speed);
                   const relatedTags = usefulListingTags(item.tags);
-                  if (relatedWifi || relatedTags.length > 0) {
+                  const relatedInclusions = usefulListingInclusions(item.inclusions);
+                  const relatedServices = usefulListingServices(item.services);
+                  if (relatedWifi || relatedTags.length > 0 || relatedInclusions || relatedServices.length > 0) {
                     place.amenityFeature = [
                       ...(relatedWifi
                         ? [{ "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: relatedWifi }]
                         : []),
+                      ...(relatedInclusions
+                        ? [{ "@type": "LocationFeatureSpecification", name: "Included", value: relatedInclusions }]
+                        : []),
+                      ...relatedServices.map((svc) => ({
+                        "@type": "LocationFeatureSpecification",
+                        name: "Service",
+                        value: svc,
+                      })),
                       ...relatedTags.map((tag) => ({
                         "@type": "LocationFeatureSpecification",
                         name: tag,
@@ -719,6 +731,16 @@ export default async function WorkspaceDetailPage({
                               </p>
                               {usefulStreetAddress(item.address, item.city, item.country) ? (
                                 <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground/80">{usefulStreetAddress(item.address, item.city, item.country)}</p>
+                              ) : null}
+                              {usefulListingInclusions(item.inclusions) ? (
+                                <p className="mt-0.5 line-clamp-2 text-[11px] text-muted-foreground">Included: {usefulListingInclusions(item.inclusions)}</p>
+                              ) : null}
+                              {usefulListingServices(item.services).length > 0 ? (
+                                <div className="mt-1 flex flex-wrap gap-1">
+                                  {usefulListingServices(item.services).slice(0, 3).map((svc) => (
+                                    <span key={svc} className="rounded-full bg-secondary px-2 py-0.5 text-[10px] text-foreground/80">{svc}</span>
+                                  ))}
+                                </div>
                               ) : null}
                               <div className="mt-1.5 flex flex-wrap gap-1.5">
                                   {!(relatedWebsite || relatedPhone || relatedEmail) && (
