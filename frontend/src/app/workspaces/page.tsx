@@ -418,12 +418,6 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
             {usefulStartingPrice(listing.starting_price) ? (
               <div>
                 <div className="font-serif text-lg font-semibold text-forest">{usefulStartingPrice(listing.starting_price)}</div>
-                {usefulListingUnits(listing.units) ? (
-                  <div className="text-[11px] text-muted-foreground">{usefulListingUnits(listing.units)}</div>
-                ) : null}
-                {usefulListingCapacity(listing.capacity) ? (
-                  <div className="text-[11px] text-muted-foreground">{usefulListingCapacity(listing.capacity)}</div>
-                ) : null}
               </div>
             ) : cityCost || cityDesk || cityRent ? (
               <div>
@@ -439,6 +433,12 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
             ) : (
               <div className="text-sm text-muted-foreground">Price not listed yet</div>
             )}
+            {usefulListingUnits(listing.units) ? (
+              <div className="text-[11px] text-muted-foreground">{usefulListingUnits(listing.units)}</div>
+            ) : null}
+            {usefulListingCapacity(listing.capacity) ? (
+              <div className="text-[11px] text-muted-foreground">{usefulListingCapacity(listing.capacity)}</div>
+            ) : null}
             {usefulWifiSpeed(listing.wifi_speed) ? (
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"><Wifi className="h-3 w-3" /> {usefulWifiSpeed(listing.wifi_speed)}</div>
             ) : cityInternet ? (
