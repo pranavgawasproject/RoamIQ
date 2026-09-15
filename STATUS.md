@@ -1,9 +1,29 @@
-## 2026-09-15 — list cards units and capacity when price pending
+## 2026-09-15 — related workspace cards inclusions and services
 
-Track A: Workspaces index cards already showed `units` and `capacity` under a real starting price. Those fields were hidden when price was empty (city-cost fallback or "Price not listed yet"). Cards now render `usefulListingUnits` / `usefulListingCapacity` in the price-pending branches too. No fabricated prices. Sitemap not resubmitted (no new routes).
+Track A: Workspace detail "More workspaces in {city}" now fetches and renders listing `inclusions` and `services` when `usefulListingInclusions` / `usefulListingServices` return values (same filters as the workspaces index and homepage preview). Related ItemList JSON-LD adds LocationFeatureSpecification rows only for values already shown. Placeholders stay hidden. Sitemap not resubmitted (no new routes).
 
-GSC 2026-08-16 to 2026-09-14 (`https://nomads-travel-indol.vercel.app/`): query sample led by `4g-travel-tool.vercel.app` (2 clicks / 16 impressions / pos 3) — FLAG only; no redirect. Branded `roam iq` 1 click / 35 impressions / pos ~7.91. Branded CTR capped until the custom domain is live (human-owned).
+GSC 2026-08-16 to 2026-09-13 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 16 impressions / pos ~3 — FLAG only; no redirect. Near-brand `roam iq` 1/35 pos ~7.9. Zero exact `roamiq` rows. Branded CTR capped until the custom domain is live (human-owned).
 
-Listings null-rates (n=10331): about empty 540 (5.2%); images null 0; starting_price empty 5243 (50.8%); wifi_speed empty 2055 (19.9%); contact_phone empty 6547; logo_url empty 7395; contact_email empty 7984.
+GA4: reuse prior snapshot — homepage is the main landing; `/workspaces` bounce stays high (~9 sessions / 88.9% bounce in the 2026-08-15 to 2026-09-14 window).
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — that host is not a GSC property on this account; do not mark resolved.
+
+## 2026-09-15 — workspaces index units and capacity when price is pending
+
+Track A: `/workspaces` cards already showed `units` and `capacity` only inside the priced branch, so pending-price cards hid those fields. They now render under the price block whenever `usefulListingUnits` / `usefulListingCapacity` return a value (same filters as related cards and homepage preview). No fabricated copy. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-16 to 2026-09-13 (`https://nomads-travel-indol.vercel.app/`): query sample 10 clicks / 278 impressions (top 50 rows). Top query `4g-travel-tool.vercel.app` 2/16 pos ~3 — FLAG only; no redirect. Near-brand `roam iq` 1/35 pos ~7.9. Zero exact `roamiq` rows. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4: not queried this run (no GA4 Composio tool in this session). Prior snapshot still applies: homepage is the main landing; `/workspaces` bounce stays high.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — URL inspect 403 (not part of this GSC property); do not mark resolved.
+
+## 2026-09-15 — related workspace cards units and capacity
+
+Track A: Workspace detail "More workspaces in {city}" now renders listing `units` under the price and `capacity` when `usefulListingUnits` / `usefulListingCapacity` return a value. Related ItemList JSON-LD sets `priceRange` with units and `maximumAttendeeCapacity` only when those values are visible. Placeholders stay hidden. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-15 to 2026-09-14 (`https://nomads-travel-indol.vercel.app/`): query sample still led by `4g-travel-tool.vercel.app` (2 clicks / 17 impressions / pos ~3.06) — FLAG only; no redirect. Branded `roam iq` 1 click / 35 impressions / pos ~7.91. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4 property `541610896` (2026-08-15 to 2026-09-14): `/` 176 sessions / 81.3% bounce; `/workspaces` 9 / 88.9%. Homepage remains the main landing.
 
 `4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — that host is not a GSC property on this account; do not mark resolved.
