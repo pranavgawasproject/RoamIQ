@@ -1,3 +1,13 @@
+## 2026-09-15 — related workspace cards region and continent
+
+Track A: Workspace detail "More workspaces in {city}" now fetches listing `state` and `continent`. Related cards render region and continent only when `usefulListingRegion` / `usefulListingContinent` return values (same filters as the workspaces index). Related ItemList JSON-LD sets `addressRegion` and `containedInPlace` only when those values are visible. Placeholders stay hidden. Sitemap not resubmitted (no new routes).
+
+GSC 2026-08-16 to 2026-09-14 (`https://nomads-travel-indol.vercel.app/`): query sample led by `4g-travel-tool.vercel.app` (2 clicks / 16 impressions / pos ~3) — FLAG only; no redirect. Near-brand `roam iq` present in prior windows; branded CTR capped until the custom domain is live (human-owned).
+
+GA4: reuse prior snapshot — homepage is the main landing; `/workspaces` bounce stays high (~9 sessions / 88.9% bounce in the 2026-08-15 to 2026-09-14 window).
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — that host is not a GSC property on this account; do not mark resolved.
+
 ## 2026-09-15 — related workspace cards social links and map
 
 Track A: Workspace detail "More workspaces in {city}" now fetches `social_links`, `google_map`, `latitude`, and `longitude`. Related cards render official social links and a Map chip only when `usefulListingSocialLinks` / `usefulListingMapUrl` return values (same filters as the workspaces index). Related ItemList JSON-LD `sameAs` includes those URLs only when they are visible. Placeholders stay hidden. Sitemap not resubmitted (no new routes).
