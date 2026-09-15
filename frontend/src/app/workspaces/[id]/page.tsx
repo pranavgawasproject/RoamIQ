@@ -71,7 +71,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, country, address, starting_price, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags, inclusions, services, social_links, google_map, latitude, longitude"
+        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags, inclusions, services, social_links, google_map, latitude, longitude"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -416,8 +416,13 @@ export default async function WorkspaceDetailPage({
                       "@type": "PostalAddress",
                       ...(relatedStreet ? { streetAddress: relatedStreet } : {}),
                       ...(item.city ? { addressLocality: item.city } : {}),
+                      ...(usefulListingRegion(item.state, item.city) ? { addressRegion: usefulListingRegion(item.state, item.city) } : {}),
                       ...(item.country ? { addressCountry: item.country } : {}),
                     };
+                  }
+                  const relatedContinent = usefulListingContinent(item.continent);
+                  if (relatedContinent) {
+                    place.containedInPlace = { "@type": "Place", name: relatedContinent };
                   }
                   const listedPrice = usefulStartingPrice(item.starting_price);
                   const listedUnits = usefulListingUnits(item.units);
@@ -742,6 +747,11 @@ export default async function WorkspaceDetailPage({
                               </p>
                               {usefulStreetAddress(item.address, item.city, item.country) ? (
                                 <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground/80">{usefulStreetAddress(item.address, item.city, item.country)}</p>
+                              ) : null}
+                              {(usefulListingRegion(item.state, item.city) || usefulListingContinent(item.continent)) ? (
+                                <p className="mt-0.5 text-[11px] text-muted-foreground/80">
+                                  {[usefulListingRegion(item.state, item.city), usefulListingContinent(item.continent)].filter(Boolean).join(" · ")}
+                                </p>
                               ) : null}
                               {usefulListingInclusions(item.inclusions) ? (
                                 <p className="mt-0.5 line-clamp-2 text-[11px] text-muted-foreground">Included: {usefulListingInclusions(item.inclusions)}</p>
