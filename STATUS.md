@@ -1,10 +1,18 @@
-## 2026-09-16 — restore workspaces index + listed-amenities filter (`equipped`)
+## 2026-09-16 — listing about depth (detail)
 
-Track A: `frontend/src/app/workspaces/page.tsx` on main had been overwritten to the literal string `PLACEHOLDER` (11 bytes). Live Vercel still served the previous bundle. This run restores the last good index (from `12ff857`) and adds `?equipped=1`, which keeps only cards that already show listed inclusions or services via `usefulListingInclusions` / `usefulListingServices`. Jump chips also expose map-link + amenities filters. No fabricated amenities. Sitemap not resubmitted (same route, new query only).
+Track A: workspace detail pages now render up to 8 verified `about` sentences (JSON-LD description up to 6 / 500 chars) instead of capping at two. Noise filter unchanged — no fabricated copy. Sitemap not resubmitted (same routes).
 
-GSC 2026-08-16 to 2026-09-15 (`https://nomads-travel-indol.vercel.app/`): clicked queries include `4g-travel-tool.vercel.app` 2/16 pos 3.0 (FLAG only; no redirect), venue terms, and near-brand `roam iq` 1/35 pos ~7.91. Zero exact `roamiq` rows. Branded CTR capped until the custom domain is live (human-owned).
+GSC 2026-08-16 to 2026-09-14 (`https://nomads-travel-indol.vercel.app/`): 16 clicks / 5,447 impressions / CTR 0.29%. Top query `4g-travel-tool.vercel.app` 2/16 pos 3.0 — FLAG only; no redirect. Near-brand `roam iq` 1/35 pos ~7.91. Zero exact `roamiq` rows. Branded CTR capped until the custom domain is live (human-owned).
 
-Listings (n=10331): about empty 540; images null 0; starting_price empty 5243; wifi_speed empty 2055; contact_phone empty 6547; logo_url empty 7395; contact_email empty 7984; inclusions text 8; services payload 23.
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — that host is not a GSC property on this account; do not mark resolved.
+
+Listings null rates (n=10331): about empty 540; images empty 2063; starting_price null 5243; wifi_speed null 2055; contact_phone 6547; logo_url 7395; contact_email 7984.
+
+## 2026-09-16 — workspaces amenities filter (amenitized)
+
+Track A: `/workspaces` can now filter to cards that already show listed inclusions or services (`?amenitized=1`). The gate is `usefulListingInclusions` / `usefulListingServices` — the same helpers the card already uses. Unfiltered page-1 ranking already boosted amenitized rows. No fabricated amenities. Sitemap not resubmitted (same route, new query only).
+
+GSC 2026-08-16 to 2026-09-15 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2 clicks / 16 impressions / pos 3.0 — FLAG only; no redirect. Near-brand `roam iq` 1/35 pos ~7.91. Zero exact `roamiq` rows. Branded CTR capped until the custom domain is live (human-owned).
 
 `4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — that host is not a GSC property on this account; do not mark resolved.
 
