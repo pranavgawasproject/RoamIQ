@@ -1,3 +1,9 @@
+## 2026-09-16 — workspaces waitlist above filters
+
+Track A: `/workspaces` waitlist moved above the filter form so high-exit landings (GA4 bounce on this route) see email + optional city before the checkbox stack. Copy states the exit pattern without fabricated stats or urgency. Sitemap not resubmitted (same route).
+
+GSC / GA4 / 4g-travel-tool flag: see prior 2026-09-16 official-site note. Branded CTR capped until the custom domain is live (human-owned).
+
 ## 2026-09-16 — workspaces official-site filter
 
 Track A: `/workspaces` can filter to cards that already show a usable official website (`?website=1`, same `usefulListingWebsite` gate as the card/detail CTA). Distinct from `?contactable=1` (site OR phone OR email). Sitemap not resubmitted (same route, new query only).

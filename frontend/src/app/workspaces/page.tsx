@@ -648,6 +648,9 @@ export default async function WorkspacesPage({
             <div className="text-sm font-medium uppercase tracking-widest text-accent">Coworking, coliving & more</div>
             <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{count.toLocaleString()} workspaces & stays, live from the database.</h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">Coworking desks, coliving houses, workations, hostels, cafes, and meeting rooms — filter by location, category, and Wi-Fi speed.</p>
+            <div className="mt-6 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
+              <WaitlistInline source="workspaces-list-above-fold" askCity heading="Leaving /workspaces without opening a card?" description="/workspaces is a high-exit landing page in analytics. Email plus an optional city is enough if filters feel like too much first. We only write when a listed price or Wi-Fi value exists. No extra page, no invented numbers." compact context={waitlistContext} />
+            </div>
             <form className="mt-8 flex flex-wrap gap-3" action="/workspaces">
               <input type="text" name="search" defaultValue={params.search ?? ""} placeholder="Search by name..." className="min-w-[200px] flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
               <input type="text" name="city" defaultValue={params.city ?? ""} placeholder="City..." className="w-40 rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
@@ -801,9 +804,6 @@ export default async function WorkspacesPage({
                   </Link>
                 );
               })}
-            </div>
-            <div className="mt-8 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
-              <WaitlistInline source="workspaces-list-above-fold" askCity heading="Landed from a venue name search?" description="Most /workspaces landings leave without a next click. Email plus an optional city is enough if the card you wanted is thin. We only write when a listed price or Wi-Fi value exists. No extra page." compact context={waitlistContext} />
             </div>
           </div>
         </section>
