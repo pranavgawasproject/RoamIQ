@@ -77,7 +77,7 @@ async function getListings(params: {
   hours?: string;
   addressed?: string;
   mapped?: string;
-  amenitized?: string;
+  equipped?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -128,7 +128,7 @@ async function getListings(params: {
     const hoursOnly = params.hours === "1";
     const addressedOnly = params.addressed === "1";
     const mappedOnly = params.mapped === "1";
-    const amenitizedOnly = params.amenitized === "1";
+    const equippedOnly = params.equipped === "1";
     const unfilteredFirstPage =
       page === 1 &&
       !params.search &&
@@ -143,14 +143,14 @@ async function getListings(params: {
       !hoursOnly &&
       !addressedOnly &&
       !mappedOnly &&
-      !amenitizedOnly;
+      !equippedOnly;
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
-      unfilteredFirstPage || photographedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || amenitizedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+      unfilteredFirstPage || photographedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -193,7 +193,7 @@ async function getListings(params: {
       );
       return { listings: withMap.slice(0, PAGE_SIZE), count: withMap.length, page };
     }
-    if (amenitizedOnly) {
+    if (equippedOnly) {
       const withAmenities = rows.filter((listing) =>
         Boolean(usefulListingInclusions(listing.inclusions) || usefulListingServices(listing.services).length)
       );
@@ -547,7 +547,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; amenitized?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -577,7 +577,7 @@ export default async function WorkspacesPage({
       hours: params.hours,
       addressed: params.addressed,
       mapped: params.mapped,
-      amenitized: params.amenitized,
+      equipped: params.equipped,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -675,7 +675,7 @@ export default async function WorkspacesPage({
                 Has map link
               </label>
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
-                <input type="checkbox" name="amenitized" value="1" defaultChecked={params.amenitized === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                <input type="checkbox" name="equipped" value="1" defaultChecked={params.equipped === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed amenities
               </label>
               <button type="submit" className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Search</button>
@@ -725,8 +725,8 @@ export default async function WorkspacesPage({
                 Has map link
               </Link>
               <Link
-                href={`/workspaces?${filterQs({ amenitized: params.amenitized === "1" ? null : "1", page: null }).toString()}`}
-                className={`rounded-full px-3 py-1 text-xs font-medium ${params.amenitized === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+                href={`/workspaces?${filterQs({ equipped: params.equipped === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.equipped === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Has listed amenities
               </Link>
