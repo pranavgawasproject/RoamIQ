@@ -157,7 +157,8 @@ function isNoisyAboutChunk(chunk: string): boolean {
 export function usefulListingAbout(
   about: string | null | undefined,
   companyName?: string | null,
-  maxLen = 0
+  maxLen = 0,
+  maxSentences = 2
 ): string | null {
   if (!about) return null;
   const cleaned = about.replace(/\s+/g, " ").trim();
@@ -167,12 +168,13 @@ export function usefulListingAbout(
   if (name && (lower === name || lower === `${name}.`)) return null;
   const sentences = cleaned.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter((s) => s.length >= 40);
   const picked: string[] = [];
+  const sentenceCap = maxSentences <= 0 ? Number.POSITIVE_INFINITY : maxSentences;
   for (const sentence of sentences.length ? sentences : [cleaned]) {
     if (isNoisyAboutChunk(sentence)) continue;
     picked.push(sentence);
     const joined = picked.join(" ");
     if (maxLen > 0 && joined.length >= maxLen) break;
-    if (maxLen === 0 && picked.length >= 2) break;
+    if (picked.length >= sentenceCap) break;
   }
   if (!picked.length) return null;
   const visible = picked.join(" ");
@@ -180,10 +182,6 @@ export function usefulListingAbout(
   return visible;
 }
 
-/**
- * Show a listed price only when it is more than a placeholder.
- * Values like "$1" / "0" are treated as missing — never invent a replacement.
- */
 export function usefulStartingPrice(price: string | number | null | undefined): string | null {
   if (price === null || price === undefined) return null;
   const cleaned = String(price).replace(/\s+/g, " ").trim();
