@@ -1,7 +1,9 @@
-## 2026-09-16 — workspaces logoed filter + page-1 logo rank
+## 2026-09-16 — workspaces official-site filter
 
-Track A: `/workspaces` can filter to cards that already show a usable `logo_url` (`?logoed=1`, same `isUsableImageUrl` gate as the card logo). Unfiltered page-1 ranking also boosts rows with a listed logo. Sitemap not resubmitted (same route, new query only).
+Track A: `/workspaces` can filter to cards that already show a usable official website (`?website=1`, same `usefulListingWebsite` gate as the card/detail CTA). Distinct from `?contactable=1` (site OR phone OR email). Sitemap not resubmitted (same route, new query only).
 
-GSC 2026-08-16 to 2026-09-15 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` still FLAG only; no redirect. Branded CTR capped until the custom domain is live (human-owned).
+GSC 2026-08-16 to 2026-09-14 (`https://nomads-travel-indol.vercel.app/`): top query `4g-travel-tool.vercel.app` 2/16 pos 3.0 — FLAG only; no redirect. Near-brand `roam iq` 1/35 pos ~7.91. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4 28d: `/` 138 sessions / bounce 82.6%; `/workspaces` 8 / 87.5%.
 
 `4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — that host is not a GSC property on this account; do not mark resolved.
