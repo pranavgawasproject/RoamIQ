@@ -8,20 +8,22 @@ type WaitlistStickyProps = {
   context?: Record<string, string | null | undefined>;
   heading?: string;
   description?: string;
+  /** Scroll Y (px) before the bar appears. Default 480. */
+  afterPx?: number;
 };
 
 /** Fixed bottom capture for high-exit listing and destination landings. No fabricated stats or urgency. */
-export function WaitlistSticky({ source, context, heading, description }: WaitlistStickyProps) {
+export function WaitlistSticky({ source, context, heading, description, afterPx = 480 }: WaitlistStickyProps) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
-      setVisible(window.scrollY > 480);
+      setVisible(window.scrollY > afterPx);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [afterPx]);
 
   if (!visible) return null;
 
