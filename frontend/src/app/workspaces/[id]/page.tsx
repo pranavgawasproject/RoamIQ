@@ -848,6 +848,16 @@ export default async function WorkspaceDetailPage({
                 ) : (
                   <div>
                     <div className="font-serif text-lg text-muted-foreground">Price not listed yet</div>
+                    <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground/80">
+                      This venue has no starting price in the database. We do not invent a number.{" "}
+                      <Link
+                        href={listing.city ? `/workspaces?priced=1&city=${encodeURIComponent(listing.city)}` : "/workspaces?priced=1"}
+                        className="font-medium text-accent underline-offset-2 hover:underline"
+                      >
+                        {listing.city ? `See ${listing.city} listings with a listed price` : "See listings with a listed price"}
+                      </Link>
+                      .
+                    </p>
                     {(destination?.coworking_desk_usd || destination?.one_bed_rent_usd || destination?.cost_usd) ? (
                       <p className="mt-1 text-[11px] text-muted-foreground/80">
                         {[
@@ -878,9 +888,18 @@ export default async function WorkspaceDetailPage({
                       <span className="font-semibold">{usefulWifiSpeed(listing.wifi_speed)}</span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2.5 text-muted-foreground/80">
-                      <Wifi className="h-4 w-4 shrink-0" />
-                      <span>Wi-Fi speed pending</span>
+                    <div className="flex items-start gap-2.5 text-muted-foreground/80">
+                      <Wifi className="mt-0.5 h-4 w-4 shrink-0" />
+                      <div>
+                        <span>Wi-Fi speed pending</span>
+                        <p className="mt-0.5 text-[11px] leading-relaxed">
+                          No measured Mbps on this row.{" "}
+                          <Link href="/workspaces?min_wifi=1" className="font-medium text-accent underline-offset-2 hover:underline">
+                            Browse listings that already list Wi-Fi speed
+                          </Link>
+                          .
+                        </p>
+                      </div>
                     </div>
                   )}
                   {listedHours.length > 0 ? (
