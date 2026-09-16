@@ -255,7 +255,7 @@ export default async function WorkspaceDetailPage({
     "@type": schemaType,
     name: listing.company_name,
     url: pageUrl,
-    description: usefulListingAbout(listing.about || listing.description, listing.company_name, 300) || undefined,
+    description: usefulListingAbout(listing.about || listing.description, listing.company_name, 500, 6) || undefined,
     publisher: {
       "@type": "Organization",
       name: "RoamIQ",
@@ -268,6 +268,7 @@ export default async function WorkspaceDetailPage({
   const listedEmail = usefulContactEmail(listing.contact_email);
   const listedWebsite = usefulListingWebsite(listing.website);
   const listedSocial = usefulListingSocialLinks(listing.social_links);
+  const listedAbout = usefulListingAbout(listing.about || listing.description, listing.company_name, 0, 8);
   if (listing.company_type) localBusinessJsonLd.additionalType = String(listing.company_type);
   if (images.length > 1) localBusinessJsonLd.image = images;
   else if (primaryImage) localBusinessJsonLd.image = primaryImage;
@@ -610,10 +611,10 @@ export default async function WorkspaceDetailPage({
                   )}
                 </div>
               </div>
-              {usefulListingAbout(listing.about || listing.description, listing.company_name) ? (
+              {listedAbout ? (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">About</h2>
-                  <p className="mt-3 whitespace-pre-line leading-relaxed text-foreground/80">{usefulListingAbout(listing.about || listing.description, listing.company_name)}</p>
+                  <p className="mt-3 whitespace-pre-line leading-relaxed text-foreground/80">{listedAbout}</p>
                 </div>
               ) : (
                 <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-5">
