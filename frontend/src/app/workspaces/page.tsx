@@ -126,6 +126,7 @@ async function getListings(params: {
     }
     const photographedOnly = params.photographed === "1";
     const logoedOnly = params.logoed === "1";
+    const websiteOnly = params.website === "1";
     const contactableOnly = params.contactable === "1";
     const hoursOnly = params.hours === "1";
     const addressedOnly = params.addressed === "1";
@@ -153,7 +154,7 @@ async function getListings(params: {
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
-      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -173,6 +174,10 @@ async function getListings(params: {
     if (logoedOnly) {
       const withLogo = rows.filter((listing) => isUsableImageUrl(listing.logo_url));
       return { listings: withLogo.slice(0, PAGE_SIZE), count: withLogo.length, page };
+    }
+    if (websiteOnly) {
+      const withSite = rows.filter((listing) => Boolean(usefulListingWebsite(listing.website)));
+      return { listings: withSite.slice(0, PAGE_SIZE), count: withSite.length, page };
     }
     if (contactableOnly) {
       const withContact = rows.filter((listing) =>
@@ -555,7 +560,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -582,6 +587,7 @@ export default async function WorkspacesPage({
       priced: params.priced,
       photographed: params.photographed,
       logoed: params.logoed,
+      website: params.website,
       contactable: params.contactable,
       hours: params.hours,
       addressed: params.addressed,
@@ -672,6 +678,10 @@ export default async function WorkspacesPage({
                 Has listed logo
               </label>
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="website" value="1" defaultChecked={params.website === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has official site
+              </label>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
                 <input type="checkbox" name="contactable" value="1" defaultChecked={params.contactable === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed contact
               </label>
@@ -718,6 +728,12 @@ export default async function WorkspacesPage({
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.logoed === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Has listed logo
+              </Link>
+              <Link
+                href={`/workspaces?${filterQs({ website: params.website === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.website === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has official site
               </Link>
               <Link
                 href={`/workspaces?${filterQs({ contactable: params.contactable === "1" ? null : "1", page: null }).toString()}`}
