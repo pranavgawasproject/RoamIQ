@@ -1,3 +1,11 @@
+## 2026-09-16 — listing price/Wi-Fi pending fallbacks
+
+Track A: workspace detail sidebar now treats missing `starting_price` / `wifi_speed` as explicit data-pending states (no invented numbers) and links to `/workspaces?priced=1` (city-scoped when known) and `/workspaces?min_wifi=1`. Existing city cost context is unchanged. Sitemap not resubmitted (same routes).
+
+GSC 2026-08-16 to 2026-09-15 (`https://nomads-travel-indol.vercel.app/`): 10 clicks / 2,501 impressions across 506 query rows (property-level query export). Top query `4g-travel-tool.vercel.app` 2/16 pos 3.0 — FLAG only; no redirect. Near-brand `roam iq` 1/35 pos ~7.91. Exact `roamiq` branded impressions 35 / 0 clicks. Branded CTR capped until the custom domain is live (human-owned).
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending — that host is not a GSC property on this account; do not mark resolved.
+
 ## 2026-09-16 — listing about depth (detail)
 
 Track A: workspace detail pages now render up to 8 verified `about` sentences (JSON-LD description up to 6 / 500 chars) instead of capping at two. Noise filter unchanged — no fabricated copy. Sitemap not resubmitted (same routes).
