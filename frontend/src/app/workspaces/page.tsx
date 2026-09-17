@@ -83,6 +83,8 @@ async function getListings(params: {
   social?: string;
   reviewed?: string;
   phoned?: string;
+  emailed?: string;
+  sized?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -140,6 +142,7 @@ async function getListings(params: {
     const reviewedOnly = params.reviewed === "1";
     const phonedOnly = params.phoned === "1";
     const emailedOnly = params.emailed === "1";
+    const sizedOnly = params.sized === "1";
     const unfilteredFirstPage =
       page === 1 &&
       !params.search &&
@@ -160,14 +163,15 @@ async function getListings(params: {
       !socialOnly &&
       !reviewedOnly &&
       !phonedOnly &&
-      !emailedOnly;
+      !emailedOnly &&
+      !sizedOnly;
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
-      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -244,6 +248,10 @@ async function getListings(params: {
       const withEmail = rows.filter((listing) => Boolean(usefulContactEmail(listing.contact_email)));
       return { listings: withEmail.slice(0, PAGE_SIZE), count: withEmail.length, page };
     }
+    if (sizedOnly) {
+      const withCapacity = rows.filter((listing) => Boolean(usefulListingCapacity(listing.capacity)));
+      return { listings: withCapacity.slice(0, PAGE_SIZE), count: withCapacity.length, page };
+    }
     if (!unfilteredFirstPage) {
       return { listings: rows, count: count ?? 0, page };
     }
@@ -265,6 +273,7 @@ async function getListings(params: {
         if (Number.isFinite(reviews) && reviews > 0 && Number(listing.ratings ?? 0) > 0) score += 9;
         if (usefulContactPhone(listing.contact_phone)) score += 8;
         if (usefulContactEmail(listing.contact_email)) score += 8;
+        if (usefulListingCapacity(listing.capacity)) score += 6;
         score += Number(listing.ratings ?? 0);
         return { listing, score, index };
       })
@@ -598,7 +607,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -635,6 +644,7 @@ export default async function WorkspacesPage({
       reviewed: params.reviewed,
       phoned: params.phoned,
       emailed: params.emailed,
+      sized: params.sized,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -743,6 +753,10 @@ export default async function WorkspacesPage({
                 Has listed email
               </label>
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="sized" value="1" defaultChecked={params.sized === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has listed capacity
+              </label>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
                 <input type="checkbox" name="contactable" value="1" defaultChecked={params.contactable === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed contact
               </label>
@@ -819,6 +833,12 @@ export default async function WorkspacesPage({
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.emailed === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Has listed email
+              </Link>
+              <Link
+                href={`/workspaces?${filterQs({ sized: params.sized === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.sized === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has listed capacity
               </Link>
               <Link
                 href={`/workspaces?${filterQs({ contactable: params.contactable === "1" ? null : "1", page: null }).toString()}`}
