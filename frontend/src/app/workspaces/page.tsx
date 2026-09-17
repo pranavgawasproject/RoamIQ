@@ -81,6 +81,7 @@ async function getListings(params: {
   equipped?: string;
   website?: string;
   social?: string;
+  emailed?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -135,6 +136,7 @@ async function getListings(params: {
     const mappedOnly = params.mapped === "1";
     const equippedOnly = params.equipped === "1";
     const socialOnly = params.social === "1";
+    const emailedOnly = params.emailed === "1";
     const unfilteredFirstPage =
       page === 1 &&
       !params.search &&
@@ -152,14 +154,15 @@ async function getListings(params: {
       !mappedOnly &&
       !equippedOnly &&
       !websiteOnly &&
-      !socialOnly;
+      !socialOnly &&
+      !emailedOnly;
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
-      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || emailedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -220,6 +223,10 @@ async function getListings(params: {
       const withSocial = rows.filter((listing) => usefulListingSocialLinks(listing.social_links).length > 0);
       return { listings: withSocial.slice(0, PAGE_SIZE), count: withSocial.length, page };
     }
+    if (emailedOnly) {
+      const withEmail = rows.filter((listing) => Boolean(usefulContactEmail(listing.contact_email)));
+      return { listings: withEmail.slice(0, PAGE_SIZE), count: withEmail.length, page };
+    }
     if (!unfilteredFirstPage) {
       return { listings: rows, count: count ?? 0, page };
     }
@@ -237,6 +244,7 @@ async function getListings(params: {
         if (usefulListingInclusions(listing.inclusions) || usefulListingServices(listing.services).length) score += 6;
         if (usefulListingWebsite(listing.website) || usefulContactPhone(listing.contact_phone) || usefulContactEmail(listing.contact_email)) score += 15;
         if (usefulListingSocialLinks(listing.social_links).length) score += 8;
+        if (usefulContactEmail(listing.contact_email)) score += 8;
         score += Number(listing.ratings ?? 0);
         return { listing, score, index };
       })
@@ -570,7 +578,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; emailed?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -604,6 +612,7 @@ export default async function WorkspacesPage({
       mapped: params.mapped,
       equipped: params.equipped,
       social: params.social,
+      emailed: params.emailed,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -700,6 +709,10 @@ export default async function WorkspacesPage({
                 Has listed social
               </label>
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="emailed" value="1" defaultChecked={params.emailed === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has listed email
+              </label>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
                 <input type="checkbox" name="contactable" value="1" defaultChecked={params.contactable === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed contact
               </label>
@@ -758,6 +771,12 @@ export default async function WorkspacesPage({
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.social === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Has listed social
+              </Link>
+              <Link
+                href={`/workspaces?${filterQs({ emailed: params.emailed === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.emailed === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has listed email
               </Link>
               <Link
                 href={`/workspaces?${filterQs({ contactable: params.contactable === "1" ? null : "1", page: null }).toString()}`}
