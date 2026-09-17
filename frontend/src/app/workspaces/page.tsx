@@ -82,6 +82,7 @@ async function getListings(params: {
   website?: string;
   social?: string;
   reviewed?: string;
+  phoned?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -137,6 +138,7 @@ async function getListings(params: {
     const equippedOnly = params.equipped === "1";
     const socialOnly = params.social === "1";
     const reviewedOnly = params.reviewed === "1";
+    const phonedOnly = params.phoned === "1";
     const unfilteredFirstPage =
       page === 1 &&
       !params.search &&
@@ -155,14 +157,15 @@ async function getListings(params: {
       !equippedOnly &&
       !websiteOnly &&
       !socialOnly &&
-      !reviewedOnly;
+      !reviewedOnly &&
+      !phonedOnly;
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
-      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -231,6 +234,10 @@ async function getListings(params: {
       });
       return { listings: withReviews.slice(0, PAGE_SIZE), count: withReviews.length, page };
     }
+    if (phonedOnly) {
+      const withPhone = rows.filter((listing) => Boolean(usefulContactPhone(listing.contact_phone)));
+      return { listings: withPhone.slice(0, PAGE_SIZE), count: withPhone.length, page };
+    }
     if (!unfilteredFirstPage) {
       return { listings: rows, count: count ?? 0, page };
     }
@@ -250,6 +257,7 @@ async function getListings(params: {
         if (usefulListingSocialLinks(listing.social_links).length) score += 8;
         const reviews = Number(listing.total_reviews ?? 0);
         if (Number.isFinite(reviews) && reviews > 0 && Number(listing.ratings ?? 0) > 0) score += 9;
+        if (usefulContactPhone(listing.contact_phone)) score += 8;
         score += Number(listing.ratings ?? 0);
         return { listing, score, index };
       })
@@ -583,7 +591,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -618,6 +626,7 @@ export default async function WorkspacesPage({
       equipped: params.equipped,
       social: params.social,
       reviewed: params.reviewed,
+      phoned: params.phoned,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -718,6 +727,10 @@ export default async function WorkspacesPage({
                 Has listed reviews
               </label>
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="phoned" value="1" defaultChecked={params.phoned === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has listed phone
+              </label>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
                 <input type="checkbox" name="contactable" value="1" defaultChecked={params.contactable === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed contact
               </label>
@@ -782,6 +795,12 @@ export default async function WorkspacesPage({
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.reviewed === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Has listed reviews
+              </Link>
+              <Link
+                href={`/workspaces?${filterQs({ phoned: params.phoned === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.phoned === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has listed phone
               </Link>
               <Link
                 href={`/workspaces?${filterQs({ contactable: params.contactable === "1" ? null : "1", page: null }).toString()}`}
