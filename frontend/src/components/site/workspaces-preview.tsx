@@ -10,7 +10,7 @@ import {
   usefulContactPhone,
   usefulListingAbout,
   usefulListingWebsite,
-  usefulStartingPrice,
+  usefulStartingPrice, usefulListedPrice,
   usefulListingTags,
   usefulOpenHours, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingUnits, usefulListingCapacity, usefulWifiSpeed,
   usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl, usefulListingTitle,
@@ -36,7 +36,7 @@ export async function WorkspacesPreview() {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, company_name, company_title, company_type, address, city, state, country, continent, starting_price, units, capacity, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email, inclusions, services, social_links, google_map, latitude, longitude"
+      "id, company_name, company_title, company_type, address, city, state, country, continent, starting_price, cost, units, capacity, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email, inclusions, services, social_links, google_map, latitude, longitude"
     )
     .eq("is_public", true)
     .eq("is_active", true)
@@ -94,7 +94,7 @@ export async function WorkspacesPreview() {
       if (Number.isFinite(capacityNumber) && capacityNumber > 0) {
         place.maximumAttendeeCapacity = capacityNumber;
       }
-      const listedPrice = usefulStartingPrice(item.starting_price);
+      const listedPrice = usefulListedPrice(item.starting_price, item.cost);
       if (listedPrice) {
         place.priceRange = listedPrice;
         place.makesOffer = {
@@ -252,7 +252,7 @@ export async function WorkspacesPreview() {
                     </div>
                   <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
                     <div>
-                      <div className={usefulStartingPrice(listing.starting_price) ? "text-sm font-semibold text-forest" : "text-xs text-muted-foreground"}>{usefulStartingPrice(listing.starting_price) || "Price not listed yet"}</div>
+                      <div className={usefulListedPrice(listing.starting_price, listing.cost) ? "text-sm font-semibold text-forest" : "text-xs text-muted-foreground"}>{usefulListedPrice(listing.starting_price, listing.cost) || "Price not listed yet"}</div>
                       {listedUnits ? <div className="text-[11px] text-muted-foreground">{listedUnits}</div> : null}
                       {listedCapacity ? <div className="text-[11px] text-muted-foreground">{listedCapacity}</div> : null}
                       <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground"><Wifi className="h-3 w-3" />{listedWifi || "Wi-Fi speed pending"}</div>

@@ -7,6 +7,7 @@ import {
   usefulListingWebsite,
   usefulOpenHours,
   usefulStartingPrice,
+  usefulListedPrice,
   usefulListingUnits,
   usefulStreetAddress,
   usefulListingRegion,
@@ -31,6 +32,7 @@ type ListingLike = {
   country?: string | null;
   address?: string | null;
   starting_price?: string | null;
+  cost?: string | null;
   units?: string | null;
   capacity?: string | null;
   wifi_speed?: string | null;
@@ -109,7 +111,7 @@ export function workspaceListItemJsonLd(
   if (continent) {
     place.containedInPlace = { "@type": "Place", name: continent };
   }
-  const listedPrice = usefulStartingPrice(listing.starting_price);
+  const listedPrice = usefulListedPrice(listing.starting_price, listing.cost);
   const listedUnits = usefulListingUnits(listing.units);
   const listedCapacity = usefulListingCapacity(listing.capacity);
   const capacityNumber = listedCapacity ? (() => { const m = listedCapacity.match(/(\d{1,5})/); return m ? Number(m[1]) : null; })() : null;
@@ -211,7 +213,7 @@ export function workspaceFaqJsonLd(
   const name = listing.company_name;
   const cityCountry = [listing.city, listing.country].filter(Boolean).join(", ");
   const about = usefulListingAbout(listing.about || listing.description, name, 280);
-  const price = usefulStartingPrice(listing.starting_price);
+  const price = usefulListedPrice(listing.starting_price, listing.cost);
   const wifi = usefulWifiSpeed(listing.wifi_speed);
   const hours = usefulOpenHours(listing.open_hours);
   const website = usefulListingWebsite(listing.website);

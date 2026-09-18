@@ -200,6 +200,17 @@ export function usefulStartingPrice(price: string | number | null | undefined): 
  * Billing unit already stored on the listing (e.g. "per day", "per month").
  * Only those two known labels are shown — never invent a period.
  */
+/**
+ * Prefer starting_price; fall back to the separate `cost` column when it
+ * already holds a usable listed figure. Never invent a price.
+ */
+export function usefulListedPrice(
+  startingPrice: string | number | null | undefined,
+  cost?: string | number | null | undefined
+): string | null {
+  return usefulStartingPrice(startingPrice) || usefulStartingPrice(cost);
+}
+
 export function usefulListingUnits(units: string | null | undefined): string | null {
   if (!units || typeof units !== "string") return null;
   const cleaned = units.replace(/\s+/g, " ").trim().toLowerCase();

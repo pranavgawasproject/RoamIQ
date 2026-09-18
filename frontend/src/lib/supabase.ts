@@ -115,6 +115,7 @@ export type Listing = {
   logo_url?: string | null;
   about: string | null;
   starting_price: string | null;
+  cost?: string | null;
   units?: string | null;
   wifi_speed: string | null;
   upload_speed_mbps?: number | null;

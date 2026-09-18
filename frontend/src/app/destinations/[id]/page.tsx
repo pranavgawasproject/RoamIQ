@@ -25,7 +25,7 @@ import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed, usefulListingTitle, usefulListingUnits, usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl, usefulListingCapacity, usefulListingContinent, usefulListingRegion } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulListedPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed, usefulListingTitle, usefulListingUnits, usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl, usefulListingCapacity, usefulListingContinent, usefulListingRegion } from "@/lib/listing-media";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
@@ -170,7 +170,7 @@ export default async function CityDetailPage({
           .maybeSingle(),
         supabase
           .from("listings")
-          .select("id, company_name, company_title, company_type, address, city, state, country, continent, starting_price, units, capacity, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email, inclusions, services, social_links, google_map, latitude, longitude")
+          .select("id, company_name, company_title, company_type, address, city, state, country, continent, starting_price, cost, units, capacity, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email, inclusions, services, social_links, google_map, latitude, longitude")
           .eq("city", city.name)
           .eq("is_public", true)
           .eq("is_active", true)
@@ -812,7 +812,7 @@ function rankDestinationListings(rows: Listing[]): Listing[] {
       if (usefulListingWebsite(listing.website) || usefulContactPhone(listing.contact_phone) || usefulContactEmail(listing.contact_email)) {
         score += 12;
       }
-      if (usefulStartingPrice(listing.starting_price)) score += 3;
+      if (usefulListedPrice(listing.starting_price, listing.cost)) score += 3;
       if (usefulWifiSpeed(listing.wifi_speed)) score += 2;
       if (usefulListingInclusions(listing.inclusions) || usefulListingServices(listing.services).length) score += 2;
       if (usefulListingSocialLinks(listing.social_links).length || usefulListingMapUrl(listing.google_map, listing.latitude, listing.longitude)) score += 2;
@@ -987,7 +987,7 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
         <div className="mt-4 space-y-1 border-t border-border pt-3 text-xs">
           <div className="flex items-center justify-between gap-2">
             <span className="font-semibold text-forest">
-              {usefulStartingPrice(listing.starting_price) || "Price not listed yet"}
+              {usefulListedPrice(listing.starting_price, listing.cost) || "Price not listed yet"}
             </span>
             {listedUnits ? <span className="text-muted-foreground">{listedUnits}</span> : null}
           </div>

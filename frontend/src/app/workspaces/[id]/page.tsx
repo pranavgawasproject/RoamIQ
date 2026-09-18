@@ -20,7 +20,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListingUnits, usefulListingCapacity, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulWifiSpeed, usefulListingMapUrl } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListedPrice, usefulListingUnits, usefulListingCapacity, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulWifiSpeed, usefulListingMapUrl } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { workspaceFaqJsonLd } from "@/lib/listing-jsonld";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
@@ -50,7 +50,7 @@ function relatedListingScore(item: Listing): number {
   let score = 0;
   if (firstUsableListingImage(item.images, item.logo_url)) score += 40;
   if (usefulListingAbout(item.about || item.description, item.company_name, 140)) score += 30;
-  if (usefulStartingPrice(item.starting_price)) score += 10;
+  if (usefulListedPrice(item.starting_price, item.cost)) score += 10;
   if (usefulWifiSpeed(item.wifi_speed)) score += 8;
   if (usefulListingWebsite(item.website)) score += 6;
   if (usefulContactPhone(item.contact_phone) || usefulContactEmail(item.contact_email)) score += 6;
@@ -71,7 +71,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags, inclusions, services, social_links, google_map, latitude, longitude"
+        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, cost, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags, inclusions, services, social_links, google_map, latitude, longitude"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -128,7 +128,7 @@ export async function generateMetadata({
       titleCore = `${name} \u2014 ${typeLabel}`;
     }
     const extras: string[] = [];
-    const listedPrice = usefulStartingPrice(listing.starting_price);
+    const listedPrice = usefulListedPrice(listing.starting_price, listing.cost);
     if (listedPrice) extras.push(listedPrice);
     const listedWifiMeta = usefulWifiSpeed(listing.wifi_speed);
     if (listedWifiMeta) extras.push(`Wi-Fi ${listedWifiMeta}`);
@@ -292,7 +292,7 @@ export default async function WorkspaceDetailPage({
   } else if (listing.latitude != null && listing.longitude != null) {
     localBusinessJsonLd.hasMap = `https://maps.google.com/?q=${listing.latitude},${listing.longitude}`;
   }
-  const listedPriceRange = usefulStartingPrice(listing.starting_price);
+  const listedPriceRange = usefulListedPrice(listing.starting_price, listing.cost);
   if (listedPriceRange) {
     localBusinessJsonLd.priceRange = listedPriceRange;
     localBusinessJsonLd.makesOffer = {
@@ -425,7 +425,7 @@ export default async function WorkspaceDetailPage({
                   if (relatedContinent) {
                     place.containedInPlace = { "@type": "Place", name: relatedContinent };
                   }
-                  const listedPrice = usefulStartingPrice(item.starting_price);
+                  const listedPrice = usefulListedPrice(item.starting_price, item.cost);
                   const listedUnits = usefulListingUnits(item.units);
                   const listedCapacity = usefulListingCapacity(item.capacity);
                   const capacityNumber = listedCapacity
@@ -814,7 +814,7 @@ export default async function WorkspaceDetailPage({
                                 </div>
                             </div>
                             <Link href={`/workspaces/${item.id}`} className="shrink-0 text-right text-sm text-muted-foreground hover:text-accent">
-                              <div>{usefulStartingPrice(item.starting_price) || "Price not listed yet"}</div>
+                              <div>{usefulListedPrice(item.starting_price, item.cost) || "Price not listed yet"}</div>
                               {usefulListingUnits(item.units) ? (
                                 <div className="text-[10px] text-muted-foreground/80">{usefulListingUnits(item.units)}</div>
                               ) : null}
@@ -835,9 +835,9 @@ export default async function WorkspaceDetailPage({
             </div>
             <div className="space-y-5">
               <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
-                {usefulStartingPrice(listing.starting_price) ? (
+                {usefulListedPrice(listing.starting_price, listing.cost) ? (
                   <div>
-                    <div className="font-serif text-2xl font-semibold text-forest">{usefulStartingPrice(listing.starting_price)}</div>
+                    <div className="font-serif text-2xl font-semibold text-forest">{usefulListedPrice(listing.starting_price, listing.cost)}</div>
                     {usefulListingUnits(listing.units) ? (
                       <div className="text-xs text-muted-foreground">{usefulListingUnits(listing.units)}</div>
                     ) : null}
