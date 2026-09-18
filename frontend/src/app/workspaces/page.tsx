@@ -90,6 +90,7 @@ async function getListings(params: {
   tagged?: string;
   titled?: string;
   regioned?: string;
+  continented?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -179,14 +180,15 @@ async function getListings(params: {
       !completeOnly &&
       !taggedOnly &&
       !titledOnly &&
-      !regionedOnly;
+      !regionedOnly &&
+      !continentedOnly;
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
-      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly || titledOnly || regionedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly || titledOnly || regionedOnly || continentedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -301,6 +303,14 @@ async function getListings(params: {
       );
       return { listings: regioned.slice(0, PAGE_SIZE), count: regioned.length, page };
     }
+    if (continentedOnly) {
+      // Keep cards whose continent already passes usefulListingContinent
+      // (same label rendered after country). Never invent a continent.
+      const continented = rows.filter((listing) =>
+        Boolean(usefulListingContinent(listing.continent))
+      );
+      return { listings: continented.slice(0, PAGE_SIZE), count: continented.length, page };
+    }
     if (!unfilteredFirstPage) {
       return { listings: rows, count: count ?? 0, page };
     }
@@ -325,6 +335,7 @@ async function getListings(params: {
         if (usefulListingCapacity(listing.capacity)) score += 6;
         if (usefulListingUnits(listing.units)) score += 5;
         if (usefulListingRegion(listing.state, listing.city)) score += 4;
+        if (usefulListingContinent(listing.continent)) score += 3;
         if (
           firstVenueListingImage(listing.images) &&
           usefulListingAbout(listing.about || listing.description, listing.company_name) &&
@@ -663,7 +674,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -706,6 +717,7 @@ export default async function WorkspacesPage({
       tagged: params.tagged,
       titled: params.titled,
       regioned: params.regioned,
+      continented: params.continented,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -838,6 +850,10 @@ export default async function WorkspacesPage({
                 Has listed region
               </label>
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="continented" value="1" defaultChecked={params.continented === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has listed continent
+              </label>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
                 <input type="checkbox" name="contactable" value="1" defaultChecked={params.contactable === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed contact
               </label>
@@ -950,6 +966,12 @@ export default async function WorkspacesPage({
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.regioned === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Has listed region
+              </Link>
+              <Link
+                href={`/workspaces?${filterQs({ continented: params.continented === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.continented === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has listed continent
               </Link>
               <Link
                 href={`/workspaces?${filterQs({ contactable: params.contactable === "1" ? null : "1", page: null }).toString()}`}
