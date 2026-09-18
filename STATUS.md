@@ -1,3 +1,15 @@
+## 2026-09-18 — workspaces listed-subtitle filter
+
+Track A: `/workspaces?titled=1` keeps cards whose `company_title` already passes `usefulListingTitle` (subtitle under the venue name). Duplicates of `company_name` stay excluded. No invented titles. Sitemap not resubmitted (same route, new query only).
+
+GSC 2026-08-20 to 2026-09-16 (`https://nomads-travel-indol.vercel.app/`): venue-name clicks (`cafe nenom`, `cafe nook`, `coliving athens`, `ngb living`, `innapartment taipei`) plus near-brand `roam iq` 1/34 pos ~7.91. Query `4g-travel-tool.vercel.app` 0/9 pos ~2.67 — FLAG only; no redirect. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4 30d (property 541610896): `/` 139 sessions / bounce 82.7%; `/workspaces` 10 / 90%; several `/workspaces/{id}` landings with lower bounce.
+
+Supabase listings snapshot: SQL via Composio returned 403 this run — last logged n=10331; about empty 0; images empty 2063; starting_price empty 5243; wifi_speed empty 2055.
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending.
+
 ## 2026-09-18 — workspaces listed-tags filter
 
 Track A: `/workspaces?tagged=1` keeps cards whose `tags` already pass `usefulListingTags` (the same chips rendered on the card). Factory type labels and 24/7 / standing-desk templates stay excluded. No invented amenities. Sitemap not resubmitted (same route, new query only).
