@@ -1,3 +1,9 @@
+## 2026-09-18 — workspaces listed-price uses stored cost
+
+Track A: `/workspaces` now selects the listings `cost` column and renders / ranks / filters priced cards through `usefulListedPrice(starting_price, cost)` — the same helper the detail page already used. `?priced=1` keeps rows whose starting_price *or* cost already holds a usable figure; placeholders still fail the helper. No invented prices. Sitemap not resubmitted (same route).
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending.
+
 ## 2026-09-18 — workspaces listed-continent filter
 
 Track A: `/workspaces?continented=1` keeps cards whose `continent` already passes `usefulListingContinent` (the same continent label rendered after country). No invented continents. Page-1 ranking also prefers those rows. Restores the filter after the later regioned patch dropped the query param. Sitemap not resubmitted (same route, new query only).

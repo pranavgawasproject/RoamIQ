@@ -7,7 +7,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity } from "@/lib/listing-media";
+import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulListedPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
@@ -100,7 +100,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, units, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude, inclusions, services, social_links, capacity",
+        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, cost, units, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude, inclusions, services, social_links, capacity",
         { count: "planned" }
       )
       .eq("is_public", true)
@@ -128,13 +128,9 @@ async function getListings(params: {
       query = query.or("about.neq.,description.neq.");
     }
     if (params.priced === "1") {
-      // Real listed prices only — empty / placeholder rows stay off this view.
-      query = query
-        .not("starting_price", "is", null)
-        .neq("starting_price", "")
-        .neq("starting_price", "n/a")
-        .neq("starting_price", "N/A")
-        .neq("starting_price", "TBD");
+      // Keep rows that already store a figure on starting_price *or* cost.
+      // Placeholder strings are dropped after fetch via usefulListedPrice.
+      query = query.or("starting_price.neq.,cost.neq.");
     }
     const photographedOnly = params.photographed === "1";
     const logoedOnly = params.logoed === "1";
@@ -197,6 +193,12 @@ async function getListings(params: {
       return { listings: [] as Listing[], count: 0, page };
     }
     const rows = (data ?? []) as Listing[];
+    if (params.priced === "1") {
+      const priced = rows.filter((listing) =>
+        Boolean(usefulListedPrice(listing.starting_price, listing.cost))
+      );
+      return { listings: priced.slice(0, PAGE_SIZE), count: priced.length, page };
+    }
     if (photographedOnly) {
       // images[] is populated on almost every row; only keep cards whose
       // photo already passes firstUsableListingImage (same gate as the UI).
@@ -280,7 +282,7 @@ async function getListings(params: {
         Boolean(
           firstVenueListingImage(listing.images) &&
           usefulListingAbout(listing.about || listing.description, listing.company_name) &&
-          usefulStartingPrice(listing.starting_price)
+          usefulListedPrice(listing.starting_price, listing.cost)
         )
       );
       return { listings: complete.slice(0, PAGE_SIZE), count: complete.length, page };
@@ -320,7 +322,7 @@ async function getListings(params: {
         if (usefulListingAbout(listing.about || listing.description, listing.company_name)) score += 100;
         if (firstVenueListingImage(listing.images)) score += 20;
         if (isUsableImageUrl(listing.logo_url)) score += 12;
-        if (usefulStartingPrice(listing.starting_price)) score += 10;
+        if (usefulListedPrice(listing.starting_price, listing.cost)) score += 10;
         if (usefulWifiSpeed(listing.wifi_speed)) score += 10;
         if (usefulOpenHours(listing.open_hours).length) score += 8;
         if (usefulStreetAddress(listing.address, listing.city, listing.country)) score += 7;
@@ -339,7 +341,7 @@ async function getListings(params: {
         if (
           firstVenueListingImage(listing.images) &&
           usefulListingAbout(listing.about || listing.description, listing.company_name) &&
-          usefulStartingPrice(listing.starting_price)
+          usefulListedPrice(listing.starting_price, listing.cost)
         ) score += 18;
         score += Number(listing.ratings ?? 0);
         return { listing, score, index };
@@ -579,9 +581,9 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
         </div>
         <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
           <div>
-            {usefulStartingPrice(listing.starting_price) ? (
+            {usefulListedPrice(listing.starting_price, listing.cost) ? (
               <div>
-                <div className="font-serif text-lg font-semibold text-forest">{usefulStartingPrice(listing.starting_price)}</div>
+                <div className="font-serif text-lg font-semibold text-forest">{usefulListedPrice(listing.starting_price, listing.cost)}</div>
               </div>
             ) : cityCost || cityDesk || cityRent ? (
               <div>
