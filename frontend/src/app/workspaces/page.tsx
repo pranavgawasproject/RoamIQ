@@ -7,7 +7,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulListedPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity } from "@/lib/listing-media";
+import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulStartingPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
@@ -87,6 +87,7 @@ async function getListings(params: {
   sized?: string;
   united?: string;
   complete?: string;
+  tagged?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -96,7 +97,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, cost, units, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude, inclusions, services, social_links, capacity",
+        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, units, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude, inclusions, services, social_links, capacity",
         { count: "planned" }
       )
       .eq("is_public", true)
@@ -125,11 +126,12 @@ async function getListings(params: {
     }
     if (params.priced === "1") {
       // Real listed prices only — empty / placeholder rows stay off this view.
-      // `cost` is a second stored price column; include it so we do not hide
-      // venues that listed a figure there instead of starting_price.
-      query = query.or(
-        "and(starting_price.neq.,starting_price.neq.n/a,starting_price.neq.N/A,starting_price.neq.TBD),and(cost.neq.,cost.neq.n/a,cost.neq.N/A,cost.neq.TBD)"
-      );
+      query = query
+        .not("starting_price", "is", null)
+        .neq("starting_price", "")
+        .neq("starting_price", "n/a")
+        .neq("starting_price", "N/A")
+        .neq("starting_price", "TBD");
     }
     const photographedOnly = params.photographed === "1";
     const logoedOnly = params.logoed === "1";
@@ -146,6 +148,7 @@ async function getListings(params: {
     const sizedOnly = params.sized === "1";
     const unitedOnly = params.united === "1";
     const completeOnly = params.complete === "1";
+    const taggedOnly = params.tagged === "1";
     const unfilteredFirstPage =
       page === 1 &&
       !params.search &&
@@ -169,14 +172,15 @@ async function getListings(params: {
       !emailedOnly &&
       !sizedOnly &&
       !unitedOnly &&
-      !completeOnly;
+      !completeOnly &&
+      !taggedOnly;
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
-      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -268,10 +272,14 @@ async function getListings(params: {
         Boolean(
           firstVenueListingImage(listing.images) &&
           usefulListingAbout(listing.about || listing.description, listing.company_name) &&
-          usefulListedPrice(listing.starting_price, listing.cost)
+          usefulStartingPrice(listing.starting_price)
         )
       );
       return { listings: complete.slice(0, PAGE_SIZE), count: complete.length, page };
+    }
+    if (taggedOnly) {
+      const tagged = rows.filter((listing) => usefulListingTags(listing.tags).length > 0);
+      return { listings: tagged.slice(0, PAGE_SIZE), count: tagged.length, page };
     }
     if (!unfilteredFirstPage) {
       return { listings: rows, count: count ?? 0, page };
@@ -282,7 +290,7 @@ async function getListings(params: {
         if (usefulListingAbout(listing.about || listing.description, listing.company_name)) score += 100;
         if (firstVenueListingImage(listing.images)) score += 20;
         if (isUsableImageUrl(listing.logo_url)) score += 12;
-        if (usefulListedPrice(listing.starting_price, listing.cost)) score += 10;
+        if (usefulStartingPrice(listing.starting_price)) score += 10;
         if (usefulWifiSpeed(listing.wifi_speed)) score += 10;
         if (usefulOpenHours(listing.open_hours).length) score += 8;
         if (usefulStreetAddress(listing.address, listing.city, listing.country)) score += 7;
@@ -539,9 +547,9 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
         </div>
         <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
           <div>
-            {usefulListedPrice(listing.starting_price, listing.cost) ? (
+            {usefulStartingPrice(listing.starting_price) ? (
               <div>
-                <div className="font-serif text-lg font-semibold text-forest">{usefulListedPrice(listing.starting_price, listing.cost)}</div>
+                <div className="font-serif text-lg font-semibold text-forest">{usefulStartingPrice(listing.starting_price)}</div>
               </div>
             ) : cityCost || cityDesk || cityRent ? (
               <div>
@@ -634,7 +642,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -674,6 +682,7 @@ export default async function WorkspacesPage({
       sized: params.sized,
       united: params.united,
       complete: params.complete,
+      tagged: params.tagged,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -794,6 +803,10 @@ export default async function WorkspacesPage({
                 Photo + description + price
               </label>
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="tagged" value="1" defaultChecked={params.tagged === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has listed tags
+              </label>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
                 <input type="checkbox" name="contactable" value="1" defaultChecked={params.contactable === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed contact
               </label>
@@ -888,6 +901,12 @@ export default async function WorkspacesPage({
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.complete === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Photo + description + price
+              </Link>
+              <Link
+                href={`/workspaces?${filterQs({ tagged: params.tagged === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.tagged === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has listed tags
               </Link>
               <Link
                 href={`/workspaces?${filterQs({ contactable: params.contactable === "1" ? null : "1", page: null }).toString()}`}
