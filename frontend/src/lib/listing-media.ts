@@ -582,6 +582,48 @@ export function usefulListingTitle(
 /**
  * Seat/capacity text when the listing stored a real value. Never invent size.
  */
+/**
+ * Plan / product label stored on the listing. Skip values that only repeat
+ * the venue name. Never invent a plan.
+ */
+export function usefulListingProductName(
+  productName: string | null | undefined,
+  companyName?: string | null
+): string | null {
+  if (!productName || typeof productName !== "string") return null;
+  const cleaned = productName.replace(/\s+/g, " ").trim();
+  if (cleaned.length < 3 || cleaned.length > 80) return null;
+  if (/^(n\/?a|na|tbd|pending|unknown|none|-|—|–)$/i.test(cleaned)) return null;
+  if (/not listed|coming soon|data pending|lorem ipsum/i.test(cleaned)) return null;
+  if (/https?:\/\//i.test(cleaned)) return null;
+  const name = (companyName || "").replace(/\s+/g, " ").trim().toLowerCase();
+  if (name && cleaned.toLowerCase() === name) return null;
+  return cleaned;
+}
+
+/**
+ * Named contact on the listing when a real person string is stored.
+ * Never invent a host or manager.
+ */
+export function usefulListingContactPerson(
+  contactName: string | null | undefined,
+  contactDesignation?: string | null
+): string | null {
+  if (!contactName || typeof contactName !== "string") return null;
+  const name = contactName.replace(/\s+/g, " ").trim();
+  if (name.length < 2 || name.length > 80) return null;
+  if (/^(n\/?a|na|tbd|pending|unknown|none|admin|test|-|—|–)$/i.test(name)) return null;
+  if (/https?:\/\//i.test(name) || /@/.test(name)) return null;
+  const role =
+    contactDesignation && typeof contactDesignation === "string"
+      ? contactDesignation.replace(/\s+/g, " ").trim()
+      : "";
+  if (role && role.length <= 60 && !/^(n\/?a|na|tbd|pending|unknown|none|-)$/i.test(role)) {
+    return `${name} · ${role}`;
+  }
+  return name;
+}
+
 export function usefulListingCapacity(raw: string | null | undefined): string | null {
   if (raw == null) return null;
   const cleaned = String(raw).replace(/\s+/g, " ").trim();
