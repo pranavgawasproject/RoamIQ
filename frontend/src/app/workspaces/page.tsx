@@ -95,6 +95,7 @@ async function getListings(params: {
   coordinated?: string;
   producted?: string;
   hosted?: string;
+  included?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -159,6 +160,7 @@ async function getListings(params: {
     const coordinatedOnly = params.coordinated === "1";
     const productedOnly = params.producted === "1";
     const hostedOnly = params.hosted === "1";
+    const includedOnly = params.included === "1";
     const unfilteredFirstPage =
       page === 1 &&
       !params.search &&
@@ -190,14 +192,15 @@ async function getListings(params: {
       !wifiableOnly &&
       !coordinatedOnly &&
       !productedOnly &&
-      !hostedOnly;
+      !hostedOnly &&
+      !includedOnly;
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
-      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly || titledOnly || regionedOnly || continentedOnly || wifiableOnly || coordinatedOnly || productedOnly || hostedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly || titledOnly || regionedOnly || continentedOnly || wifiableOnly || coordinatedOnly || productedOnly || hostedOnly || includedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -354,6 +357,14 @@ async function getListings(params: {
       );
       return { listings: hosted.slice(0, PAGE_SIZE), count: hosted.length, page };
     }
+    if (includedOnly) {
+      // Keep cards whose stored inclusions already pass usefulListingInclusions
+      // (same line under price on the card). Never invent what's included.
+      const included = rows.filter((listing) =>
+        Boolean(usefulListingInclusions(listing.inclusions))
+      );
+      return { listings: included.slice(0, PAGE_SIZE), count: included.length, page };
+    }
     if (!unfilteredFirstPage) {
       return { listings: rows, count: count ?? 0, page };
     }
@@ -363,6 +374,7 @@ async function getListings(params: {
         if (usefulListingAbout(listing.about || listing.description, listing.company_name)) score += 100;
         if (firstVenueListingImage(listing.images)) score += 20;
         if (isUsableImageUrl(listing.logo_url)) score += 12;
+        if (usefulListingInclusions(listing.inclusions)) score += 6;
         if (usefulListedPrice(listing.starting_price, listing.cost)) score += 10;
         if (usefulWifiSpeed(listing.wifi_speed)) score += 10;
         if (usefulOpenHours(listing.open_hours).length) score += 8;
@@ -721,7 +733,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; wifiable?: string; coordinated?: string; producted?: string; hosted?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; wifiable?: string; coordinated?: string; producted?: string; hosted?: string; included?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -769,6 +781,7 @@ export default async function WorkspacesPage({
       coordinated: params.coordinated,
       producted: params.producted,
       hosted: params.hosted,
+      included: params.included,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -937,6 +950,10 @@ export default async function WorkspacesPage({
                 Has listed host
               </label>
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="included" value="1" defaultChecked={params.included === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has listed inclusions
+              </label>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
                 <input type="checkbox" name="equipped" value="1" defaultChecked={params.equipped === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed amenities
               </label>
@@ -1087,6 +1104,12 @@ export default async function WorkspacesPage({
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.hosted === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Has listed host
+              </Link>
+              <Link
+                href={`/workspaces?${filterQs({ included: params.included === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.included === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has listed inclusions
               </Link>
               <Link
                 href={`/workspaces?${filterQs({ equipped: params.equipped === "1" ? null : "1", page: null }).toString()}`}
