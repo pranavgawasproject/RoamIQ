@@ -92,6 +92,7 @@ async function getListings(params: {
   regioned?: string;
   continented?: string;
   wifiable?: string;
+  wified?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -152,7 +153,7 @@ async function getListings(params: {
     const titledOnly = params.titled === "1";
     const regionedOnly = params.regioned === "1";
     const continentedOnly = params.continented === "1";
-    const wifiableOnly = params.wifiable === "1";
+    const wifiableOnly = params.wifiable === "1" || params.wified === "1";
     const unfilteredFirstPage =
       page === 1 &&
       !params.search &&
@@ -674,7 +675,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; wifiable?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; wifiable?: string; wified?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -719,6 +720,7 @@ export default async function WorkspacesPage({
       regioned: params.regioned,
       continented: params.continented,
       wifiable: params.wifiable,
+      wified: params.wified,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
