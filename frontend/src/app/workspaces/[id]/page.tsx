@@ -20,7 +20,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListedPrice, usefulListingUnits, usefulListingCapacity, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulWifiSpeed, usefulListingMapUrl } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListedPrice, usefulListingUnits, usefulListingCapacity, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulWifiSpeed, usefulListingMapUrl, usefulListingProductName, usefulListingContactPerson } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { workspaceFaqJsonLd } from "@/lib/listing-jsonld";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
@@ -557,6 +557,12 @@ export default async function WorkspaceDetailPage({
                 </div>
                 {usefulListingTitle(listing.company_title, listing.company_name) && (
                   <p className="mt-2 text-lg text-muted-foreground">{usefulListingTitle(listing.company_title, listing.company_name)}</p>
+                )}
+                {usefulListingProductName(listing.product_name, listing.company_name) && (
+                  <p className="mt-1 text-sm text-muted-foreground">Plan: {usefulListingProductName(listing.product_name, listing.company_name)}</p>
+                )}
+                {usefulListingContactPerson(listing.contact_name, listing.contact_designation) && (
+                  <p className="mt-1 text-sm text-muted-foreground">Contact: {usefulListingContactPerson(listing.contact_name, listing.contact_designation)}</p>
                 )}
                 {listing.city ? (
                   <p className="mt-3 text-sm text-muted-foreground">
