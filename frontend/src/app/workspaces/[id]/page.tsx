@@ -62,6 +62,8 @@ function relatedListingScore(item: Listing): number {
   if (usefulListingTags(item.tags).length > 0) score += 4;
   if (usefulListingSocialLinks(item.social_links).length > 0) score += 2;
   if (usefulListingMapUrl(item.google_map, item.latitude, item.longitude)) score += 2;
+  if (usefulListingProductName(item.product_name, item.company_name)) score += 3;
+  if (usefulListingContactPerson(item.contact_name, item.contact_designation)) score += 2;
   return score;
 }
 
@@ -71,7 +73,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, cost, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, ratings, total_reviews, website, contact_phone, contact_email, tags, inclusions, services, social_links, google_map, latitude, longitude"
+        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, cost, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, product_name, contact_name, contact_designation, ratings, total_reviews, website, contact_phone, contact_email, tags, inclusions, services, social_links, google_map, latitude, longitude"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -739,6 +741,12 @@ export default async function WorkspaceDetailPage({
                               <Link href={`/workspaces/${item.id}`} className="truncate font-medium hover:text-accent">{item.company_name}</Link>
                               {usefulListingTitle(item.company_title, item.company_name) ? (
                                 <p className="mt-0.5 truncate text-xs text-muted-foreground">{usefulListingTitle(item.company_title, item.company_name)}</p>
+                              ) : null}
+                              {usefulListingProductName(item.product_name, item.company_name) ? (
+                                <p className="mt-0.5 truncate text-xs text-muted-foreground">Plan: {usefulListingProductName(item.product_name, item.company_name)}</p>
+                              ) : null}
+                              {usefulListingContactPerson(item.contact_name, item.contact_designation) ? (
+                                <p className="mt-0.5 truncate text-xs text-muted-foreground">Contact: {usefulListingContactPerson(item.contact_name, item.contact_designation)}</p>
                               ) : null}
                               {aboutOk ? (
                                 <p className="mt-0.5 line-clamp-2 text-xs text-foreground/70">{snippet}</p>

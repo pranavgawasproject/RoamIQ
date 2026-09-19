@@ -93,6 +93,7 @@ async function getListings(params: {
   continented?: string;
   wifiable?: string;
   coordinated?: string;
+  producted?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -155,6 +156,7 @@ async function getListings(params: {
     const continentedOnly = params.continented === "1";
     const wifiableOnly = params.wifiable === "1";
     const coordinatedOnly = params.coordinated === "1";
+    const productedOnly = params.producted === "1";
     const unfilteredFirstPage =
       page === 1 &&
       !params.search &&
@@ -184,14 +186,15 @@ async function getListings(params: {
       !regionedOnly &&
       !continentedOnly &&
       !wifiableOnly &&
-      !coordinatedOnly;
+      !coordinatedOnly &&
+      !productedOnly;
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
-      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly || titledOnly || regionedOnly || continentedOnly || wifiableOnly || coordinatedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly || titledOnly || regionedOnly || continentedOnly || wifiableOnly || coordinatedOnly || productedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -334,6 +337,14 @@ async function getListings(params: {
       );
       return { listings: coordinated.slice(0, PAGE_SIZE), count: coordinated.length, page };
     }
+    if (productedOnly) {
+      // Keep cards whose stored product_name already passes usefulListingProductName
+      // (the same plan label rendered under the venue name). Never invent a plan.
+      const producted = rows.filter((listing) =>
+        Boolean(usefulListingProductName(listing.product_name, listing.company_name))
+      );
+      return { listings: producted.slice(0, PAGE_SIZE), count: producted.length, page };
+    }
     if (!unfilteredFirstPage) {
       return { listings: rows, count: count ?? 0, page };
     }
@@ -360,6 +371,8 @@ async function getListings(params: {
         if (usefulListingRegion(listing.state, listing.city)) score += 4;
         if (usefulListingContinent(listing.continent)) score += 3;
         if (usefulListingCoordinates(listing.latitude, listing.longitude)) score += 4;
+        if (usefulListingProductName(listing.product_name, listing.company_name)) score += 5;
+        if (usefulListingContactPerson(listing.contact_name, listing.contact_designation)) score += 4;
         if (
           firstVenueListingImage(listing.images) &&
           usefulListingAbout(listing.about || listing.description, listing.company_name) &&
@@ -699,7 +712,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; wifiable?: string; coordinated?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; wifiable?: string; coordinated?: string; producted?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -745,6 +758,7 @@ export default async function WorkspacesPage({
       continented: params.continented,
       wifiable: params.wifiable,
       coordinated: params.coordinated,
+      producted: params.producted,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -905,6 +919,10 @@ export default async function WorkspacesPage({
                 Has listed coordinates
               </label>
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="producted" value="1" defaultChecked={params.producted === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has listed plan name
+              </label>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
                 <input type="checkbox" name="equipped" value="1" defaultChecked={params.equipped === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed amenities
               </label>
@@ -1043,6 +1061,12 @@ export default async function WorkspacesPage({
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.coordinated === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Has listed coordinates
+              </Link>
+              <Link
+                href={`/workspaces?${filterQs({ producted: params.producted === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.producted === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has listed plan name
               </Link>
               <Link
                 href={`/workspaces?${filterQs({ equipped: params.equipped === "1" ? null : "1", page: null }).toString()}`}
