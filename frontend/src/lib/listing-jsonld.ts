@@ -20,6 +20,8 @@ import {
   usefulListingContinent,
   usefulListingCapacity,
   usefulListingTitle,
+  usefulListingProductName,
+  usefulListingContactPerson,
 } from "@/lib/listing-media";
 
 type ListingLike = {
@@ -54,6 +56,9 @@ type ListingLike = {
   inclusions?: string | null;
   services?: string | null;
   continent?: string | null;
+  product_name?: string | null;
+  contact_name?: string | null;
+  contact_designation?: string | null;
 };
 
 export type ListingJsonLdDestination = {
@@ -142,6 +147,16 @@ export function workspaceListItemJsonLd(
   ];
   if (amenityFeature.length) place.amenityFeature = amenityFeature;
   if (visibleTags.length) place.keywords = visibleTags.join(", ");
+  const listedPlan = usefulListingProductName(listing.product_name, listing.company_name);
+  const listedHost = usefulListingContactPerson(listing.contact_name, listing.contact_designation);
+  if (listedPlan) {
+    const props = Array.isArray(place.additionalProperty) ? place.additionalProperty : [];
+    props.push({ "@type": "PropertyValue", name: "Listed plan", value: listedPlan });
+    place.additionalProperty = props;
+  }
+  if (listedHost) {
+    place.employee = { "@type": "Person", name: listedHost };
+  }
   const listedHours = usefulOpenHours(listing.open_hours);
   if (listedHours.length === 1) place.openingHours = listedHours[0];
   else if (listedHours.length > 1) place.openingHours = listedHours;
@@ -228,6 +243,22 @@ export function workspaceFaqJsonLd(
       "@type": "Question",
       name: `What is the listed title for ${name}?`,
       acceptedAnswer: { "@type": "Answer", text: title },
+    });
+  }
+  const plan = usefulListingProductName(listing.product_name, listing.company_name);
+  if (plan) {
+    mainEntity.push({
+      "@type": "Question",
+      name: `What plan is listed for ${name}?`,
+      acceptedAnswer: { "@type": "Answer", text: plan },
+    });
+  }
+  const host = usefulListingContactPerson(listing.contact_name, listing.contact_designation);
+  if (host) {
+    mainEntity.push({
+      "@type": "Question",
+      name: `Who is the listed host for ${name}?`,
+      acceptedAnswer: { "@type": "Answer", text: host },
     });
   }
   if (about) {
