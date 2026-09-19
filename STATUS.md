@@ -1,3 +1,13 @@
+## 2026-09-19 — workspaces listed-host filter
+
+Track A: /workspaces?hosted=1 keeps cards whose contact_name / contact_designation already pass usefulListingContactPerson (same host chip on the card). No invented hosts. Sitemap not resubmitted (same route, new query only).
+
+GSC 2026-08-19 to 2026-09-18: 18 clicks / 6206 impressions / CTR 0.29% / avg position 11.9. Query 4g-travel-tool.vercel.app FLAG only (14 impressions, position ~3.1); no redirect. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4: last logged 30d home 139 sessions / bounce 82.7%; /workspaces 10 / 90% (property id not resolved this pass).
+
+4g-travel-tool.vercel.app duplicate-index status: FLAG / pending.
+
 ## 2026-09-19 — workspaces listed-plan (product_name) filter
 
 Track A: `/workspaces?producted=1` keeps cards whose stored `product_name` already passes `usefulListingProductName` (the same plan label under the venue name). Related-city cards now select `product_name` / `contact_name` / `contact_designation` so those rows can render when present. No invented plans. Sitemap not resubmitted (same route, new query only).
