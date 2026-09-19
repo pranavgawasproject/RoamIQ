@@ -1,3 +1,9 @@
+## 2026-09-19 — listed Wi-Fi filter + continent filter declaration
+
+Track A: `/workspaces?wifiable=1` keeps cards whose `wifi_speed` already passes `usefulWifiSpeed` (same gate as the card label / pending fallback). Also restored `const continentedOnly` so `?continented=1` actually filters again (the query param and UI were live, the const was missing). Removed duplicate units/capacity lines on unpriced cards. No invented speeds. Sitemap not resubmitted (same route, new query only).
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending (query still appears on nomads-travel-indol property; no GSC access to the old host; no redirect).
+
 ## 2026-09-18 — workspaces listed-price uses stored cost
 
 Track A: `/workspaces` now selects the listings `cost` column and renders / ranks / filters priced cards through `usefulListedPrice(starting_price, cost)` — the same helper the detail page already used. `?priced=1` keeps rows whose starting_price *or* cost already holds a usable figure; placeholders still fail the helper. No invented prices. Sitemap not resubmitted (same route).
