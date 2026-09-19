@@ -342,6 +342,27 @@ export default async function WorkspaceDetailPage({
   if (tags.length > 0) {
     localBusinessJsonLd.keywords = tags.join(", ");
   }
+  const listedPlan = usefulListingProductName(listing.product_name, listing.company_name);
+  const listedHost = usefulListingContactPerson(listing.contact_name, listing.contact_designation);
+  if (listedPlan) {
+    localBusinessJsonLd.additionalProperty = [
+      { "@type": "PropertyValue", name: "Listed plan", value: listedPlan },
+    ];
+  }
+  if (listedHost) {
+    localBusinessJsonLd.employee = { "@type": "Person", name: listedHost };
+    const existingContact = localBusinessJsonLd.contactPoint as Record<string, unknown> | undefined;
+    if (existingContact) {
+      existingContact.name = listedHost;
+    } else {
+      localBusinessJsonLd.contactPoint = {
+        "@type": "ContactPoint",
+        contactType: "customer service",
+        name: listedHost,
+        availableLanguage: "en",
+      };
+    }
+  }
   if (destination?.id) {
     const cityProps = [
       destination.visa_difficulty
