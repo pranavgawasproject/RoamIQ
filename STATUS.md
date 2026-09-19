@@ -1,6 +1,12 @@
-## 2026-09-19 — workspaces listed-Wi-Fi filter (`wifiable` + `wified` alias)
+## 2026-09-19 — workspaces listed-coordinates filter
 
-Track A: `/workspaces?wifiable=1` (alias `/workspaces?wified=1`) keeps cards whose `wifi_speed` already passes `usefulWifiSpeed` (the same label rendered on the card). No invented speeds. Jump chip + checkbox use `wifiable`. Sitemap not resubmitted (same route, new query only).
+Track A: `/workspaces?coordinated=1` keeps cards whose stored latitude/longitude already pass `usefulListingCoordinates` (the same pair rendered next to the Map chip). No invented pins. Page-1 ranking prefers those rows. Sitemap not resubmitted (same route, new query only).
+
+`4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending.
+
+## 2026-09-19 — workspaces listed-Wi-Fi filter + continent filter declaration
+
+Track A: `/workspaces?wified=1` keeps cards whose `wifi_speed` already passes `usefulWifiSpeed` (the same label rendered on the card). No invented speeds. Also declares `continentedOnly` from `params.continented` so the existing continent filter is a real binding, not an implicit reference. Jump chip + checkbox added. Sitemap not resubmitted (same route, new query only).
 
 GSC 2026-08-19 to 2026-09-18 (`https://nomads-travel-indol.vercel.app/`): 9 clicks on venue-name / branded queries (`cafe nenom`, `cafe nook`, `coliving athens`, `coliving zürich`, `durty nellys amsterdam`, `innapartment taipei`, `izzy's coffee and brunch`, `ngb living`, `roam iq` 1/34). Query `4g-travel-tool.vercel.app` FLAG only (14 impressions, position ~3.1); no redirect. Branded CTR capped until the custom domain is live (human-owned).
 
