@@ -628,3 +628,21 @@ export function usefulListingMapUrl(
   }
   return null;
 }
+
+/** Visible lat/lng pair already stored on the row. Never invent a pin. */
+export function usefulListingCoordinates(
+  latitude?: number | string | null,
+  longitude?: number | string | null
+): string | null {
+  const lat = typeof latitude === "number" ? latitude : Number(latitude);
+  const lng = typeof longitude === "number" ? longitude : Number(longitude);
+  if (
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lng) ||
+    Math.abs(lat) > 90 ||
+    Math.abs(lng) > 180
+  ) {
+    return null;
+  }
+  return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+}
