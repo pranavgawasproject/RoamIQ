@@ -7,7 +7,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulListedPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingCoordinates, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity } from "@/lib/listing-media";
+import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulListedPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingCoordinates, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity, usefulListingProductName, usefulListingContactPerson } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
@@ -102,7 +102,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, cost, units, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, website, contact_phone, contact_email, google_map, latitude, longitude, inclusions, services, social_links, capacity",
+        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, cost, units, wifi_speed, open_hours, ratings, total_reviews, tags, logo_url, images, about, description, product_name, website, contact_name, contact_designation, contact_phone, contact_email, google_map, latitude, longitude, inclusions, services, social_links, capacity",
         { count: "planned" }
       )
       .eq("is_public", true)
@@ -473,6 +473,9 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
           </h3>
         </div>
         {usefulListingTitle(listing.company_title, listing.company_name) && <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulListingTitle(listing.company_title, listing.company_name)}</p>}
+        {usefulListingProductName(listing.product_name, listing.company_name) && (
+          <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">Plan: {usefulListingProductName(listing.product_name, listing.company_name)}</p>
+        )}
         {(() => {
           const aboutSnippet = usefulAboutSnippet(listing.about || listing.description, listing.company_name);
           const addressSnippet = usefulStreetAddress(listing.address, listing.city, listing.country);
@@ -570,6 +573,11 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
               >
                 <Phone className="h-3 w-3" /> Call
               </a>
+            )}
+            {usefulListingContactPerson(listing.contact_name, listing.contact_designation) && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80">
+                <Phone className="h-3 w-3" /> {usefulListingContactPerson(listing.contact_name, listing.contact_designation)}
+              </span>
             )}
             {listedEmail && (
               <a
