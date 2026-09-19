@@ -91,6 +91,7 @@ async function getListings(params: {
   titled?: string;
   regioned?: string;
   continented?: string;
+  wifiable?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -150,6 +151,8 @@ async function getListings(params: {
     const taggedOnly = params.tagged === "1";
     const titledOnly = params.titled === "1";
     const regionedOnly = params.regioned === "1";
+    const continentedOnly = params.continented === "1";
+    const wifiableOnly = params.wifiable === "1";
     const unfilteredFirstPage =
       page === 1 &&
       !params.search &&
@@ -177,14 +180,15 @@ async function getListings(params: {
       !taggedOnly &&
       !titledOnly &&
       !regionedOnly &&
-      !continentedOnly;
+      !continentedOnly &&
+      !wifiableOnly;
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
-      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly || titledOnly || regionedOnly || continentedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly || titledOnly || regionedOnly || continentedOnly || wifiableOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -312,6 +316,12 @@ async function getListings(params: {
         Boolean(usefulListingContinent(listing.continent))
       );
       return { listings: continented.slice(0, PAGE_SIZE), count: continented.length, page };
+    }
+    if (wifiableOnly) {
+      // Keep cards whose wifi_speed already passes usefulWifiSpeed (same
+      // gate as the card label). Pending / template strings stay out.
+      const wifiable = rows.filter((listing) => Boolean(usefulWifiSpeed(listing.wifi_speed)));
+      return { listings: wifiable.slice(0, PAGE_SIZE), count: wifiable.length, page };
     }
     if (!unfilteredFirstPage) {
       return { listings: rows, count: count ?? 0, page };
@@ -588,12 +598,6 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
             ) : cityCost || cityDesk || cityRent ? (
               <div>
                 <div className="text-sm text-muted-foreground">Price not listed yet</div>
-                {usefulListingUnits(listing.units) ? (
-                  <div className="text-[11px] text-muted-foreground">{usefulListingUnits(listing.units)}</div>
-                ) : null}
-                {usefulListingCapacity(listing.capacity) ? (
-                  <div className="text-[11px] text-muted-foreground">{usefulListingCapacity(listing.capacity)}</div>
-                ) : null}
                 <div className="text-[11px] text-muted-foreground/80">
                   {[
                     cityDesk ? `city coworking desk ~$${cityDesk.toLocaleString()}/mo` : null,
@@ -605,12 +609,6 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
             ) : (
               <div>
                 <div className="text-sm text-muted-foreground">Price not listed yet</div>
-                {usefulListingUnits(listing.units) ? (
-                  <div className="text-[11px] text-muted-foreground">{usefulListingUnits(listing.units)}</div>
-                ) : null}
-                {usefulListingCapacity(listing.capacity) ? (
-                  <div className="text-[11px] text-muted-foreground">{usefulListingCapacity(listing.capacity)}</div>
-                ) : null}
               </div>
             )}
             {usefulListingUnits(listing.units) ? (
@@ -676,7 +674,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; wifiable?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -720,6 +718,7 @@ export default async function WorkspacesPage({
       titled: params.titled,
       regioned: params.regioned,
       continented: params.continented,
+      wifiable: params.wifiable,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -856,6 +855,10 @@ export default async function WorkspacesPage({
                 Has listed continent
               </label>
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="wifiable" value="1" defaultChecked={params.wifiable === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has listed Wi-Fi speed
+              </label>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
                 <input type="checkbox" name="contactable" value="1" defaultChecked={params.contactable === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed contact
               </label>
@@ -974,6 +977,12 @@ export default async function WorkspacesPage({
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.continented === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Has listed continent
+              </Link>
+              <Link
+                href={`/workspaces?${filterQs({ wifiable: params.wifiable === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.wifiable === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has listed Wi-Fi speed
               </Link>
               <Link
                 href={`/workspaces?${filterQs({ contactable: params.contactable === "1" ? null : "1", page: null }).toString()}`}
