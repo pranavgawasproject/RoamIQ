@@ -7,7 +7,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulListedPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity } from "@/lib/listing-media";
+import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulListedPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingCoordinates, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
@@ -92,7 +92,7 @@ async function getListings(params: {
   regioned?: string;
   continented?: string;
   wifiable?: string;
-  wified?: string;
+  coordinated?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -153,7 +153,8 @@ async function getListings(params: {
     const titledOnly = params.titled === "1";
     const regionedOnly = params.regioned === "1";
     const continentedOnly = params.continented === "1";
-    const wifiableOnly = params.wifiable === "1" || params.wified === "1";
+    const wifiableOnly = params.wifiable === "1";
+    const coordinatedOnly = params.coordinated === "1";
     const unfilteredFirstPage =
       page === 1 &&
       !params.search &&
@@ -182,14 +183,15 @@ async function getListings(params: {
       !titledOnly &&
       !regionedOnly &&
       !continentedOnly &&
-      !wifiableOnly;
+      !wifiableOnly &&
+      !coordinatedOnly;
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
-      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly || titledOnly || regionedOnly || continentedOnly || wifiableOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly || titledOnly || regionedOnly || continentedOnly || wifiableOnly || coordinatedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -324,6 +326,14 @@ async function getListings(params: {
       const wifiable = rows.filter((listing) => Boolean(usefulWifiSpeed(listing.wifi_speed)));
       return { listings: wifiable.slice(0, PAGE_SIZE), count: wifiable.length, page };
     }
+    if (coordinatedOnly) {
+      // Keep cards whose stored lat/lng already pass usefulListingCoordinates
+      // (same pair shown next to the Map chip). Never invent a pin.
+      const coordinated = rows.filter((listing) =>
+        Boolean(usefulListingCoordinates(listing.latitude, listing.longitude))
+      );
+      return { listings: coordinated.slice(0, PAGE_SIZE), count: coordinated.length, page };
+    }
     if (!unfilteredFirstPage) {
       return { listings: rows, count: count ?? 0, page };
     }
@@ -349,6 +359,7 @@ async function getListings(params: {
         if (usefulListingUnits(listing.units)) score += 5;
         if (usefulListingRegion(listing.state, listing.city)) score += 4;
         if (usefulListingContinent(listing.continent)) score += 3;
+        if (usefulListingCoordinates(listing.latitude, listing.longitude)) score += 4;
         if (
           firstVenueListingImage(listing.images) &&
           usefulListingAbout(listing.about || listing.description, listing.company_name) &&
@@ -587,6 +598,11 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
                 className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-[11px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
               >
                 <MapPin className="h-3 w-3" /> Map
+                {usefulListingCoordinates(listing.latitude, listing.longitude) ? (
+                  <span className="font-mono text-[10px] text-muted-foreground">
+                    {usefulListingCoordinates(listing.latitude, listing.longitude)}
+                  </span>
+                ) : null}
               </a>
             )}
         </div>
@@ -675,7 +691,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; wifiable?: string; wified?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; wifiable?: string; coordinated?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
@@ -720,7 +736,7 @@ export default async function WorkspacesPage({
       regioned: params.regioned,
       continented: params.continented,
       wifiable: params.wifiable,
-      wified: params.wified,
+      coordinated: params.coordinated,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -877,6 +893,10 @@ export default async function WorkspacesPage({
                 Has map link
               </label>
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
+                <input type="checkbox" name="coordinated" value="1" defaultChecked={params.coordinated === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
+                Has listed coordinates
+              </label>
+              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
                 <input type="checkbox" name="equipped" value="1" defaultChecked={params.equipped === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed amenities
               </label>
@@ -1009,6 +1029,12 @@ export default async function WorkspacesPage({
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.mapped === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
                 Has map link
+              </Link>
+              <Link
+                href={`/workspaces?${filterQs({ coordinated: params.coordinated === "1" ? null : "1", page: null }).toString()}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium ${params.coordinated === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+              >
+                Has listed coordinates
               </Link>
               <Link
                 href={`/workspaces?${filterQs({ equipped: params.equipped === "1" ? null : "1", page: null }).toString()}`}
