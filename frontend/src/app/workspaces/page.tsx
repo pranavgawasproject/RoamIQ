@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
-import { supabase, type Listing } from "@/lib/supabase";
+import { supabase, type City, type Listing } from "@/lib/supabase";
 import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulListedPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingCoordinates, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity, usefulListingProductName, usefulListingContactPerson } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
@@ -54,6 +54,24 @@ export const metadata: Metadata = {
 
 export const revalidate = 180;
 const PAGE_SIZE = 24;
+
+async function getGuideCities(): Promise<Pick<City, "id" | "name" | "country">[]> {
+  try {
+    const { data, error } = await supabase
+      .from("cities")
+      .select("id, name, country")
+      .order("overall_score", { ascending: false })
+      .limit(24);
+    if (error) {
+      console.error(error);
+      return [];
+    }
+    return (data ?? []).filter((row) => Boolean(row?.name && String(row.name).trim()));
+  } catch (error) {
+    console.error("Error in getGuideCities:", error);
+    return [];
+  }
+}
 const types = [
   { value: "", label: "All types" },
   { value: "coworking", label: "Coworking" },
@@ -96,7 +114,6 @@ async function getListings(params: {
   producted?: string;
   hosted?: string;
   included?: string;
-  serviced?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -162,7 +179,6 @@ async function getListings(params: {
     const productedOnly = params.producted === "1";
     const hostedOnly = params.hosted === "1";
     const includedOnly = params.included === "1";
-    const servicedOnly = params.serviced === "1";
     const unfilteredFirstPage =
       page === 1 &&
       !params.search &&
@@ -195,15 +211,14 @@ async function getListings(params: {
       !coordinatedOnly &&
       !productedOnly &&
       !hostedOnly &&
-      !includedOnly &&
-      !servicedOnly;
+      !includedOnly;
 
     // Page 1 of the unfiltered index is the bounce landing (GA4 ~87.5%).
     // Over-fetch a rated pool and prefer cards that already show a real about
     // snippet or a usable photo — never invent copy, and do not hide the rest
     // of the catalog on later pages.
     const fetchTo =
-      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly || titledOnly || regionedOnly || continentedOnly || wifiableOnly || coordinatedOnly || productedOnly || hostedOnly || includedOnly || servicedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
+      unfilteredFirstPage || photographedOnly || logoedOnly || contactableOnly || hoursOnly || addressedOnly || mappedOnly || equippedOnly || websiteOnly || socialOnly || reviewedOnly || phonedOnly || emailedOnly || sizedOnly || unitedOnly || completeOnly || taggedOnly || titledOnly || regionedOnly || continentedOnly || wifiableOnly || coordinatedOnly || productedOnly || hostedOnly || includedOnly ? Math.max(to, PAGE_SIZE * 4 - 1) : to;
     const { data, error, count } = await query
       .order("ratings", { ascending: false, nullsFirst: false })
       .range(from, fetchTo);
@@ -367,14 +382,6 @@ async function getListings(params: {
         Boolean(usefulListingInclusions(listing.inclusions))
       );
       return { listings: included.slice(0, PAGE_SIZE), count: included.length, page };
-    }
-    if (servicedOnly) {
-      // Keep cards whose stored services already pass usefulListingServices
-      // (same chips under price). Never invent a service list.
-      const serviced = rows.filter((listing) =>
-        usefulListingServices(listing.services).length > 0
-      );
-      return { listings: serviced.slice(0, PAGE_SIZE), count: serviced.length, page };
     }
     if (!unfilteredFirstPage) {
       return { listings: rows, count: count ?? 0, page };
@@ -744,11 +751,14 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; wifiable?: string; coordinated?: string; producted?: string; hosted?: string; included?: string; serviced?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; country?: string; min_wifi?: string; described?: string; priced?: string; photographed?: string; logoed?: string; website?: string; social?: string; reviewed?: string; phoned?: string; emailed?: string; sized?: string; united?: string; complete?: string; tagged?: string; titled?: string; regioned?: string; continented?: string; wifiable?: string; coordinated?: string; producted?: string; hosted?: string; included?: string; contactable?: string; hours?: string; addressed?: string; mapped?: string; equipped?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const waitlistContext = { city: params.city, country: params.country, type: params.type, search: params.search };
-  const { listings, count, page } = await getListings(params);
+  const [{ listings, count, page }, guideCities] = await Promise.all([
+    getListings(params),
+    getGuideCities(),
+  ]);
   const destKey = (city?: string | null, country?: string | null) => `${city || ""}||${country || ""}`;
   const destPairs = await Promise.all(
     Array.from(new Set(listings.map((l) => destKey(l.city, l.country)))).map(async (key) => {
@@ -793,7 +803,6 @@ export default async function WorkspacesPage({
       producted: params.producted,
       hosted: params.hosted,
       included: params.included,
-      serviced: params.serviced,
       ...overrides,
     };
     for (const [key, value] of Object.entries(merged)) {
@@ -849,6 +858,27 @@ export default async function WorkspacesPage({
             <div className="text-sm font-medium uppercase tracking-widest text-accent">Coworking, coliving & more</div>
             <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{count.toLocaleString()} workspaces & stays, live from the database.</h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">Coworking desks, coliving houses, workations, hostels, cafes, and meeting rooms — filter by location, category, and Wi-Fi speed.</p>
+            {guideCities.length > 0 ? (
+              <div className="mt-6 max-w-3xl">
+                <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Browse by destination city</p>
+                <p className="mt-1 text-sm text-muted-foreground">Cities already in the destinations table — open workspaces filtered to that name. No invented listings.</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {guideCities.map((city) => {
+                    const active = (params.city ?? "").toLowerCase() === city.name.toLowerCase();
+                    return (
+                      <Link
+                        key={city.id}
+                        href={`/workspaces?city=${encodeURIComponent(city.name)}`}
+                        className={`rounded-full px-3 py-1 text-xs font-medium ${active ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
+                      >
+                        {city.name}
+                        {city.country ? <span className="opacity-70"> · {city.country}</span> : null}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
             <div className="mt-6 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
               <WaitlistInline source="workspaces-list-above-fold" askCity heading="Leaving /workspaces without opening a card?" description="/workspaces is a high-exit landing page in analytics. Email plus an optional city is enough if filters feel like too much first. We only write when a listed price or Wi-Fi value exists. No extra page, no invented numbers." compact context={waitlistContext} />
             </div>
@@ -964,10 +994,6 @@ export default async function WorkspacesPage({
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
                 <input type="checkbox" name="included" value="1" defaultChecked={params.included === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                 Has listed inclusions
-              </label>
-              <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
-                <input type="checkbox" name="serviced" value="1" defaultChecked={params.serviced === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
-                Has listed services
               </label>
               <label className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm">
                 <input type="checkbox" name="equipped" value="1" defaultChecked={params.equipped === "1"} className="h-4 w-4 accent-[hsl(var(--primary))]" />
@@ -1128,12 +1154,6 @@ export default async function WorkspacesPage({
                 Has listed inclusions
               </Link>
               <Link
-                href={`/workspaces?${filterQs({ serviced: params.serviced === "1" ? null : "1", page: null }).toString()}`}
-                className={`rounded-full px-3 py-1 text-xs font-medium ${params.serviced === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
-              >
-                Has listed services
-              </Link>
-              <Link
                 href={`/workspaces?${filterQs({ equipped: params.equipped === "1" ? null : "1", page: null }).toString()}`}
                 className={`rounded-full px-3 py-1 text-xs font-medium ${params.equipped === "1" ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground/80 hover:bg-secondary"}`}
               >
@@ -1184,6 +1204,19 @@ export default async function WorkspacesPage({
               <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-border px-6 py-16 text-center">
                 <Building2 className="h-8 w-8 text-muted-foreground" />
                 <p className="text-muted-foreground">No listings match those filters. Try a different city or type, or drop the description / listed-price / contact filters.</p>
+                {guideCities.length > 0 ? (
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {guideCities.slice(0, 8).map((city) => (
+                      <Link
+                        key={`empty-${city.id}`}
+                        href={`/workspaces?city=${encodeURIComponent(city.name)}`}
+                        className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground/80 hover:bg-secondary"
+                      >
+                        Try {city.name}
+                      </Link>
+                    ))}
+                  </div>
+                ) : null}
                 <Link href="/workspaces?contactable=1" className="text-sm font-medium text-accent hover:underline">
                   Browse listings that already show a site, phone, or email
                 </Link>
