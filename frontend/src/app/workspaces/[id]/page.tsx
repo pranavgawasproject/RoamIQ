@@ -20,7 +20,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListedPrice, usefulListingUnits, usefulListingCapacity, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulWifiSpeed, usefulListingMapUrl, usefulListingProductName, usefulListingContactPerson } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListedPrice, usefulListingUnits, usefulListingCapacity, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulWifiSpeed, usefulListingMapUrl, usefulListingProductName, usefulListingContactPerson, usefulListingRegisteredEntity } from "@/lib/listing-media";
 import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { workspaceFaqJsonLd } from "@/lib/listing-jsonld";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
@@ -73,7 +73,7 @@ async function getRelatedListings(listing: Listing) {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, cost, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, product_name, contact_name, contact_designation, ratings, total_reviews, website, contact_phone, contact_email, tags, inclusions, services, social_links, google_map, latitude, longitude"
+        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, cost, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, product_name, registered_entity_name, contact_name, contact_designation, ratings, total_reviews, website, contact_phone, contact_email, tags, inclusions, services, social_links, google_map, latitude, longitude"
       )
       .eq("is_public", true)
       .eq("is_active", true)
@@ -344,6 +344,7 @@ export default async function WorkspaceDetailPage({
   }
   const listedPlan = usefulListingProductName(listing.product_name, listing.company_name);
   const listedHost = usefulListingContactPerson(listing.contact_name, listing.contact_designation);
+  const listedLegal = usefulListingRegisteredEntity(listing.registered_entity_name, listing.company_name);
   if (listedPlan) {
     localBusinessJsonLd.additionalProperty = [
       { "@type": "PropertyValue", name: "Listed plan", value: listedPlan },
@@ -583,6 +584,9 @@ export default async function WorkspaceDetailPage({
                 )}
                 {usefulListingProductName(listing.product_name, listing.company_name) && (
                   <p className="mt-1 text-sm text-muted-foreground">Plan: {usefulListingProductName(listing.product_name, listing.company_name)}</p>
+                )}
+                {listedLegal && (
+                  <p className="mt-1 text-sm text-muted-foreground">Legal name: {listedLegal}</p>
                 )}
                 {usefulListingContactPerson(listing.contact_name, listing.contact_designation) && (
                   <p className="mt-1 text-sm text-muted-foreground">Contact: {usefulListingContactPerson(listing.contact_name, listing.contact_designation)}</p>
