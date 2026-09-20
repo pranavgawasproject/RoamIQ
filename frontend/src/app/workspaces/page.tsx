@@ -915,7 +915,7 @@ export default async function WorkspacesPage({
             <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{headlineCount.toLocaleString()} workspaces & stays, live from the database.</h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">Coworking desks, coliving houses, workations, hostels, cafes, and meeting rooms — filter by location, category, and Wi-Fi speed.{catalogCount > 0 && count !== catalogCount ? ` This view lists ${count.toLocaleString()} matching rows from that catalog.` : ""}</p>
             <div className="mt-6 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
-              <WaitlistInline source="workspaces-list-above-fold" askCity heading="Leaving /workspaces without opening a card?" description="Last 30 days: 10 sessions landed on /workspaces and none were engaged (GA4 bounce 100%). Email plus an optional city is enough if the filters feel like too much first. We only write when a listed price or Wi-Fi value exists. No extra page, no invented numbers." compact context={waitlistContext} />
+              <WaitlistInline source="workspaces-list-above-fold" askCity askGap heading="Leaving /workspaces without opening a card?" description="Last 30 days: 10 sessions landed on /workspaces and none were engaged (GA4 bounce 100%). Email plus an optional city is enough if the filters feel like too much first. We only write when a listed price or Wi-Fi value exists. No extra page, no invented numbers." compact context={waitlistContext} />
             </div>
             <form className="mt-8 flex flex-wrap gap-3" action="/workspaces">
               <input type="text" name="search" defaultValue={params.search ?? ""} placeholder="Search by name..." className="min-w-[200px] flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
@@ -1282,7 +1282,7 @@ export default async function WorkspacesPage({
                 </div>
                 {listings.length > 6 && (
                   <div className="my-8 rounded-2xl border border-border bg-card/80 p-5 sm:p-6">
-                    <WaitlistInline source="workspaces-list-mid-grid" askCity heading="Still scanning cards? Leave a city and email" description="If you are about to leave this index, drop an email and optional city. We send matching workspaces when price or Wi-Fi is listed — we do not invent missing numbers." compact context={waitlistContext} />
+                    <WaitlistInline source="workspaces-list-mid-grid" askCity askGap heading="Still scanning cards? Leave a city and email" description="If you are about to leave this index, drop an email and optional city. We send matching workspaces when price or Wi-Fi is listed — we do not invent missing numbers." compact context={waitlistContext} />
                   </div>
                 )}
                 {listings.length > 6 && (
@@ -1293,7 +1293,7 @@ export default async function WorkspacesPage({
                   </div>
                 )}
                 <div className="mt-10 rounded-2xl border border-border bg-card/80 p-5 sm:p-6">
-                  <WaitlistInline source="workspaces-list-after-pagination" askCity heading="Reached the end of this page?" description="Pagination is a common exit. Leave an email and optional city if you want a shortlist of listings that already show a price or Wi-Fi figure. No invented numbers." compact context={waitlistContext} />
+                  <WaitlistInline source="workspaces-list-after-pagination" askCity askGap heading="Reached the end of this page?" description="Pagination is a common exit. Leave an email and optional city if you want a shortlist of listings that already show a price or Wi-Fi figure. No invented numbers." compact context={waitlistContext} />
                 </div>
                 <div className="mt-12 flex items-center justify-between">
                   {page > 1 ? (
@@ -1319,7 +1319,7 @@ export default async function WorkspacesPage({
             <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">Found a workspace you like — or still deciding where to go?</h2>
             <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">Leave your email on this page. We send destination shortlists matched to budget, visa window, and listed Wi-Fi speeds. No fabricated urgency, no spam.</p>
           </div>
-          <WaitlistInline source="workspaces-list" askCity heading="Leave with a shortlist, not a blank tab" description="No extra page. Add a city if the filters above did not stick. We email workspace picks only when listed price or Wi-Fi exists. No fabricated urgency." compact={false} context={waitlistContext} />
+          <WaitlistInline source="workspaces-list" askCity askGap heading="Leave with a shortlist, not a blank tab" description="No extra page. Add a city if the filters above did not stick. We email workspace picks only when listed price or Wi-Fi exists. No fabricated urgency." compact={false} context={waitlistContext} />
         </div>
       </section>
       <WaitlistSticky source="workspaces-list-sticky" context={waitlistContext} />
