@@ -134,6 +134,7 @@ export type Listing = {
   services?: string | null;
   description?: string | null;
   product_name?: string | null;
+  registered_entity_name?: string | null;
   contact_name?: string | null;
   contact_designation?: string | null;
   contact_phone?: string | null;
