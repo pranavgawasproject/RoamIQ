@@ -1,13 +1,13 @@
-## 2026-09-20 — workspaces listed legal-name filter
+## 2026-09-20 — workspaces H1 uses catalog count
 
-Track A: `/workspaces?legal=1` keeps cards whose stored `registered_entity_name` already passes `usefulListingRegisteredEntity` (shown as "Legal name" when it is distinct from the venue name). Empty / pending / same-as-brand strings stay out — no invented registrations. Sitemap not resubmitted (same route, new query only).
+Track A: `/workspaces` H1 now uses an exact `is_public` + `is_active` catalog count instead of the post-filter fetch window (which could render as "1 workspaces"). Matching-row copy stays separate. Waitlist above the fold cites the current GA4 fact for this path (10 sessions / 0 engaged / 100% bounce, last 30 days) — no invented urgency. Sitemap not resubmitted (same route).
 
-About, images, price/wifi fallbacks, LocalBusiness JSON-LD, waitlist CTAs, and server-side admin auth were already live from prior runs.
+About, images, price/wifi fallbacks, LocalBusiness JSON-LD, listed legal-name filter, and server-side admin auth were already live from prior runs.
 
-GSC 2026-08-20 to 2026-09-19: branded `roamiq` 0 clicks / 6 impressions / pos ~9.7; `roamiq price` 0/23 / pos ~8.9. Non-branded clicks are venue names (cafe nenom, cafe nook, coliving athens). Query `4g-travel-tool.vercel.app` FLAG only (11 impressions, position ~3.1); no redirect. Branded CTR capped until the custom domain is live (human-owned).
+GSC 2026-08-20 to 2026-09-18: 20 clicks / 6,379 impressions / CTR 0.31% / avg position 11.7. Branded `roam iq` 1 click / 35 impressions / pos ~8.1. Non-branded clicks are venue names (cafe nenom, cafe nook, coliving athens, ngb living). Query `4g-travel-tool.vercel.app` FLAG only (11 impressions, position ~3.1); no redirect. Branded CTR capped until the custom domain is live (human-owned).
 
-GA4: last logged 30d home 139 sessions / bounce 82.7%; /workspaces 10 / 90% (property id not resolved this pass).
+GA4 last 30d: `/` 71 sessions / bounce 87.3%; `/workspaces` 10 / 100% bounce / 0 engaged.
 
 `4g-travel-tool.vercel.app` duplicate-index status: FLAG / pending.
 
-Supabase listings null-rate: Management API not queried this pass — not treated as a schema change.
+Supabase listings null-rate: connected project is INACTIVE; Management API not queried this pass — not treated as a schema change.
