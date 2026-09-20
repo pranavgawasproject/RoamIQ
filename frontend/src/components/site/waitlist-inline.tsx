@@ -21,6 +21,7 @@ const GAP_OPTIONS = [
   { id: "no_wifi", label: "No Wi-Fi figure" },
   { id: "wrong_city", label: "Wrong city" },
   { id: "too_many_filters", label: "Too many filters" },
+  { id: "venue_search_thin", label: "Named venue looks thin" },
 ] as const;
 
 function encodeWaitlistSource(source: string, context?: Record<string, string | null | undefined>) {
