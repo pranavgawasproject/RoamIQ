@@ -14,7 +14,16 @@ type WaitlistInlineProps = {
   context?: Record<string, string | null | undefined>;
   /** Show a city field so bounce traffic can leave destination intent. */
   askCity?: boolean;
+  /** Optional reason chips for high-bounce landings (stored on source, no schema change). */
+  askGap?: boolean;
 };
+
+const GAP_OPTIONS = [
+  { id: "no_price", label: "No listed price" },
+  { id: "no_wifi", label: "No Wi-Fi figure" },
+  { id: "wrong_city", label: "Wrong city" },
+  { id: "too_many_filters", label: "Too many filters" },
+] as const;
 
 function encodeWaitlistSource(source: string, context?: Record<string, string | null | undefined>) {
   if (!context) return source;
@@ -34,11 +43,13 @@ export function WaitlistInline({
   compact = false,
   context,
   askCity = false,
+  askGap = false,
 }: WaitlistInlineProps) {
   const [email, setEmail] = useState("");
   const [city, setCity] = useState((context?.city ?? "").toString());
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [gap, setGap] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -50,6 +61,7 @@ export function WaitlistInline({
     const mergedContext = {
       ...(context ?? {}),
       city: city.trim() || context?.city,
+      gap: gap || context?.gap,
     };
 
     const { error } = await supabase
@@ -63,6 +75,7 @@ export function WaitlistInline({
           source,
           status: "already_subscribed",
           has_city: Boolean((city.trim() || context?.city || "").toString().trim()),
+          gap: gap || undefined,
         });
       } else {
         setStatus("error");
@@ -76,6 +89,7 @@ export function WaitlistInline({
       source,
       status: "created",
       has_city: Boolean((city.trim() || context?.city || "").toString().trim()),
+      gap: gap || undefined,
     });
     setEmail("");
   }
@@ -103,6 +117,24 @@ export function WaitlistInline({
           onSubmit={handleSubmit}
           className="mt-3 flex w-full flex-col gap-2"
         >
+          {askGap ? (
+            <fieldset className="flex flex-wrap gap-1.5">
+              <legend className="sr-only">What was missing on this page</legend>
+              {GAP_OPTIONS.map((opt) => {
+                const active = gap === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setGap(active ? "" : opt.id)}
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${active ? "bg-primary text-primary-foreground" : "border border-border bg-card text-muted-foreground hover:bg-secondary"}`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </fieldset>
+          ) : null}
           <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center">
             <label htmlFor={`waitlist-email-${source}`} className="sr-only">
               Email address

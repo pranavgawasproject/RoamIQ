@@ -33,6 +33,7 @@ export function WaitlistSticky({ source, context, heading, description, afterPx 
         <WaitlistInline
           source={source}
           askCity
+          askGap
           compact
           context={context}
           heading={heading ?? "Leaving without a shortlist?"}
