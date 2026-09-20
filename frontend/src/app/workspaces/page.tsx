@@ -709,10 +709,36 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
                     cityCost ? `city living cost ~$${cityCost.toLocaleString()}/mo` : null,
                   ].filter(Boolean).join(" · ")}
                 </div>
+                {listedEmail ? (
+                  <div className="mt-1 text-[11px]">
+                    <a href={`mailto:${listedEmail}?subject=${encodeURIComponent(`Rates at ${listing.company_name}`)}`} className="font-medium text-accent underline-offset-2 hover:underline">
+                      Ask this venue for current rates
+                    </a>
+                  </div>
+                ) : listedPhone ? (
+                  <div className="mt-1 text-[11px]">
+                    <a href={`tel:${listedPhone.replace(/[^+\d]/g, "")}`} className="font-medium text-accent underline-offset-2 hover:underline">
+                      Call for current rates
+                    </a>
+                  </div>
+                ) : null}
               </div>
             ) : (
               <div>
                 <div className="text-sm text-muted-foreground">Price not listed yet</div>
+                {listedEmail || listedPhone ? (
+                  <div className="mt-1 text-[11px] text-muted-foreground/80">
+                    {listedEmail ? (
+                      <a href={`mailto:${listedEmail}?subject=${encodeURIComponent(`Rates at ${listing.company_name}`)}`} className="font-medium text-accent underline-offset-2 hover:underline">
+                        Ask this venue for current rates
+                      </a>
+                    ) : (
+                      <a href={`tel:${listedPhone!.replace(/[^+\d]/g, "")}`} className="font-medium text-accent underline-offset-2 hover:underline">
+                        Call for current rates
+                      </a>
+                    )}
+                  </div>
+                ) : null}
               </div>
             )}
             {usefulListingUnits(listing.units) ? (

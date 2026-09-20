@@ -889,6 +889,27 @@ export default async function WorkspaceDetailPage({
                     <div className="font-serif text-lg text-muted-foreground">Price not listed yet</div>
                     <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground/80">
                       This venue has no starting price in the database. We do not invent a number.{" "}
+                      {listedEmail ? (
+                        <>
+                          <a
+                            href={`mailto:${listedEmail}?subject=${encodeURIComponent(`Rates at ${listing.company_name}`)}`}
+                            className="font-medium text-accent underline-offset-2 hover:underline"
+                          >
+                            Ask this venue for current rates
+                          </a>
+                          {" · "}
+                        </>
+                      ) : listedPhone ? (
+                        <>
+                          <a
+                            href={`tel:${listedPhone.replace(/[^+\d]/g, "")}`}
+                            className="font-medium text-accent underline-offset-2 hover:underline"
+                          >
+                            Call for current rates
+                          </a>
+                          {" · "}
+                        </>
+                      ) : null}
                       <Link
                         href={listing.city ? `/workspaces?priced=1&city=${encodeURIComponent(listing.city)}` : "/workspaces?priced=1"}
                         className="font-medium text-accent underline-offset-2 hover:underline"
