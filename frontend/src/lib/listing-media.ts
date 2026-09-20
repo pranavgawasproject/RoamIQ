@@ -688,3 +688,21 @@ export function usefulListingCoordinates(
   }
   return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
 }
+
+/**
+ * Registered / legal entity name when stored and distinct from the venue name.
+ * Never invent a company registration.
+ */
+export function usefulListingRegisteredEntity(
+  raw: string | null | undefined,
+  companyName?: string | null
+): string | null {
+  if (!raw || typeof raw !== "string") return null;
+  const cleaned = raw.replace(/\s+/g, " ").trim();
+  if (cleaned.length < 3 || cleaned.length > 160) return null;
+  if (/^(n\/?a|na|tbd|pending|unknown|none|-|—|–)$/i.test(cleaned)) return null;
+  if (/not listed|coming soon|data pending/i.test(cleaned)) return null;
+  const venue = typeof companyName === "string" ? companyName.replace(/\s+/g, " ").trim() : "";
+  if (venue && cleaned.toLowerCase() === venue.toLowerCase()) return null;
+  return cleaned;
+}
