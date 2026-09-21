@@ -684,6 +684,18 @@ export default async function WorkspaceDetailPage({
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Amenity tags have not been verified for this listing yet. We do not invent desks, kitchens, or access hours to fill the gap.</p>
                 </div>
               )}
+              <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-5">
+                <h2 className="font-serif text-xl font-semibold">What this page can show</h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Fields below stay empty when the database has no verified value. RoamIQ does not invent prices, Wi-Fi speeds, or reviews.
+                </p>
+                <ul className="mt-3 grid gap-1.5 text-sm text-foreground/80 sm:grid-cols-2">
+                  <li>{usefulListedPrice(listing.starting_price, listing.cost) ? "Price is listed from the database." : "Price not listed yet."}</li>
+                  <li>{usefulWifiSpeed(listing.wifi_speed) ? "Wi-Fi speed is listed from the database." : "Wi-Fi speed pending."}</li>
+                  <li>{usefulOpenHours(listing.open_hours)[0] ? "Hours are listed from the database." : "Hours not listed yet."}</li>
+                  <li>{images.length ? `${images.length} venue photo${images.length === 1 ? "" : "s"} on this page.` : "Venue photos pending."}</li>
+                </ul>
+              </div>
               {listedInclusions ? (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">Included</h2>
