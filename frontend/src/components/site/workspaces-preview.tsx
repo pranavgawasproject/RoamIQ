@@ -6,6 +6,7 @@ import { WaitlistInline } from "@/components/site/waitlist-inline";
 import {
   firstVenueListingImage,
   isUsableImageUrl,
+  isVenuePhotoUrl,
   usefulContactEmail,
   usefulContactPhone,
   usefulListingAbout,
@@ -210,11 +211,24 @@ export async function WorkspacesPreview() {
                       <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/80">Photo pending</span>
                     </div>
                   )}
-                  {imageKind === "logo" ? (
-                    <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium text-foreground/80">
-                      Logo
-                    </span>
-                  ) : null}
+                  {(() => {
+                    const photoCount = Array.isArray(listing.images)
+                      ? listing.images.filter((u) => isVenuePhotoUrl(u)).length
+                      : 0;
+                    if (imageKind === "logo") {
+                      return (
+                        <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium text-foreground/80">
+                          Logo
+                        </span>
+                      );
+                    }
+                    if (!imageUrl || photoCount < 2) return null;
+                    return (
+                      <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium text-foreground/80">
+                        {photoCount} photos
+                      </span>
+                    );
+                  })()}
                 </Link>
                 <div className="flex flex-1 flex-col p-4">
                   {listing.company_type && (<div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-foreground/70">{listing.company_type}</div>)}
@@ -253,6 +267,19 @@ export async function WorkspacesPreview() {
                   <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
                     <div>
                       <div className={usefulListedPrice(listing.starting_price, listing.cost) ? "text-sm font-semibold text-forest" : "text-xs text-muted-foreground"}>{usefulListedPrice(listing.starting_price, listing.cost) || "Price not listed yet"}</div>
+                      {!usefulListedPrice(listing.starting_price, listing.cost) && (listedEmail || listedPhone) ? (
+                        <div className="mt-1 text-[11px]">
+                          {listedEmail ? (
+                            <a href={`mailto:${listedEmail}?subject=${encodeURIComponent(`Rates at ${listing.company_name}`)}`} className="font-medium text-accent underline-offset-2 hover:underline">
+                              Ask this venue for current rates
+                            </a>
+                          ) : (
+                            <a href={`tel:${listedPhone!.replace(/[^+\d]/g, "")}`} className="font-medium text-accent underline-offset-2 hover:underline">
+                              Call for current rates
+                            </a>
+                          )}
+                        </div>
+                      ) : null}
                       {listedUnits ? <div className="text-[11px] text-muted-foreground">{listedUnits}</div> : null}
                       {listedCapacity ? <div className="text-[11px] text-muted-foreground">{listedCapacity}</div> : null}
                       <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground"><Wifi className="h-3 w-3" />{listedWifi || "Wi-Fi speed pending"}</div>
