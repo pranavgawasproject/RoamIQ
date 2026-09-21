@@ -1,3 +1,17 @@
+## 2026-09-21 — GSC click-query chips on /workspaces
+
+Track A: `/workspaces` above-fold now links the eight non-branded venue-name queries that earned a GSC click in 2026-08-21 to 2026-09-20 (`cafe nenom`, `cafe nook`, `coliving zürich`, `durty nellys amsterdam`, `innapartment taipei`, `izzy's coffee and brunch`, `ngb living`, `urban place`). Chips hide once `?search=` is active. No invented names. Sitemap not resubmitted (same routes).
+
+GSC 2026-08-21 to 2026-09-20: clicks are those venue names plus branded `roam iq` (1 click / 36 impressions / pos ~8.2). Query `4g-travel-tool.vercel.app` FLAG only (11 impressions, pos ~3.1); no redirect. Branded CTR capped until custom domain is live (human-owned).
+
+GA4: not re-queried this pass (property id not confirmed). Prior snapshot `/workspaces` 10 sessions / 100% bounce.
+
+Supabase listings (davvpymbybvniexmkgcu): total 10331; about blank 0; images sql-null 0; starting_price null 5243; wifi_speed null/empty 2055; contact_phone null 2178; logo_url null 895; contact_email null 4451.
+
+Live site note: nomads-travel-indol.vercel.app was previously flagged DEPLOYMENT_DISABLED — domain/config is human-owned.
+
+---
+
 ## 2026-09-21 — render extra venue photos + longer about on /workspaces cards
 
 Track A: `/workspaces` listing cards now show up to three additional stored `images[]` thumbnails (real URLs only) under the hero, and the about snippet uses 420 characters with line-clamp-4. No invented copy or photos. Photo-pending placeholder unchanged. Sitemap not resubmitted (same routes).
