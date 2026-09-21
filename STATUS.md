@@ -1,3 +1,17 @@
+## 2026-09-21 — render extra venue photos + longer about on /workspaces cards
+
+Track A: `/workspaces` listing cards now show up to three additional stored `images[]` thumbnails (real URLs only) under the hero, and the about snippet uses 420 characters with line-clamp-4. No invented copy or photos. Photo-pending placeholder unchanged. Sitemap not resubmitted (same routes).
+
+GSC 2026-08-21 to 2026-09-20: 9 clicks; top queries non-branded venue names (cafe nenom, cafe nook, coliving zürich, durty nellys amsterdam, innapartment taipei, izzy's coffee, ngb living, urban place) plus branded `roam iq` (1 click / 36 impressions / pos ~8.2). Query `4g-travel-tool.vercel.app` FLAG only (11 impressions, pos ~3.1); no redirect. Branded CTR capped until custom domain is live (human-owned).
+
+GA4: not queried this pass (no GA4 toolkit in this run). Prior snapshot `/workspaces` 10 sessions / 100% bounce.
+
+Supabase listings (davvpymbybvniexmkgcu): total 10331; about blank 0; images empty-array 2063 / sql-null 0; starting_price null 5243; cost null 10331; wifi_speed null/empty 2055; contact_phone null 2178; logo_url null 895; contact_email null 4451.
+
+Live site note: nomads-travel-indol.vercel.app currently returns Vercel “deployment is temporarily paused” — not changed this run (domain/config is human-owned).
+
+---
+
 ## 2026-09-21 — extra listing photos + longer about on /workspaces
 
 Track A: workspaces index cards now render additional venue photos from the `images` field (not just the first URL) and show a longer about snippet (line-clamp-4, 420 chars). No invented copy or photos. A placeholder commit was immediately restored. Sitemap not resubmitted (same routes).
