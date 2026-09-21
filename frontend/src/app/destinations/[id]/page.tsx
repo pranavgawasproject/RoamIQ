@@ -25,7 +25,7 @@ import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulListedPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed, usefulListingTitle, usefulListingUnits, usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl, usefulListingCapacity, usefulListingContinent, usefulListingRegion } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulListedPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed, usefulListingTitle, usefulListingUnits, usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl, usefulListingCapacity, usefulListingContinent, usefulListingRegion, isVenuePhotoUrl } from "@/lib/listing-media";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
@@ -840,7 +840,13 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
   const cardImage = getCardImage(listing);
   const img = cardImage?.url ?? null;
   const imageKind = cardImage?.kind ?? null;
-  const about = usefulListingAbout(listing.about || listing.description, listing.company_name, 180);
+  const about = usefulListingAbout(listing.about || listing.description, listing.company_name, 420);
+  const extraPhotos = Array.isArray(listing.images)
+    ? listing.images.filter((u) => isVenuePhotoUrl(u) && u !== img).slice(0, 3)
+    : [];
+  const photoCount = Array.isArray(listing.images)
+    ? listing.images.filter((u) => isVenuePhotoUrl(u)).length
+    : 0;
   const listedStreet = usefulStreetAddress(listing.address, listing.city, listing.country);
   const listedWebsite = usefulListingWebsite(listing.website);
   const listedPhone = usefulContactPhone(listing.contact_phone);
@@ -877,8 +883,21 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
           <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium text-foreground/80">
             Logo
           </span>
+        ) : img && photoCount >= 2 ? (
+          <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium text-foreground/80">
+            {photoCount} photos
+          </span>
         ) : null}
       </Link>
+      {extraPhotos.length > 0 ? (
+        <div className="grid grid-cols-3 gap-px bg-border">
+          {extraPhotos.map((src) => (
+            <Link key={src} href={`/workspaces/${listing.id}`} className="relative aspect-[16/10] overflow-hidden bg-secondary">
+              <Image src={src} alt="" fill className="object-cover" sizes="120px" unoptimized />
+            </Link>
+          ))}
+        </div>
+      ) : null}
       <div className="flex flex-1 flex-col justify-between p-5">
         <div>
           <div className="flex items-center justify-between">
@@ -968,7 +987,7 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
               )}
             </div>
           {about ? (
-            <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-foreground/70">
+            <p className="mt-2 line-clamp-4 text-xs leading-relaxed text-foreground/70">
               {about}
             </p>
           ) : (
@@ -991,6 +1010,19 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
             </span>
             {listedUnits ? <span className="text-muted-foreground">{listedUnits}</span> : null}
           </div>
+          {!usefulListedPrice(listing.starting_price, listing.cost) && (listedEmail || listedPhone) ? (
+            <p className="text-[11px] text-muted-foreground/80">
+              {listedEmail ? (
+                <a href={`mailto:${listedEmail}?subject=${encodeURIComponent(`Rates at ${listing.company_name}`)}`} className="font-medium text-accent underline-offset-2 hover:underline">
+                  Ask this venue for current rates
+                </a>
+              ) : (
+                <a href={`tel:${listedPhone.replace(/[^+\d]/g, "")}`} className="font-medium text-accent underline-offset-2 hover:underline">
+                  Call for current rates
+                </a>
+              )}
+            </p>
+          ) : null}
           {listedCapacity ? (
             <p className="text-[11px] text-muted-foreground">{listedCapacity}</p>
           ) : null}
