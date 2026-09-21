@@ -1,3 +1,17 @@
+## 2026-09-21 — listing-detail data-completeness strip
+
+Track A: `/workspaces/[id]` now has an explicit “What this page can show” block after amenities. It only reports whether price, Wi-Fi, hours, and photos exist in the live row — no invented copy, prices, or speeds. Sitemap not resubmitted (same routes).
+
+GSC 2026-08-21 to 2026-09-20: clicks remain venue-name queries (cafe nenom, cafe nook, coliving zürich, durty nellys amsterdam, innapartment taipei, izzy's coffee and brunch, ngb living, urban place) plus branded `roam iq` (1 click / 36 impressions / pos ~8.2). Query `4g-travel-tool.vercel.app` FLAG only (12 impressions, pos ~3.25); no redirect. Branded CTR capped until custom domain is live (human-owned).
+
+GA4: not re-queried this pass (property id not confirmed). Prior snapshot `/workspaces` 10 sessions / 100% bounce.
+
+Supabase listings (prior snapshot): total 10331; about blank 0; images sql-null 0; starting_price null 5243; wifi_speed null/empty 2055; contact_phone null 2178; logo_url null 895; contact_email null 4451.
+
+Live site note: nomads-travel-indol.vercel.app currently returns Vercel “deployment is temporarily paused” — not changed this run (domain/config is human-owned).
+
+---
+
 ## 2026-09-21 — extra venue photos + longer about on destination listing cards
 
 Track A: destination guide pages (`/destinations/[id]`) now match `/workspaces` cards for extra stored `images[]` thumbnails (up to 3 real URLs), a photo-count badge when 2+ venue photos exist, a 420-character about snippet (line-clamp-4), and an "Ask this venue for current rates" mailto/tel when `starting_price`/`cost` is empty. No invented copy, prices, or photos. Sitemap not resubmitted (same routes).
