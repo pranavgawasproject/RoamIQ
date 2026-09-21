@@ -7,7 +7,7 @@ import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type Listing } from "@/lib/supabase";
-import { firstVenueListingImage, listingGalleryImages, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulListedPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingCoordinates, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity, usefulListingProductName, usefulListingContactPerson, usefulListingRegisteredEntity } from "@/lib/listing-media";
+import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulListedPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingCoordinates, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity, usefulListingProductName, usefulListingContactPerson, usefulListingRegisteredEntity } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
@@ -461,10 +461,6 @@ function getCardImage(listing: Listing): { url: string; kind: "photo" | "logo" }
   return null;
 }
 
-function cardGalleryPhotos(listing: Listing): string[] {
-  return listingGalleryImages(listing.images, listing.logo_url);
-}
-
 function usefulAboutSnippet(about: string | null | undefined, companyName?: string | null): string | null {
   return usefulListingAbout(about, companyName, 420);
 }
@@ -490,8 +486,6 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
   const cardImage = getCardImage(listing);
   const imageUrl = cardImage?.url ?? null;
   const imageKind = cardImage?.kind ?? null;
-  const galleryPhotos = cardGalleryPhotos(listing);
-  const extraPhotos = galleryPhotos.filter((src) => src !== imageUrl).slice(0, 4);
   const reviewCount = Number(listing.total_reviews ?? 0);
   const ratingValue = Number(listing.ratings ?? 0);
   const showRating = ratingValue > 0 && reviewCount > 0;
@@ -536,26 +530,21 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
           );
         })()}
       </Link>
-      {extraPhotos.length > 0 ? (
-        <div className="flex gap-1 bg-secondary/40 px-1 py-1" aria-label={`${galleryPhotos.length} photos of ${listing.company_name}`}>
-          {extraPhotos.map((src, i) => (
-            <Link
-              key={`${src}-${i}`}
-              href={`/workspaces/${listing.id}`}
-              className="relative h-14 flex-1 overflow-hidden rounded-lg"
-            >
-              <Image
-                src={src}
-                alt={`${listing.company_name} photo ${i + 2}`}
-                fill
-                className="object-cover"
-                sizes="120px"
-                unoptimized
-              />
-            </Link>
-          ))}
-        </div>
-      ) : null}
+      {Array.isArray(listing.images) ? (() => {
+        const extras = listing.images
+          .filter((u) => isVenuePhotoUrl(u) && u !== imageUrl)
+          .slice(0, 3);
+        if (extras.length === 0) return null;
+        return (
+          <div className="grid grid-cols-3 gap-px bg-border">
+            {extras.map((src) => (
+              <Link key={src} href={`/workspaces/${listing.id}`} className="relative aspect-[16/10] overflow-hidden bg-secondary">
+                <Image src={src} alt="" fill className="object-cover" sizes="120px" unoptimized />
+              </Link>
+            ))}
+          </div>
+        );
+      })() : null}
       <div className="flex flex-1 flex-col p-5">
         {typeHref && (
           <div className="mb-2">
