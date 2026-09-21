@@ -747,8 +747,6 @@ export default async function WorkspaceDetailPage({
                       const logoThumb = isUsableImageUrl(item.logo_url) ? item.logo_url!.trim() : null;
                       const thumb = venueThumb || logoThumb;
                       const thumbKind = venueThumb ? "photo" : logoThumb ? "logo" : null;
-                      const snippet = usefulListingAbout(item.about || item.description, item.company_name, 140);
-                      const aboutOk = Boolean(snippet);
                       const relatedWebsite = usefulListingWebsite(item.website);
                       const relatedPhone = usefulContactPhone(item.contact_phone);
                       const relatedEmail = usefulContactEmail(item.contact_email);
