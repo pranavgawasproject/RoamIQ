@@ -1,3 +1,15 @@
+## 2026-09-21 — extra listing photos + longer about on /workspaces
+
+Track A: workspaces index cards now render additional venue photos from the `images` field (not just the first URL) and show a longer about snippet (line-clamp-4, 420 chars). No invented copy or photos. A placeholder commit was immediately restored. Sitemap not resubmitted (same routes).
+
+GSC 2026-08-21 to 2026-09-20: clicks remain non-branded venue names (cafe nenom, cafe nook, coliving zürich, ngb living, izzy's coffee, innapartment taipei, roam iq). Query `4g-travel-tool.vercel.app` FLAG only — no redirect this run. Branded CTR capped until custom domain is live (human-owned).
+
+GA4: prior snapshot `/workspaces` 10 sessions / 100% bounce / 0 engaged. Not re-queried this pass.
+
+Supabase listings null-rate: not re-queried this pass (project previously INACTIVE).
+
+---
+
 ## 2026-09-21 — homepage preview photo count + ask-rates CTA
 
 Track A: homepage `workspaces-preview` now matches the /workspaces card for two conversion gaps — a photo-count badge when a listing has 2+ venue images, and an "Ask this venue for current rates" mailto/tel when `starting_price`/`cost` is empty. No invented prices. Sitemap not resubmitted (same routes).
