@@ -13,6 +13,18 @@ import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
+/** Venue-name queries that earned at least one GSC click in the last 30d (2026-08-21 to 2026-09-20). No invented names. */
+const GSC_CLICK_QUERIES = [
+  "cafe nenom",
+  "cafe nook",
+  "coliving zürich",
+  "durty nellys amsterdam",
+  "innapartment taipei",
+  "izzy's coffee and brunch",
+  "ngb living",
+  "urban place",
+] as const;
+
 export const metadata: Metadata = {
   title: "Coworking, Coliving & Workation Spaces for Nomads | RoamIQ",
   description:
@@ -932,6 +944,20 @@ export default async function WorkspacesPage({
             <div className="mt-6 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
               <WaitlistInline source="workspaces-list-above-fold" askCity askGap heading={params.search ? `Looking for ${params.search}? Leave an email if this filter is empty or thin.` : "Leaving /workspaces without opening a card?"} description={params.search ? `This page filtered to “${params.search}” because that name showed up in Search Console. Email is enough if the matching cards are missing a listed price, photo, or Wi-Fi figure — we do not invent those values.` : "Most /workspaces sessions in the last 30 days ended on this index (GA4). Email plus an optional city is enough if the filters feel like too much first. We only write when a listed price or Wi-Fi value exists. No extra page, no invented numbers."} compact context={waitlistContext} />
             </div>
+            {!params.search && (
+              <div className="mt-6 flex flex-wrap items-center gap-2">
+                <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Names already earning Search clicks</span>
+                {GSC_CLICK_QUERIES.map((q) => (
+                  <Link
+                    key={q}
+                    href={`/workspaces?search=${encodeURIComponent(q)}`}
+                    className="rounded-full border border-border bg-card px-3 py-1 text-xs text-foreground hover:border-accent hover:text-accent"
+                  >
+                    {q}
+                  </Link>
+                ))}
+              </div>
+            )}
             <form className="mt-8 flex flex-wrap gap-3" action="/workspaces">
               <input type="text" name="search" defaultValue={params.search ?? ""} placeholder="Search by name..." className="min-w-[200px] flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
               <input type="text" name="city" defaultValue={params.city ?? ""} placeholder="City..." className="w-40 rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
