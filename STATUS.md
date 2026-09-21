@@ -1,3 +1,15 @@
+## 2026-09-21 — related-listing extra photos + longer about
+
+Track A: `/workspaces/[id]` related-city rows now show extra stored venue photos (real URLs only), a photo-count label when 2+ images exist, and a 220-character about snippet via RelatedListingExtras. No invented copy or photos. Sitemap not resubmitted (same routes).
+
+GSC 2026-08-21 to 2026-09-20: 9 clicks on venue-name queries plus branded `roam iq` (1 click / 36 impressions / pos ~8.2). Query `4g-travel-tool.vercel.app` FLAG only (12 impressions, pos ~3.25); no redirect. Branded CTR capped until custom domain is live (human-owned).
+
+GA4 last 28 days (property 541610896): 128 sessions, bounce 79.7%, 26 engaged. Top landings: `/` 63 sess / 90% bounce; `/workspaces` 10 / 100% bounce / 0 engaged.
+
+Supabase listings: not re-queried this pass (prior snapshot total 10331; starting_price null 5243; wifi_speed empty 2055).
+
+---
+
 ## 2026-09-21 — listing-detail data-completeness strip
 
 Track A: `/workspaces/[id]` now has an explicit “What this page can show” block after amenities. It only reports whether price, Wi-Fi, hours, and photos exist in the live row — no invented copy, prices, or speeds. Sitemap not resubmitted (same routes).

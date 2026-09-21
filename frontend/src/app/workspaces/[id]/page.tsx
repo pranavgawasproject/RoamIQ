@@ -25,6 +25,7 @@ import { getDestinationForListingCity } from "@/lib/listing-destination";
 import { workspaceFaqJsonLd } from "@/lib/listing-jsonld";
 import { WorkspaceGallery } from "@/components/site/workspace-gallery";
 import { TrackedAnchor } from "@/components/site/tracked-anchor";
+import { RelatedListingExtras } from "@/components/site/related-listing-extras";
 
 export const revalidate = 180;
 
@@ -785,11 +786,7 @@ export default async function WorkspaceDetailPage({
                               {usefulListingContactPerson(item.contact_name, item.contact_designation) ? (
                                 <p className="mt-0.5 truncate text-xs text-muted-foreground">Contact: {usefulListingContactPerson(item.contact_name, item.contact_designation)}</p>
                               ) : null}
-                              {aboutOk ? (
-                                <p className="mt-0.5 line-clamp-2 text-xs text-foreground/70">{snippet}</p>
-                              ) : (
-                                <p className="mt-0.5 text-xs text-muted-foreground">Description pending</p>
-                              )}
+                              <RelatedListingExtras item={item} />
                               <p className="text-xs text-muted-foreground">
                                 {item.company_type || "workspace"}
                                 {Number(item.ratings) > 0 && Number(item.total_reviews) > 0
