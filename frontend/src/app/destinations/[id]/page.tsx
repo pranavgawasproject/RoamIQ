@@ -190,7 +190,11 @@ export default async function CityDetailPage({
   const typedCost = cost as CostOfLiving | null;
   const typedVisa = visa as VisaInfo | null;
   const typedListings = rankDestinationListings((listings ?? []) as Listing[]);
-
+  const listingsWithPrice = typedListings.filter((row) => Boolean(usefulListedPrice(row.starting_price, row.cost))).length;
+  const listingsWithWifi = typedListings.filter((row) => Boolean(usefulWifiSpeed(row.wifi_speed))).length;
+  const listingsWithAbout = typedListings.filter((row) => Boolean(usefulListingAbout(row.about || row.description, row.company_name, 80))).length;
+  const listingsWithPhoto = typedListings.filter((row) => Boolean(firstVenueListingImage(row.images))).length;
+  const listingsMissingRateOrWifi = typedListings.length - typedListings.filter((row) => usefulListedPrice(row.starting_price, row.cost) && usefulWifiSpeed(row.wifi_speed)).length;
 
   const photo = typedCity.image || cityPhotos[typedCity.id];
   const [gradient] = cityGradient(typedCity.id);
@@ -644,6 +648,11 @@ export default async function CityDetailPage({
                   <p className="mt-1 text-sm text-muted-foreground">
                     Public listings already in the database for {typedCity.name}. Missing prices or Wi-Fi stay labeled pending.
                   </p>
+                  {typedListings.length > 0 ? (
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Of {typedListings.length} shown here: {listingsWithAbout} have a description, {listingsWithPhoto} have a venue photo, {listingsWithPrice} list a price, {listingsWithWifi} list Wi-Fi. Counts are from stored rows only.
+                    </p>
+                  ) : null}
                 </div>
                 <Link
                   href={`/workspaces?city=${encodeURIComponent(typedCity.name)}`}
@@ -652,6 +661,19 @@ export default async function CityDetailPage({
                   View all workspaces in {typedCity.name} →
                 </Link>
               </div>
+
+              {listingsMissingRateOrWifi > 0 ? (
+                <div className="mt-4 rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
+                  <WaitlistInline
+                    source="destination_detail_missing_rate_wifi"
+                    askGap
+                    heading={`${listingsMissingRateOrWifi} of ${typedListings.length} ${typedCity.name} listings are missing a price or Wi-Fi figure`}
+                    description="Those fields stay blank until the database has a real value. Leave an email if you want a note when a listed rate or speed appears for this city — we do not invent numbers."
+                    compact
+                    context={{ city: typedCity.name, country: typedCity.country, gap_count: String(listingsMissingRateOrWifi) }}
+                  />
+                </div>
+              ) : null}
 
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {typedListings.slice(0, 3).map((listing) => (
