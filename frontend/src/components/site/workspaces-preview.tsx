@@ -30,7 +30,7 @@ function usefulAboutSnippet(
   description?: string | null,
   companyName?: string | null
 ): string | null {
-  return usefulListingAbout(about || description, companyName, 160);
+  return usefulListingAbout(about || description, companyName, 420);
 }
 
 export async function WorkspacesPreview() {
@@ -230,6 +230,21 @@ export async function WorkspacesPreview() {
                     );
                   })()}
                 </Link>
+                {Array.isArray(listing.images) ? (() => {
+                  const extras = listing.images
+                    .filter((u) => isVenuePhotoUrl(u) && u !== imageUrl)
+                    .slice(0, 3);
+                  if (extras.length === 0) return null;
+                  return (
+                    <div className="grid grid-cols-3 gap-px bg-border">
+                      {extras.map((src) => (
+                        <Link key={src} href={`/workspaces/${listing.id}`} className="relative aspect-[16/10] overflow-hidden bg-secondary">
+                          <Image src={src} alt="" fill className="object-cover" sizes="120px" unoptimized />
+                        </Link>
+                      ))}
+                    </div>
+                  );
+                })() : null}
                 <div className="flex flex-1 flex-col p-4">
                   {listing.company_type && (<div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-foreground/70">{listing.company_type}</div>)}
                   <div className="flex items-center gap-2.5">
@@ -243,7 +258,7 @@ export async function WorkspacesPreview() {
                   {usefulListingTitle(listing.company_title, listing.company_name) ? (
                     <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">{usefulListingTitle(listing.company_title, listing.company_name)}</p>
                   ) : null}
-                  {about ? (<p className="mt-1 text-sm text-foreground/70 line-clamp-2">{about}</p>) : (<p className="mt-1 text-sm text-muted-foreground">Description pending</p>)}
+                  {about ? (<p className="mt-1 text-sm text-foreground/70 line-clamp-4">{about}</p>) : (<p className="mt-1 text-sm text-muted-foreground">Description pending</p>)}
                   {visibleTags.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {visibleTags.slice(0, 4).map((tag) => (
