@@ -22,6 +22,7 @@ import {
   usefulListingTitle,
   usefulListingProductName,
   usefulListingContactPerson,
+  usefulListingRegisteredEntity,
 } from "@/lib/listing-media";
 
 type ListingLike = {
@@ -59,6 +60,7 @@ type ListingLike = {
   product_name?: string | null;
   contact_name?: string | null;
   contact_designation?: string | null;
+  registered_entity_name?: string | null;
 };
 
 export type ListingJsonLdDestination = {
@@ -98,6 +100,8 @@ export function workspaceListItemJsonLd(
   };
   const listedTitle = usefulListingTitle(listing.company_title, listing.company_name);
   if (listedTitle) place.alternateName = listedTitle;
+  const listedLegal = usefulListingRegisteredEntity(listing.registered_entity_name, listing.company_name);
+  if (listedLegal) place.legalName = listedLegal;
   if (aboutSnippet) place.description = aboutSnippet;
   if (imageUrl) place.image = imageUrl;
   if (logoUrl) place.logo = logoUrl;
@@ -243,6 +247,14 @@ export function workspaceFaqJsonLd(
       "@type": "Question",
       name: `What is the listed title for ${name}?`,
       acceptedAnswer: { "@type": "Answer", text: title },
+    });
+  }
+  const legal = usefulListingRegisteredEntity(listing.registered_entity_name, listing.company_name);
+  if (legal) {
+    mainEntity.push({
+      "@type": "Question",
+      name: `What is the listed legal name for ${name}?`,
+      acceptedAnswer: { "@type": "Answer", text: legal },
     });
   }
   const plan = usefulListingProductName(listing.product_name, listing.company_name);
