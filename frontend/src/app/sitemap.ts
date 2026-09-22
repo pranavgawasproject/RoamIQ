@@ -4,6 +4,7 @@ import {
   firstUsableListingImage,
   usefulListingAbout,
 } from "@/lib/listing-media";
+import { INTENT_LISTING_IDS } from "@/components/site/intent-listing-links";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -257,6 +258,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: "weekly" as const,
         priority: 0.6,
       }));
+    }
+
+    // Always include listing URLs Google already sent a click to, even if they
+    // fall outside the ratings-capped verified slice. IDs come from GSC page
+    // dimension + GA4 landings already wired in IntentListingLinks.
+    const existing = new Set(workspaceEntries.map((entry) => entry.url));
+    for (const id of INTENT_LISTING_IDS) {
+      const url = `${BASE_URL}/workspaces/${id}`;
+      if (existing.has(url)) continue;
+      workspaceEntries.push({
+        url,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.65,
+      });
+      existing.add(url);
     }
   } catch (error) {
     console.error("Sitemap: failed to fetch workspace listings", error);
