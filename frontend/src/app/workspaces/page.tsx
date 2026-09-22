@@ -10,6 +10,7 @@ import { supabase, type Listing } from "@/lib/supabase";
 import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingWebsite, usefulListedPrice, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulListingTags, usefulListingTitle, usefulListingInclusions, usefulListingServices, usefulOpenHours, usefulWifiSpeed, usefulListingMapUrl, usefulListingCoordinates, usefulListingSocialLinks, usefulListingUnits, usefulListingCapacity, usefulListingProductName, usefulListingContactPerson, usefulListingRegisteredEntity } from "@/lib/listing-media";
 import { getDestinationForListingCity, type ListingDestinationMatch } from "@/lib/listing-destination";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
+import { IntentListingLinks } from "@/components/site/intent-listing-links";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -944,6 +945,7 @@ export default async function WorkspacesPage({
             <div className="mt-6 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
               <WaitlistInline source="workspaces-list-above-fold" askCity askGap heading={params.search ? `Looking for ${params.search}? Leave an email if this filter is empty or thin.` : "Leaving /workspaces without opening a card?"} description={params.search ? `This page filtered to “${params.search}” because that name showed up in Search Console. Email is enough if the matching cards are missing a listed price, photo, or Wi-Fi figure — we do not invent those values.` : "Most /workspaces sessions in the last 30 days ended on this index (GA4). Email plus an optional city is enough if the filters feel like too much first. We only write when a listed price or Wi-Fi value exists. No extra page, no invented numbers."} compact context={waitlistContext} />
             </div>
+            <IntentListingLinks className="mt-5" />
             {!params.search && (
               <div className="mt-6 flex flex-wrap items-center gap-2">
                 <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Names already earning Search clicks</span>
