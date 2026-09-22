@@ -14,14 +14,13 @@ import { IntentListingLinks } from "@/components/site/intent-listing-links";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
-/** Venue-name queries that earned at least one GSC click in the last 30d (2026-08-21 to 2026-09-20). No invented names. */
+/** Venue-name queries that earned at least one GSC click in the last 30d (2026-08-22 to 2026-09-21). No invented names. */
 const GSC_CLICK_QUERIES = [
   "cafe nenom",
   "cafe nook",
   "coliving zürich",
   "durty nellys amsterdam",
   "innapartment taipei",
-  "izzy's coffee and brunch",
   "ngb living",
   "urban place",
 ] as const;
