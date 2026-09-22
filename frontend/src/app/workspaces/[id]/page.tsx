@@ -1,1 +1,1120 @@
-PLACEHOLDER
+import Link from "next/link";
+import Image from "next/image";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import {
+  Star,
+  MapPin,
+  Wifi,
+  ArrowLeft,
+  Building2,
+  Globe,
+  Clock,
+  Users,
+  ExternalLink,
+  Phone,
+  Mail,
+} from "lucide-react";
+import { SiteNav } from "@/components/site/nav";
+import { Footer } from "@/components/site/footer";
+import { WaitlistInline } from "@/components/site/waitlist-inline";
+import { WaitlistSticky } from "@/components/site/waitlist-sticky";
+import { supabase, type Listing } from "@/lib/supabase";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, listingGalleryImages, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingInclusions, usefulListingServices, usefulListingTags, usefulListingTitle, usefulListingSocialLinks, usefulListingWebsite, usefulOpenHours, usefulStartingPrice, usefulListedPrice, usefulListingUnits, usefulListingCapacity, usefulStreetAddress, usefulListingRegion, usefulListingContinent, usefulWifiSpeed, usefulListingMapUrl, usefulListingProductName, usefulListingContactPerson, usefulListingRegisteredEntity } from "@/lib/listing-media";
+import { getDestinationForListingCity } from "@/lib/listing-destination";
+import { workspaceFaqJsonLd } from "@/lib/listing-jsonld";
+import { WorkspaceGallery } from "@/components/site/workspace-gallery";
+import { TrackedAnchor } from "@/components/site/tracked-anchor";
+import { RelatedListingExtras } from "@/components/site/related-listing-extras";
+
+export const revalidate = 180;
+
+const BASE_URL = "https://nomads-travel-indol.vercel.app";
+
+async function getListing(id: string) {
+  try {
+    const { data, error } = await supabase
+      .from("listings")
+      .select("*")
+      .eq("id", id)
+      .eq("is_public", true)
+      .eq("is_active", true)
+      .single();
+    if (error || !data) return null;
+    return data as Listing;
+  } catch {
+    return null;
+  }
+}
+
+function relatedListingScore(item: Listing): number {
+  let score = 0;
+  if (firstUsableListingImage(item.images, item.logo_url)) score += 40;
+  if (usefulListingAbout(item.about || item.description, item.company_name, 140)) score += 30;
+  if (usefulListedPrice(item.starting_price, item.cost)) score += 10;
+  if (usefulWifiSpeed(item.wifi_speed)) score += 8;
+  if (usefulListingWebsite(item.website)) score += 6;
+  if (usefulContactPhone(item.contact_phone) || usefulContactEmail(item.contact_email)) score += 6;
+  if (usefulListingInclusions(item.inclusions)) score += 3;
+  if (usefulListingServices(item.services).length > 0) score += 3;
+  if (Number(item.ratings) > 0 && Number(item.total_reviews) > 0) {
+    score += Math.min(10, Number(item.ratings));
+  }
+  if (usefulListingTags(item.tags).length > 0) score += 4;
+  if (usefulListingSocialLinks(item.social_links).length > 0) score += 2;
+  if (usefulListingMapUrl(item.google_map, item.latitude, item.longitude)) score += 2;
+  if (usefulListingProductName(item.product_name, item.company_name)) score += 3;
+  if (usefulListingContactPerson(item.contact_name, item.contact_designation)) score += 2;
+  return score;
+}
+
+async function getRelatedListings(listing: Listing) {
+  if (!listing.city) return [] as Listing[];
+  try {
+    const { data, error } = await supabase
+      .from("listings")
+      .select(
+        "id, company_name, company_title, company_type, city, state, country, continent, address, starting_price, cost, units, capacity, wifi_speed, open_hours, images, logo_url, about, description, product_name, registered_entity_name, contact_name, contact_designation, ratings, total_reviews, website, contact_phone, contact_email, tags, inclusions, services, social_links, google_map, latitude, longitude"
+      )
+      .eq("is_public", true)
+      .eq("is_active", true)
+      .eq("city", listing.city)
+      .neq("id", listing.id)
+      .order("ratings", { ascending: false, nullsFirst: false })
+      .limit(20);
+    if (error || !data) return [];
+    const pool = data as Listing[];
+    return [...pool].sort((a, b) => relatedListingScore(b) - relatedListingScore(a)).slice(0, 4);
+  } catch {
+    return [];
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  try {
+    const listing = await getListing(id);
+    if (!listing) {
+      return {
+        title: "Workspace not found | RoamIQ",
+        description: "This workspace listing could not be found on RoamIQ.",
+      };
+    }
+    const cityCountry = [listing.city, listing.country].filter(Boolean).join(", ");
+    const typeRaw = String(listing.company_type || "").trim().toLowerCase();
+    const typeLabelMap: Record<string, string> = {
+      cafe: "cafe",
+      coffee: "cafe",
+      "coffee shop": "cafe",
+      coliving: "coliving",
+      coworking: "coworking",
+      hostel: "hostel",
+      meetingroom: "meeting room",
+      "meeting room": "meeting room",
+      workation: "workation",
+      workspace: "workspace",
+    };
+    const typeLabel = typeRaw
+      ? typeLabelMap[typeRaw] || typeRaw.replace(/[_-]+/g, " ")
+      : "";
+    const name = listing.company_name;
+    let titleCore = name;
+    if (typeLabel && cityCountry) {
+      titleCore = `${name} \u2014 ${typeLabel} in ${cityCountry}`;
+    } else if (cityCountry) {
+      titleCore = `${name} \u2014 ${cityCountry}`;
+    } else if (typeLabel) {
+      titleCore = `${name} \u2014 ${typeLabel}`;
+    }
+    const extras: string[] = [];
+    const listedPrice = usefulListedPrice(listing.starting_price, listing.cost);
+    if (listedPrice) extras.push(listedPrice);
+    const listedWifiMeta = usefulWifiSpeed(listing.wifi_speed);
+    if (listedWifiMeta) extras.push(`Wi-Fi ${listedWifiMeta}`);
+    // Prefer clickable SERP titles; keep brand light (not the only differentiator).
+    const title = extras.length
+      ? `${titleCore} \u00b7 ${extras.slice(0, 2).join(" \u00b7 ")}`
+      : titleCore;
+    const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 140) || "";
+    const audience =
+      typeLabel === "cafe"
+        ? "laptop-friendly cafe for digital nomads"
+        : typeLabel === "coliving"
+        ? "coliving for remote workers and digital nomads"
+        : typeLabel === "meeting room"
+        ? "meeting room and flexible workspace"
+        : typeLabel === "hostel"
+        ? "hostel stay with workspace options for digital nomads"
+        : "coworking and workspace for digital nomads";
+    const description =
+      aboutSnippet ||
+      `${name}${cityCountry ? ` in ${cityCountry}` : ""} \u2014 ${audience} on RoamIQ.${extras.length ? ` ${extras.join(" \u00b7 ")}.` : ""}`;
+    const url = `${BASE_URL}/workspaces/${listing.id}`;
+    const image = firstUsableListingImage(listing.images, listing.logo_url) || undefined;
+    return {
+      title,
+      description,
+      keywords: [
+        listing.company_name,
+        typeLabel || "workspace",
+        `${listing.company_name} ${listing.city || ""}`.trim(),
+        `${listing.city || ""} ${typeLabel || "coworking"}`.trim(),
+        "digital nomad workspace",
+        "roamiq",
+      ].filter(Boolean),
+      alternates: { canonical: url },
+      openGraph: {
+        title,
+        description,
+        url,
+        siteName: "RoamIQ",
+        type: "article",
+        ...(image ? { images: [{ url: image, alt: listing.company_name }] } : {}),
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        ...(image ? { images: [image] } : {}),
+      },
+      other: {
+        founder: "Pranav Gawas",
+        ceo: "Pranav Gawas",
+        cto: "RoamIQ Tech Leadership",
+        "executive-team": "Pranav Gawas (Founder & CEO), RoamIQ Tech Leadership (CTO & Lead AI Architect)",
+        "organization:ceo": "Pranav Gawas",
+        "organization:cto": "RoamIQ Tech Leadership",
+      },
+    };
+  } catch {
+    return {
+      title: "Workspace | RoamIQ",
+      description: "Explore coworking spaces and workspaces for digital nomads on RoamIQ.",
+    };
+  }
+}
+
+export default async function WorkspaceDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const listing = await getListing(id);
+  if (!listing) notFound();
+  const related = await getRelatedListings(listing);
+  const destination = await getDestinationForListingCity(listing.city, listing.country);
+  const images: string[] = listingGalleryImages(listing.images, listing.logo_url);
+  const tags: string[] = usefulListingTags(listing.tags);
+  const listedRegion = usefulListingRegion(listing.state, listing.city);
+  const listedContinent = usefulListingContinent(listing.continent);
+  const locationParts = [listing.city, listedRegion, listing.country, listedContinent].filter(Boolean);
+  const pageUrl = `${BASE_URL}/workspaces/${listing.id}`;
+  const primaryImage = images[0] || undefined;
+  const listedLogo = isUsableImageUrl(listing.logo_url) ? listing.logo_url.trim() : null;
+  const typeFilterHref = listing.company_type
+    ? `${BASE_URL}/workspaces?type=${encodeURIComponent(listing.company_type)}`
+    : null;
+  const destinationHref = destination?.id ? `${BASE_URL}/destinations/${destination.id}` : null;
+  const breadcrumbItems: { name: string; item: string }[] = [
+    { name: "Home", item: BASE_URL },
+    { name: "Workspaces", item: `${BASE_URL}/workspaces` },
+  ];
+  if (listing.company_type && typeFilterHref) {
+    breadcrumbItems.push({ name: listing.company_type, item: typeFilterHref });
+  }
+  if (destination && destinationHref) {
+    breadcrumbItems.push({ name: destination.name, item: destinationHref });
+  } else if (listing.city) {
+    breadcrumbItems.push({
+      name: listing.city,
+      item: `${BASE_URL}/workspaces?city=${encodeURIComponent(listing.city)}`,
+    });
+  }
+  breadcrumbItems.push({ name: listing.company_name, item: pageUrl });
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbItems.map((crumb, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: crumb.name,
+      item: crumb.item,
+    })),
+  };
+  const typeKey = String(listing.company_type || "").toLowerCase();
+  const schemaType =
+    typeKey === "cafe" || typeKey === "coffee" || typeKey === "coffee shop"
+      ? "CafeOrCoffeeShop"
+      : typeKey === "coliving" || typeKey === "hostel" || typeKey === "workation"
+      ? "LodgingBusiness"
+      : "LocalBusiness";
+  const localBusinessJsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": schemaType,
+    name: listing.company_name,
+    url: pageUrl,
+    description: usefulListingAbout(listing.about || listing.description, listing.company_name, 500, 6) || undefined,
+    publisher: {
+      "@type": "Organization",
+      name: "RoamIQ",
+      url: BASE_URL,
+      founder: { "@type": "Person", name: "Pranav Gawas", jobTitle: "Founder & CEO" },
+    },
+  };
+  const listedStreet = usefulStreetAddress(listing.address, listing.city, listing.country);
+  const listedPhone = usefulContactPhone(listing.contact_phone);
+  const listedEmail = usefulContactEmail(listing.contact_email);
+  const listedWebsite = usefulListingWebsite(listing.website);
+  const listedSocial = usefulListingSocialLinks(listing.social_links);
+  const listedAbout = usefulListingAbout(listing.about || listing.description, listing.company_name, 0, 8);
+  if (listing.company_type) localBusinessJsonLd.additionalType = String(listing.company_type);
+  if (images.length > 1) localBusinessJsonLd.image = images;
+  else if (primaryImage) localBusinessJsonLd.image = primaryImage;
+  if (listedLogo) localBusinessJsonLd.logo = listedLogo;
+  const sameAs = [...(listedWebsite ? [listedWebsite] : []), ...listedSocial.map((s) => s.url)];
+  if (sameAs.length) localBusinessJsonLd.sameAs = sameAs;
+  if (listedStreet || locationParts.length) {
+    localBusinessJsonLd.address = {
+      "@type": "PostalAddress",
+      ...(listedStreet ? { streetAddress: listedStreet } : {}),
+      ...(listing.city ? { addressLocality: listing.city } : {}),
+      ...(listedRegion ? { addressRegion: listedRegion } : {}),
+      ...(listing.country ? { addressCountry: listing.country } : {}),
+    };
+  }
+  if (listing.latitude != null && listing.longitude != null) {
+    localBusinessJsonLd.geo = { "@type": "GeoCoordinates", latitude: listing.latitude, longitude: listing.longitude };
+  }
+  if (listing.google_map) {
+    localBusinessJsonLd.hasMap = listing.google_map;
+  } else if (listing.latitude != null && listing.longitude != null) {
+    localBusinessJsonLd.hasMap = `https://maps.google.com/?q=${listing.latitude},${listing.longitude}`;
+  }
+  const listedPriceRange = usefulListedPrice(listing.starting_price, listing.cost);
+  if (listedPriceRange) {
+    localBusinessJsonLd.priceRange = listedPriceRange;
+    localBusinessJsonLd.makesOffer = {
+      "@type": "Offer",
+      url: pageUrl,
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        description: listedPriceRange,
+      },
+      availability: "https://schema.org/InStock",
+    };
+  }
+  if (listing.ratings > 0 && listing.total_reviews > 0) {
+    localBusinessJsonLd.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: Number(listing.ratings),
+      reviewCount: Number(listing.total_reviews),
+    };
+  }
+  const listedHours = usefulOpenHours(listing.open_hours);
+  if (listedHours.length === 1) localBusinessJsonLd.openingHours = listedHours[0];
+  else if (listedHours.length > 1) localBusinessJsonLd.openingHours = listedHours;
+  if (listedPhone) localBusinessJsonLd.telephone = listedPhone;
+  if (listedEmail) localBusinessJsonLd.email = listedEmail;
+  if (listedPhone || listedEmail) {
+    localBusinessJsonLd.contactPoint = {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      ...(listedPhone ? { telephone: listedPhone } : {}),
+      ...(listedEmail ? { email: listedEmail } : {}),
+      availableLanguage: "en",
+    };
+  }
+  const listedWifi = usefulWifiSpeed(listing.wifi_speed);
+  const listedInclusions = usefulListingInclusions(listing.inclusions);
+  const listedServices = usefulListingServices(listing.services);
+  if (tags.length > 0 || listedWifi || listedInclusions || listedServices.length > 0) {
+    localBusinessJsonLd.amenityFeature = [
+      ...(listedWifi ? [{ "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi }] : []),
+      ...tags.map((tag) => ({ "@type": "LocationFeatureSpecification", name: tag, value: true })),
+      ...(listedInclusions ? [{ "@type": "LocationFeatureSpecification", name: "Included", value: listedInclusions }] : []),
+      ...listedServices.map((item) => ({ "@type": "LocationFeatureSpecification", name: item, value: true })),
+    ];
+  }
+  if (tags.length > 0) {
+    localBusinessJsonLd.keywords = tags.join(", ");
+  }
+  const listedPlan = usefulListingProductName(listing.product_name, listing.company_name);
+  const listedHost = usefulListingContactPerson(listing.contact_name, listing.contact_designation);
+  const listedLegal = usefulListingRegisteredEntity(listing.registered_entity_name, listing.company_name);
+  if (listedPlan) {
+    localBusinessJsonLd.additionalProperty = [
+      { "@type": "PropertyValue", name: "Listed plan", value: listedPlan },
+    ];
+  }
+  if (listedHost) {
+    localBusinessJsonLd.employee = { "@type": "Person", name: listedHost };
+    const existingContact = localBusinessJsonLd.contactPoint as Record<string, unknown> | undefined;
+    if (existingContact) {
+      existingContact.name = listedHost;
+    } else {
+      localBusinessJsonLd.contactPoint = {
+        "@type": "ContactPoint",
+        contactType: "customer service",
+        name: listedHost,
+        availableLanguage: "en",
+      };
+    }
+  }
+  if (destination?.id) {
+    const cityProps = [
+      destination.visa_difficulty
+        ? { "@type": "PropertyValue", name: "Visa difficulty", value: destination.visa_difficulty }
+        : null,
+      destination.safety_score != null
+        ? { "@type": "PropertyValue", name: "Safety score", value: Number(destination.safety_score).toFixed(1) }
+        : null,
+      destination.walkability_score != null
+        ? { "@type": "PropertyValue", name: "Walkability score", value: Number(destination.walkability_score).toFixed(1) }
+        : null,
+      destination.coworking_desk_usd != null
+        ? { "@type": "PropertyValue", name: "City coworking desk (USD/mo)", value: destination.coworking_desk_usd }
+        : null,
+      destination.one_bed_rent_usd != null
+        ? { "@type": "PropertyValue", name: "City 1-bed rent (USD/mo)", value: destination.one_bed_rent_usd }
+        : null,
+    ].filter(Boolean);
+    const cityPlace = {
+      "@type": "City",
+      name: destination.name,
+      url: `${BASE_URL}/destinations/${destination.id}`,
+      ...(cityProps.length ? { additionalProperty: cityProps } : {}),
+    };
+    localBusinessJsonLd.containedInPlace = cityPlace;
+    localBusinessJsonLd.areaServed = cityPlace;
+  } else if (listing.city) {
+    localBusinessJsonLd.areaServed = {
+      "@type": "City",
+      name: listing.city,
+    };
+  }
+  const faqJsonLd = workspaceFaqJsonLd(listing, BASE_URL);
+  return (
+    <div className="flex min-h-screen flex-col bg-background">
+      <SiteNav />
+      <main className="flex-1 pt-28 sm:pt-32">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
+        {faqJsonLd ? (
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+        ) : null}
+        {related.length > 0 && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "ItemList",
+                name: listing.city ? `More workspaces in ${listing.city}` : "More workspaces",
+                numberOfItems: related.length,
+                itemListElement: related.map((item, index) => {
+                  const thumb = firstVenueListingImage(item.images);
+                  const snippet = usefulListingAbout(item.about || item.description, item.company_name, 140);
+                  const relatedUrl = `${BASE_URL}/workspaces/${item.id}`;
+                  const typeKey = String(item.company_type || "").toLowerCase();
+                  const relatedType =
+                    typeKey === "cafe" || typeKey === "coffee" || typeKey === "coffee shop"
+                      ? "CafeOrCoffeeShop"
+                      : typeKey === "coliving" || typeKey === "hostel" || typeKey === "workation"
+                        ? "LodgingBusiness"
+                        : "LocalBusiness";
+                  const relatedTitle = usefulListingTitle(item.company_title, item.company_name);
+                  const place: Record<string, unknown> = {
+                    "@type": relatedType,
+                    name: item.company_name,
+                    url: relatedUrl,
+                  };
+                  if (relatedTitle) place.alternateName = relatedTitle;
+                  if (snippet) place.description = snippet;
+                  if (thumb) place.image = thumb;
+                  const relatedStreet = usefulStreetAddress(item.address, item.city, item.country);
+                  if (relatedStreet || item.city || item.country) {
+                    place.address = {
+                      "@type": "PostalAddress",
+                      ...(relatedStreet ? { streetAddress: relatedStreet } : {}),
+                      ...(item.city ? { addressLocality: item.city } : {}),
+                      ...(usefulListingRegion(item.state, item.city) ? { addressRegion: usefulListingRegion(item.state, item.city) } : {}),
+                      ...(item.country ? { addressCountry: item.country } : {}),
+                    };
+                  }
+                  const relatedContinent = usefulListingContinent(item.continent);
+                  if (relatedContinent) {
+                    place.containedInPlace = { "@type": "Place", name: relatedContinent };
+                  }
+                  const listedPrice = usefulListedPrice(item.starting_price, item.cost);
+                  const listedUnits = usefulListingUnits(item.units);
+                  const listedCapacity = usefulListingCapacity(item.capacity);
+                  const capacityNumber = listedCapacity
+                    ? (() => {
+                        const m = listedCapacity.match(/(\d{1,5})/);
+                        return m ? Number(m[1]) : null;
+                      })()
+                    : null;
+                  if (capacityNumber && Number.isFinite(capacityNumber) && capacityNumber > 0) {
+                    place.maximumAttendeeCapacity = capacityNumber;
+                  }
+                  if (listedPrice) {
+                    place.priceRange = listedUnits ? `${listedPrice} ${listedUnits}` : listedPrice;
+                    place.makesOffer = {
+                      "@type": "Offer",
+                      url: relatedUrl,
+                      priceSpecification: { "@type": "PriceSpecification", description: listedUnits ? `${listedPrice} ${listedUnits}` : listedPrice },
+                    };
+                  }
+                  const listedWifi = usefulWifiSpeed(item.wifi_speed);
+                  if (listedWifi) {
+                    place.amenityFeature = [
+                      { "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: listedWifi },
+                    ];
+                  }
+                  const relatedRating = Number(item.ratings);
+                  const relatedReviews = Number(item.total_reviews);
+                  if (relatedRating > 0 && relatedReviews > 0) {
+                    place.aggregateRating = {
+                      "@type": "AggregateRating",
+                      ratingValue: relatedRating,
+                      reviewCount: relatedReviews,
+                    };
+                  }
+                  const relatedHours = usefulOpenHours(item.open_hours);
+                  if (relatedHours.length === 1) place.openingHours = relatedHours[0];
+                  else if (relatedHours.length > 1) place.openingHours = relatedHours;
+                  const relatedWebsite = usefulListingWebsite(item.website);
+                  const relatedPhone = usefulContactPhone(item.contact_phone);
+                  const relatedEmail = usefulContactEmail(item.contact_email);
+                  const relatedSocial = usefulListingSocialLinks(item.social_links);
+                  const relatedMap = usefulListingMapUrl(item.google_map, item.latitude, item.longitude);
+                  const sameAs = [
+                    ...(relatedWebsite ? [relatedWebsite] : []),
+                    ...relatedSocial.map((s) => s.url),
+                    ...(relatedMap ? [relatedMap] : []),
+                  ];
+                  if (sameAs.length) place.sameAs = sameAs;
+                  if (relatedPhone) place.telephone = relatedPhone;
+                  if (relatedEmail) place.email = relatedEmail;
+                  const relatedWifi = usefulWifiSpeed(item.wifi_speed);
+                  const relatedTags = usefulListingTags(item.tags);
+                  const relatedInclusions = usefulListingInclusions(item.inclusions);
+                  const relatedServices = usefulListingServices(item.services);
+                  if (relatedWifi || relatedTags.length > 0 || relatedInclusions || relatedServices.length > 0) {
+                    place.amenityFeature = [
+                      ...(relatedWifi
+                        ? [{ "@type": "LocationFeatureSpecification", name: "Wi-Fi Speed", value: relatedWifi }]
+                        : []),
+                      ...(relatedInclusions
+                        ? [{ "@type": "LocationFeatureSpecification", name: "Included", value: relatedInclusions }]
+                        : []),
+                      ...relatedServices.map((svc) => ({
+                        "@type": "LocationFeatureSpecification",
+                        name: "Service",
+                        value: svc,
+                      })),
+                      ...relatedTags.map((tag) => ({
+                        "@type": "LocationFeatureSpecification",
+                        name: tag,
+                        value: true,
+                      })),
+                    ];
+                  }
+                  return { "@type": "ListItem", position: index + 1, url: relatedUrl, item: place };
+                }),
+              }),
+            }}
+          />
+        )}
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+            <Link href="/workspaces" className="inline-flex items-center gap-1.5 font-medium hover:text-foreground transition-colors">
+              <ArrowLeft className="h-4 w-4" /> Workspaces
+            </Link>
+            {listing.company_type ? (
+              <>
+                <span aria-hidden="true">/</span>
+                <Link href={`/workspaces?type=${encodeURIComponent(listing.company_type)}`} className="hover:text-foreground hover:underline underline-offset-2">
+                  {listing.company_type}
+                </Link>
+              </>
+            ) : null}
+            {destination ? (
+              <>
+                <span aria-hidden="true">/</span>
+                <Link href={`/destinations/${destination.id}`} className="hover:text-foreground hover:underline underline-offset-2">
+                  {destination.name}
+                </Link>
+              </>
+            ) : listing.city ? (
+              <>
+                <span aria-hidden="true">/</span>
+                <Link href={`/workspaces?city=${encodeURIComponent(listing.city)}`} className="hover:text-foreground hover:underline underline-offset-2">
+                  {listing.city}
+                </Link>
+              </>
+            ) : null}
+            <span aria-hidden="true">/</span>
+            <span className="line-clamp-1 text-foreground/80">{listing.company_name}</span>
+          </nav>
+        </div>
+        <section className="mt-6">
+          <div className="mx-auto max-w-6xl px-5 sm:px-8">
+            <WorkspaceGallery images={images} alt={listing.company_name} typeLabel={listing.company_type} />
+          </div>
+        </section>
+        <section className="py-10 sm:py-14">
+          <div className="mx-auto grid max-w-6xl gap-10 px-5 sm:px-8 lg:grid-cols-3">
+            <div className="lg:col-span-2 space-y-8">
+              <div>
+                <div className="flex items-start gap-3 sm:gap-4">
+                  {listedLogo ? (
+                    <div className="relative mt-1 h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-border bg-secondary sm:h-14 sm:w-14">
+                      <Image src={listedLogo} alt={`${listing.company_name} logo`} fill className="object-contain p-1" sizes="56px" unoptimized />
+                    </div>
+                  ) : null}
+                  <h1 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">{listing.company_name}</h1>
+                </div>
+                {usefulListingTitle(listing.company_title, listing.company_name) && (
+                  <p className="mt-2 text-lg text-muted-foreground">{usefulListingTitle(listing.company_title, listing.company_name)}</p>
+                )}
+                {usefulListingProductName(listing.product_name, listing.company_name) && (
+                  <p className="mt-1 text-sm text-muted-foreground">Plan: {usefulListingProductName(listing.product_name, listing.company_name)}</p>
+                )}
+                {listedLegal && (
+                  <p className="mt-1 text-sm text-muted-foreground">Legal name: {listedLegal}</p>
+                )}
+                {usefulListingContactPerson(listing.contact_name, listing.contact_designation) && (
+                  <p className="mt-1 text-sm text-muted-foreground">Contact: {usefulListingContactPerson(listing.contact_name, listing.contact_designation)}</p>
+                )}
+                {listing.city ? (
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    {destination ? (
+                      <Link href={`/destinations/${destination.id}`} className="font-medium text-foreground underline-offset-4 hover:underline">
+                        Explore {destination.name} cost of living & visa data on RoamIQ
+                        {destination.avg_temp != null || destination.air_quality || destination.visa_difficulty || destination.safety_score != null ? (
+                          <span className="text-muted-foreground">
+                            {" "}
+                            ({[
+                              destination.avg_temp != null ? `${destination.avg_temp}°C avg` : null,
+                              destination.air_quality ? `air ${destination.air_quality}` : null,
+                              destination.visa_difficulty ? `visa ${destination.visa_difficulty}` : null,
+                              destination.safety_score != null ? `safety ${Number(destination.safety_score).toFixed(1)}` : null,
+                              destination.walkability_score != null ? `walk ${Number(destination.walkability_score).toFixed(1)}` : null,
+                            ].filter(Boolean).join(" · ")})
+                          </span>
+                        ) : null}
+                      </Link>
+                    ) : (
+                      <Link href={`/destinations?search=${encodeURIComponent(listing.city)}`} className="font-medium text-foreground underline-offset-4 hover:underline">
+                        Explore {listing.city} cost of living & visa data on RoamIQ
+                      </Link>
+                    )}
+                    {" · "}
+                    <Link href={`/workspaces?city=${encodeURIComponent(listing.city)}`} className="underline-offset-4 hover:underline">
+                      More workspaces in {listing.city}
+                    </Link>
+                  </p>
+                ) : null}
+                <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-foreground/70">
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4" />
+                    {listing.city ? (
+                      <Link href={`/workspaces?city=${encodeURIComponent(listing.city)}`} className="hover:text-accent underline-offset-2 hover:underline">{listing.city}</Link>
+                    ) : null}
+                    {listedRegion ? `, ${listedRegion}` : ""}
+                    {listing.country ? `, ${listing.country}` : ""}
+                    {listedContinent ? `, ${listedContinent}` : ""}
+                  </span>
+                  {listing.ratings > 0 && Number(listing.total_reviews) > 0 ? (
+                    <span className="inline-flex items-center gap-1 font-medium">
+                      <Star className="h-4 w-4 fill-sunset text-sunset" />
+                      {Number(listing.ratings).toFixed(1)}
+                      <span className="font-normal text-muted-foreground">({listing.total_reviews} reviews)</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-muted-foreground">
+                      <Star className="h-4 w-4" />
+                      Reviews pending
+                    </span>
+                  )}
+                </div>
+              </div>
+              {listedAbout ? (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold">About</h2>
+                  <p className="mt-3 whitespace-pre-line leading-relaxed text-foreground/80">{listedAbout}</p>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-5">
+                  <h2 className="font-serif text-xl font-semibold">About</h2>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">A written description has not been verified for this listing yet. Photos, location, and any listed price or Wi-Fi figures above are from the live database — we do not generate placeholder copy.</p>
+                </div>
+              )}
+              <div className="lg:hidden rounded-2xl border border-border bg-secondary/30 p-4">
+                <WaitlistInline
+                  source="workspace_detail_after_about"
+                  compact
+                  askCity={!listing.city}
+                  heading={listing.city ? `Email other ${listing.city} listings` : "Email similar listings"}
+                  description={
+                    listing.city
+                      ? `Most visitors leave this page after the description. Leave an email for other live ${listing.city} workspaces when a price or Wi-Fi figure exists. No invented numbers, no fake urgency.`
+                      : "Most visitors leave this page after the description. Leave an email for similar live workspaces when a price or Wi-Fi figure exists. No invented numbers, no fake urgency."
+                  }
+                  context={{ city: listing.city, type: listing.company_type, listing: listing.company_name }}
+                />
+              </div>
+              {tags.length > 0 ? (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold">Amenities</h2>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <span key={tag} className="rounded-full border border-border bg-secondary/60 px-3 py-1 text-sm">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-5">
+                  <h2 className="font-serif text-xl font-semibold">Amenities</h2>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Amenity tags have not been verified for this listing yet. We do not invent desks, kitchens, or access hours to fill the gap.</p>
+                </div>
+              )}
+              <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-5">
+                <h2 className="font-serif text-xl font-semibold">What this page can show</h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Fields below stay empty when the database has no verified value. RoamIQ does not invent prices, Wi-Fi speeds, or reviews.
+                </p>
+                <ul className="mt-3 grid gap-1.5 text-sm text-foreground/80 sm:grid-cols-2">
+                  <li>{usefulListedPrice(listing.starting_price, listing.cost) ? "Price is listed from the database." : "Price not listed yet."}</li>
+                  <li>{usefulWifiSpeed(listing.wifi_speed) ? "Wi-Fi speed is listed from the database." : "Wi-Fi speed pending."}</li>
+                  <li>{usefulOpenHours(listing.open_hours)[0] ? "Hours are listed from the database." : "Hours not listed yet."}</li>
+                  <li>{images.length ? `${images.length} venue photo${images.length === 1 ? "" : "s"} on this page.` : "Venue photos pending."}</li>
+                </ul>
+                {(!usefulListedPrice(listing.starting_price, listing.cost) || !usefulWifiSpeed(listing.wifi_speed)) ? (
+                  <div className="mt-4 rounded-xl border border-border bg-background/70 p-4">
+                    <WaitlistInline
+                      source="workspace_detail_missing_rate_wifi"
+                      compact
+                      askGap
+                      heading={
+                        !usefulListedPrice(listing.starting_price, listing.cost) && !usefulWifiSpeed(listing.wifi_speed)
+                          ? "This listing has no listed price or Wi-Fi figure"
+                          : !usefulListedPrice(listing.starting_price, listing.cost)
+                          ? "This listing has no listed price yet"
+                          : "This listing has no listed Wi-Fi figure yet"
+                      }
+                      description={
+                        listing.city
+                          ? `Leave an email if you want other ${listing.city} workspaces that already publish a price or Wi-Fi value. We will not invent a number for ${listing.company_name}.`
+                          : `Leave an email if you want similar workspaces that already publish a price or Wi-Fi value. We will not invent a number for ${listing.company_name}.`
+                      }
+                      context={{
+                        city: listing.city,
+                        type: listing.company_type,
+                        listing: listing.company_name,
+                        gap: !usefulListedPrice(listing.starting_price, listing.cost) && !usefulWifiSpeed(listing.wifi_speed)
+                          ? "no_price_no_wifi"
+                          : !usefulListedPrice(listing.starting_price, listing.cost)
+                          ? "no_price"
+                          : "no_wifi",
+                      }}
+                    />
+                  </div>
+                ) : null}
+              </div>
+              {listedInclusions ? (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold">Included</h2>
+                  <p className="mt-3 leading-relaxed text-foreground/80">{listedInclusions}</p>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-5">
+                  <h2 className="font-serif text-xl font-semibold">Included</h2>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">What the stay or desk includes is not listed in the database yet. No placeholder perks.</p>
+                </div>
+              )}
+              {listedServices.length > 0 ? (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold">Services</h2>
+                  <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-relaxed text-foreground/80">
+                    {listedServices.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-border bg-secondary/30 p-5">
+                  <h2 className="font-serif text-xl font-semibold">Services</h2>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">No verified service list yet. Meeting rooms, cleaning, and similar extras stay hidden until they exist in the listing row.</p>
+                </div>
+              )}
+              {faqJsonLd && Array.isArray(faqJsonLd.mainEntity) && faqJsonLd.mainEntity.length > 0 ? (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold">Listing facts</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">Answers use only fields already shown on this page. Missing price, Wi-Fi, hours, or contact stay off this list.</p>
+                  <dl className="mt-4 space-y-4">
+                    {(faqJsonLd.mainEntity as Array<{ name?: string; acceptedAnswer?: { text?: string } }>).map((qa) => (
+                      <div key={String(qa.name)} className="rounded-2xl border border-border bg-card/60 p-4">
+                        <dt className="text-sm font-semibold text-foreground">{qa.name}</dt>
+                        <dd className="mt-1.5 text-sm leading-relaxed text-foreground/80">{qa.acceptedAnswer?.text}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              ) : null}
+              {related.length > 0 && (
+                <div>
+                  <h2 className="font-serif text-xl font-semibold">More workspaces in {listing.city}</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">Other live listings in the same city — prices and Wi-Fi only when the database has them. Ranked by photo, description, and listed price when those fields exist.</p>
+                  <ul className="mt-4 divide-y divide-border rounded-2xl border border-border">
+                    {related.map((item) => {
+                      const venueThumb = firstVenueListingImage(item.images);
+                      const logoThumb = isUsableImageUrl(item.logo_url) ? item.logo_url!.trim() : null;
+                      const thumb = venueThumb || logoThumb;
+                      const thumbKind = venueThumb ? "photo" : logoThumb ? "logo" : null;
+                      const relatedWebsite = usefulListingWebsite(item.website);
+                      const relatedPhone = usefulContactPhone(item.contact_phone);
+                      const relatedEmail = usefulContactEmail(item.contact_email);
+                      const relatedTags = usefulListingTags(item.tags);
+                      const relatedSocial = usefulListingSocialLinks(item.social_links);
+                      const relatedMap = usefulListingMapUrl(item.google_map, item.latitude, item.longitude);
+                      return (
+                        <li key={item.id} className="px-4 py-3 hover:bg-secondary/50 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <Link href={`/workspaces/${item.id}`} className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-secondary">
+                              {thumb ? (
+                                <Image
+                                  src={thumb.trim()}
+                                  alt={thumbKind === "logo" ? `${item.company_name} logo` : item.company_name}
+                                  fill
+                                  className={thumbKind === "logo" ? "object-contain bg-secondary p-1.5" : "object-cover"}
+                                  sizes="80px"
+                                  unoptimized
+                                />
+                              ) : (
+                                <div className="flex h-full w-full flex-col items-center justify-center gap-0.5 px-1">
+                                  <Building2 className="h-4 w-4 text-muted-foreground/50" />
+                                  <span className="text-[8px] font-medium uppercase tracking-wider text-muted-foreground/80">Photo pending</span>
+                                </div>
+                              )}
+                            </Link>
+                            <div className="min-w-0 flex-1">
+                              <Link href={`/workspaces/${item.id}`} className="truncate font-medium hover:text-accent">{item.company_name}</Link>
+                              {usefulListingTitle(item.company_title, item.company_name) ? (
+                                <p className="mt-0.5 truncate text-xs text-muted-foreground">{usefulListingTitle(item.company_title, item.company_name)}</p>
+                              ) : null}
+                              {usefulListingProductName(item.product_name, item.company_name) ? (
+                                <p className="mt-0.5 truncate text-xs text-muted-foreground">Plan: {usefulListingProductName(item.product_name, item.company_name)}</p>
+                              ) : null}
+                              {usefulListingContactPerson(item.contact_name, item.contact_designation) ? (
+                                <p className="mt-0.5 truncate text-xs text-muted-foreground">Contact: {usefulListingContactPerson(item.contact_name, item.contact_designation)}</p>
+                              ) : null}
+                              <RelatedListingExtras item={item} />
+                              <p className="text-xs text-muted-foreground">
+                                {item.company_type || "workspace"}
+                                {Number(item.ratings) > 0 && Number(item.total_reviews) > 0
+                                  ? ` · ${Number(item.ratings).toFixed(1)} (${Number(item.total_reviews)})`
+                                  : " · Reviews pending"}
+                                {usefulWifiSpeed(item.wifi_speed) ? ` · ${usefulWifiSpeed(item.wifi_speed)}` : " · Wi-Fi speed pending"}{usefulOpenHours(item.open_hours)[0] ? ` · ${usefulOpenHours(item.open_hours)[0]}` : " · Hours not listed yet"}
+                              </p>
+                              {usefulStreetAddress(item.address, item.city, item.country) ? (
+                                <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground/80">{usefulStreetAddress(item.address, item.city, item.country)}</p>
+                              ) : null}
+                              {(usefulListingRegion(item.state, item.city) || usefulListingContinent(item.continent)) ? (
+                                <p className="mt-0.5 text-[11px] text-muted-foreground/80">
+                                  {[usefulListingRegion(item.state, item.city), usefulListingContinent(item.continent)].filter(Boolean).join(" · ")}
+                                </p>
+                              ) : null}
+                              {usefulListingInclusions(item.inclusions) ? (
+                                <p className="mt-0.5 line-clamp-2 text-[11px] text-muted-foreground">Included: {usefulListingInclusions(item.inclusions)}</p>
+                              ) : null}
+                              {usefulListingServices(item.services).length > 0 ? (
+                                <div className="mt-1 flex flex-wrap gap-1">
+                                  {usefulListingServices(item.services).slice(0, 3).map((svc) => (
+                                    <span key={svc} className="rounded-full bg-secondary px-2 py-0.5 text-[10px] text-foreground/80">{svc}</span>
+                                  ))}
+                                </div>
+                              ) : null}
+                              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                                  {!(relatedWebsite || relatedPhone || relatedEmail) && (
+                                    <span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border bg-secondary/30 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                                      <Phone className="h-3 w-3" /> Contact pending
+                                    </span>
+                                  )}
+                                  {relatedWebsite && (
+                                    <a href={relatedWebsite} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2 py-0.5 text-[10px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest">
+                                      <ExternalLink className="h-3 w-3" /> Official site
+                                    </a>
+                                  )}
+                                  {relatedPhone && (
+                                    <a href={`tel:${relatedPhone.replace(/[^+\d]/g, "")}`} className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2 py-0.5 text-[10px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest">
+                                      <Phone className="h-3 w-3" /> Call
+                                    </a>
+                                  )}
+                                  {relatedEmail && (
+                                    <a href={`mailto:${relatedEmail}`} className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2 py-0.5 text-[10px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest">
+                                      <Mail className="h-3 w-3" /> Email
+                                    </a>
+                                  )}
+                                  {relatedSocial.slice(0, 3).map((s) => (
+                                    <a
+                                      key={s.url}
+                                      href={s.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2 py-0.5 text-[10px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+                                    >
+                                      <ExternalLink className="h-3 w-3" /> {s.label}
+                                    </a>
+                                  ))}
+                                  {relatedMap && (
+                                    <a
+                                      href={relatedMap}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 rounded-full border border-border bg-secondary/50 px-2 py-0.5 text-[10px] font-medium text-foreground/80 hover:border-forest/40 hover:text-forest"
+                                    >
+                                      <MapPin className="h-3 w-3" /> Map
+                                    </a>
+                                  )}
+                                  {relatedTags.slice(0, 3).map((tag) => (
+                                    <span key={tag} className="inline-flex items-center rounded-full border border-border bg-secondary/40 px-2 py-0.5 text-[10px] font-medium text-foreground/70">
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                            </div>
+                            <Link href={`/workspaces/${item.id}`} className="shrink-0 text-right text-sm text-muted-foreground hover:text-accent">
+                              <div>{usefulListedPrice(item.starting_price, item.cost) || "Price not listed yet"}</div>
+                              {usefulListingUnits(item.units) ? (
+                                <div className="text-[10px] text-muted-foreground/80">{usefulListingUnits(item.units)}</div>
+                              ) : null}
+                              {usefulListingCapacity(item.capacity) ? (
+                                <div className="text-[10px] text-muted-foreground/80">{usefulListingCapacity(item.capacity)}</div>
+                              ) : null}
+                            </Link>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <Link href={`/workspaces?city=${encodeURIComponent(listing.city || "")}`} className="mt-3 inline-block text-sm font-medium text-accent hover:underline">
+                    Browse all in {listing.city}
+                  </Link>
+                </div>
+              )}
+            </div>
+            <div className="space-y-5">
+              <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+                {usefulListedPrice(listing.starting_price, listing.cost) ? (
+                  <div>
+                    <div className="font-serif text-2xl font-semibold text-forest">{usefulListedPrice(listing.starting_price, listing.cost)}</div>
+                    {usefulListingUnits(listing.units) ? (
+                      <div className="text-xs text-muted-foreground">{usefulListingUnits(listing.units)}</div>
+                    ) : null}
+                    {usefulListingCapacity(listing.capacity) ? (
+                      <div className="text-xs text-muted-foreground">{usefulListingCapacity(listing.capacity)}</div>
+                    ) : null}
+                  </div>
+                ) : (
+                  <div>
+                    <div className="font-serif text-lg text-muted-foreground">Price not listed yet</div>
+                    <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground/80">
+                      This venue has no starting price in the database. We do not invent a number.{" "}
+                      {listedEmail ? (
+                        <>
+                          <a
+                            href={`mailto:${listedEmail}?subject=${encodeURIComponent(`Rates at ${listing.company_name}`)}`}
+                            className="font-medium text-accent underline-offset-2 hover:underline"
+                          >
+                            Ask this venue for current rates
+                          </a>
+                          {" · "}
+                        </>
+                      ) : listedPhone ? (
+                        <>
+                          <a
+                            href={`tel:${listedPhone.replace(/[^+\d]/g, "")}`}
+                            className="font-medium text-accent underline-offset-2 hover:underline"
+                          >
+                            Call for current rates
+                          </a>
+                          {" · "}
+                        </>
+                      ) : null}
+                      <Link
+                        href={listing.city ? `/workspaces?priced=1&city=${encodeURIComponent(listing.city)}` : "/workspaces?priced=1"}
+                        className="font-medium text-accent underline-offset-2 hover:underline"
+                      >
+                        {listing.city ? `See ${listing.city} listings with a listed price` : "See listings with a listed price"}
+                      </Link>
+                      .
+                    </p>
+                    {(destination?.coworking_desk_usd || destination?.one_bed_rent_usd || destination?.cost_usd) ? (
+                      <p className="mt-1 text-[11px] text-muted-foreground/80">
+                        {[
+                          destination?.coworking_desk_usd ? `city coworking desk ~$${Number(destination.coworking_desk_usd).toLocaleString()}/mo` : null,
+                          destination?.one_bed_rent_usd ? `1-bed rent ~$${Number(destination.one_bed_rent_usd).toLocaleString()}/mo` : null,
+                          destination?.cost_usd ? `city living cost ~$${Number(destination.cost_usd).toLocaleString()}/mo` : null,
+                        ].filter(Boolean).join(" · ")}
+                      </p>
+                    ) : null}
+                  </div>
+                )}
+                {destination ? (
+                  <div className="mt-4 rounded-xl border border-border bg-secondary/40 p-3 text-sm">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">City context</p>
+                    <Link href={`/destinations/${destination.id}`} className="mt-1 block font-medium text-foreground underline-offset-4 hover:underline">
+                      {destination.name} guide
+                    </Link>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {[destination.avg_temp != null ? `${destination.avg_temp}°C avg` : null, destination.air_quality ? `air ${destination.air_quality}` : null, destination.visa_difficulty ? `visa ${destination.visa_difficulty}` : null, destination.safety_score != null ? `safety ${Number(destination.safety_score).toFixed(1)}` : null,
+                              destination.walkability_score != null ? `walk ${Number(destination.walkability_score).toFixed(1)}` : null, destination.cost_usd ? `~$${destination.cost_usd}/mo city cost` : null, destination.wifi_speed_p90 || destination.internet_mbps ? `${destination.wifi_speed_p90 || destination.internet_mbps} city internet` : null, destination.coworking_desk_usd ? `desk ~$${Number(destination.coworking_desk_usd).toLocaleString()}/mo` : null, destination.one_bed_rent_usd ? `1-bed ~$${Number(destination.one_bed_rent_usd).toLocaleString()}/mo` : null].filter(Boolean).join(" · ") || "City page has the cost, visa, and internet figures for this place."}
+                    </p>
+                  </div>
+                ) : null}
+                <div className="mt-5 space-y-3 text-sm">
+                  {usefulWifiSpeed(listing.wifi_speed) ? (
+                    <div className="flex items-center gap-2.5 text-foreground/80">
+                      <Wifi className="h-4 w-4 text-forest shrink-0" />
+                      <span className="font-semibold">{usefulWifiSpeed(listing.wifi_speed)}</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-start gap-2.5 text-muted-foreground/80">
+                      <Wifi className="mt-0.5 h-4 w-4 shrink-0" />
+                      <div>
+                        <span>Wi-Fi speed pending</span>
+                        <p className="mt-0.5 text-[11px] leading-relaxed">
+                          No measured Mbps on this row.{" "}
+                          <Link href="/workspaces?min_wifi=1" className="font-medium text-accent underline-offset-2 hover:underline">
+                            Browse listings that already list Wi-Fi speed
+                          </Link>
+                          .
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {listedHours.length > 0 ? (
+                    <div className="flex items-start gap-2.5 text-foreground/80">
+                      <Clock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                      <div className="space-y-0.5">{listedHours.map((line) => (<div key={line}>{line}</div>))}</div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2.5 text-muted-foreground/80">
+                      <Clock className="h-4 w-4 shrink-0" /> Hours not listed yet
+                    </div>
+                  )}
+                  {listing.capacity ? (
+                    <div className="flex items-center gap-2.5 text-foreground/80">
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      {listing.capacity}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2.5 text-muted-foreground/80">
+                      <Users className="h-4 w-4 shrink-0" />
+                      Capacity not listed yet
+                    </div>
+                  )}
+                  {listedStreet ? (
+                    <div className="flex items-start gap-2.5 text-foreground/80">
+                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                      {listedStreet}
+                    </div>
+                  ) : (
+                    <div className="flex items-start gap-2.5 text-muted-foreground/80">
+                      <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+                      Street address not listed yet
+                    </div>
+                  )}
+                </div>
+                <div className="mt-6 space-y-2 border-t border-border pt-4">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Contact</p>
+                  {listedPhone ? (
+                    <TrackedAnchor eventName="contact_workspace" eventParams={{ method: "phone", listing_id: listing.id, city: listing.city || undefined }} href={`tel:${listedPhone.replace(/\s+/g, "")}`} className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent transition-colors">
+                      <Phone className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      <span>{listedPhone}</span>
+                    </TrackedAnchor>
+                  ) : (
+                    <p className="flex items-center gap-2.5 text-sm text-muted-foreground/80">
+                      <Phone className="h-4 w-4 shrink-0" /> Phone not listed yet
+                    </p>
+                  )}
+                  {listedEmail ? (
+                    <TrackedAnchor eventName="contact_workspace" eventParams={{ method: "email", listing_id: listing.id, city: listing.city || undefined }} href={`mailto:${listedEmail}`} className="flex items-center gap-2.5 text-sm text-foreground/80 hover:text-accent transition-colors">
+                      <Mail className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      <span className="break-all">{listedEmail}</span>
+                    </TrackedAnchor>
+                  ) : (
+                    <p className="flex items-center gap-2.5 text-sm text-muted-foreground/80">
+                      <Mail className="h-4 w-4 shrink-0" /> Email not listed yet
+                    </p>
+                  )}
+                </div>
+                {listedWebsite ? (
+                  <a href={listedWebsite} target="_blank" rel="noopener noreferrer" className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
+                    Visit website <ExternalLink className="h-4 w-4" />
+                  </a>
+                ) : listedEmail ? (
+                  <TrackedAnchor
+                    eventName="contact_workspace"
+                    eventParams={{ method: "email_availability", listing_id: listing.id, city: listing.city || undefined }}
+                    href={`mailto:${listedEmail}?subject=${encodeURIComponent(`Availability at ${listing.company_name}`)}`}
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+                  >
+                    Ask about availability <Mail className="h-4 w-4" />
+                  </TrackedAnchor>
+                ) : (
+                  <p className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">
+                    Official website not listed yet
+                  </p>
+                )}
+                {listedSocial.length > 0 ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {listedSocial.map((s) => (
+                      <a
+                        key={s.url}
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground/80 hover:bg-secondary"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        {s.label}
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-3 text-xs text-muted-foreground/80">Social profiles not listed yet</p>
+                )}
+                {(listing.google_map || (listing.latitude != null && listing.longitude != null)) && (
+                  <a href={listing.google_map || `https://maps.google.com/?q=${listing.latitude},${listing.longitude}`} target="_blank" rel="noopener noreferrer" className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-medium hover:bg-secondary transition-colors">
+                    <Globe className="h-4 w-4" /> View on Google Maps
+                  </a>
+                )}
+                <div className="mt-6 rounded-xl border border-border bg-secondary/40 p-4">
+                  <WaitlistInline
+                    source="workspace_detail"
+                    heading={listing.city ? `Want similar workspaces in ${listing.city}?` : "Want similar workspaces after this listing?"}
+                    description={listing.city ? `This page is a common last stop. Leave an email for other live listings in ${listing.city} when a listed price or Wi-Fi value exists. No extra page, no fabricated urgency.` : "This page is a common last stop. Leave an email for similar live listings when a listed price or Wi-Fi value exists. No extra page, no fabricated urgency."}
+                    context={{ city: listing.city, type: listing.company_type, listing: listing.company_name }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <WaitlistSticky
+        source="workspace_detail_sticky"
+        context={{ city: listing.city, type: listing.company_type, listing: listing.company_name }}
+      />
+      <Footer />
+    </div>
+  );
+}
