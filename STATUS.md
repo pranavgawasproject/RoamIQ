@@ -1,3 +1,17 @@
+## 2026-09-22 ~14:05 UTC — price/Wi-Fi transparency on /workspaces
+
+Track A (conversion): GSC still shows impression demand for price-shaped queries (`roamiq price` in the prior window) while GA4 keeps `/workspaces` at 100% bounce (10 sessions, 24 Aug–20 Sep). About/images already render. Added an above-the-fold note that price and Mbps only appear when stored, plus filters to `priced=1` and `wifiable=1`. No invented figures. Waitlist copy unchanged.
+
+GSC 2026-08-22 to 2026-09-21 (query): cafe nenom 1/22 pos ~9.1; cafe nook 1/12; coliving zürich 1/1; durty nellys amsterdam 1/1; innapartment taipei 1/8; ngb living 1/31; roam iq 1/35 pos ~8.2; urban place 1/2. Query `4g-travel-tool.vercel.app` 0 clicks / 12 impressions pos ~3.3 — FLAG only; that host is not on this GSC property so inspect is not possible here; no redirect. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4: reused same-day snapshot — `/` ~63–67 sessions / ~90% bounce; `/workspaces` 10 / 100%. Live `nomads-travel-indol.vercel.app` and `roamiq-app.vercel.app` still return Vercel “deployment paused” — not changed (domain config is human-owned).
+
+Listings null-rates: reused prior n=10331 (Composio SQL 403 / PostgREST 401 this run): about 0 empty, images 0 empty, starting_price 5243 empty (50.7%), wifi_speed 2055 empty (19.9%), contact_phone 2178, logo_url 895, contact_email 4451.
+
+Sitemap not resubmitted (no new routes).
+
+---
+
 ## 2026-09-22 ~13:58 UTC — waitlist on thin /workspaces cards
 
 Track A (conversion): `/workspaces` remains a 100% bounce landing page (GA4 2026-08-24–2026-09-20, 10 sessions). About and images already render on cards. Listings that still have no listed price *and* no listed Wi-Fi *and* no venue email/phone now show an on-card waitlist (`source=workspaces-card-thin`) instead of a dead footer. Copy states we only write when a stored price or Wi-Fi figure exists — no invented numbers. Top-of-page waitlist description updated to the current bounce window.

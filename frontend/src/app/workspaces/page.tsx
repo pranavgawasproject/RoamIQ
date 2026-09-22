@@ -957,6 +957,14 @@ export default async function WorkspacesPage({
               <WaitlistInline source="workspaces-list-above-fold" askCity askGap heading={params.search ? `Looking for ${params.search}? Leave an email if this filter is empty or thin.` : "Leaving /workspaces without opening a card?"} description={params.search ? `This page filtered to “${params.search}” because that name showed up in Search Console. Email is enough if the matching cards are missing a listed price, photo, or Wi-Fi figure — we do not invent those values.` : "/workspaces is still a 100% bounce landing page in the current GA4 window (10 sessions, 24 Aug–20 Sep). Email plus an optional city is enough if you leave without opening a card. We only write when a listed price or Wi-Fi value exists. No extra page, no invented numbers."} compact context={waitlistContext} />
             </div>
             <IntentListingLinks className="mt-5" />
+            <div className="mt-5 max-w-2xl rounded-2xl border border-border bg-secondary/30 p-4 text-sm leading-relaxed text-muted-foreground">
+              <p className="font-medium text-foreground">How listed prices and Wi-Fi appear</p>
+              <p className="mt-1">A card only shows a price or Mbps figure when that value is already stored on the listing. Empty fields stay empty — we do not invent a rate. If you landed here from a price search, filter to rows that already have a figure, or leave an email above and we write when one is added.</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Link href="/workspaces?priced=1" className="rounded-full border border-border bg-card px-3 py-1 text-xs text-foreground hover:border-accent hover:text-accent">Show listed prices only</Link>
+                <Link href="/workspaces?wifiable=1" className="rounded-full border border-border bg-card px-3 py-1 text-xs text-foreground hover:border-accent hover:text-accent">Show listed Wi-Fi only</Link>
+              </div>
+            </div>
             {!params.search && (
               <div className="mt-6 flex flex-wrap items-center gap-2">
                 <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Names already earning Search clicks</span>
