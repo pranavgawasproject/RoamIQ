@@ -9,6 +9,7 @@ import { CTA } from "@/components/site/cta";
 import { Footer } from "@/components/site/footer";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
+import { IntentListingLinks } from "@/components/site/intent-listing-links";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -178,6 +179,7 @@ export default function Page() {
               heading="Leaving after the homepage? Send the city you are considering."
               description="Most sessions start and end here. Email is enough; add a city if you have one. We only write when a listed workspace description, price, or photo exists for that place. No extra page, no fabricated urgency."
             />
+            <IntentListingLinks className="mt-6" />
           </div>
         </section>
         <Features />
