@@ -1,13 +1,14 @@
 import Link from "next/link";
 
-/** Venue names that already earned GSC clicks (2026-08-20–2026-09-18). */
+/** Venue names that already earned GSC clicks (2026-08-22–2026-09-21). */
 const GSC_CLICK_VENUES = [
-  { label: "Cafe Nenom", q: "cafe nenom" },
+  { label: "Café Nénom", q: "cafe nenom" },
   { label: "Cafe Nook", q: "cafe nook" },
-  { label: "Coliving Athens", q: "coliving athens" },
+  { label: "Coliving Zürich", q: "coliving zürich" },
+  { label: "Durty Nellys", q: "durty nellys amsterdam" },
+  { label: "Innapartment Taipei", q: "innapartment taipei" },
   { label: "NGB Living", q: "ngb living" },
-  { label: "Izzy's Coffee", q: "izzy" },
-  { label: "Innapartment Taipei", q: "innapartment" },
+  { label: "Urban Place", q: "urban place" },
 ] as const;
 
 export function GscVenueSearchChips({ activeSearch }: { activeSearch?: string }) {
