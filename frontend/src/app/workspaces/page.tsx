@@ -781,6 +781,18 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
             ) : (
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground/70"><Wifi className="h-3 w-3" /> Wi-Fi speed pending</div>
             )}
+            {!usefulListedPrice(listing.starting_price, listing.cost) && !usefulWifiSpeed(listing.wifi_speed) && !listedEmail && !listedPhone ? (
+              <div className="mt-3">
+                <WaitlistInline
+                  source="workspaces-card-thin"
+                  heading="Want this card when a price or Wi-Fi figure is listed?"
+                  description="This listing is still missing both. Email is enough — we only write when a stored price or Wi-Fi value exists. No invented numbers."
+                  compact
+                  askCity
+                  context={{ city: listing.city, listing: listing.id, gap: "no_price_no_wifi" }}
+                />
+              </div>
+            ) : null}
             {usefulOpenHours(listing.open_hours)[0] ? (
               <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"><Clock className="h-3 w-3" /> {usefulOpenHours(listing.open_hours)[0]}</div>
             ) : (
@@ -942,7 +954,7 @@ export default async function WorkspacesPage({
             <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{headlineCount.toLocaleString()} workspaces & stays, live from the database.</h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">Coworking desks, coliving houses, workations, hostels, cafes, and meeting rooms — filter by location, category, and Wi-Fi speed.{catalogCount > 0 && count !== catalogCount ? ` This view lists ${count.toLocaleString()} matching rows from that catalog.` : ""}</p>
             <div className="mt-6 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
-              <WaitlistInline source="workspaces-list-above-fold" askCity askGap heading={params.search ? `Looking for ${params.search}? Leave an email if this filter is empty or thin.` : "Leaving /workspaces without opening a card?"} description={params.search ? `This page filtered to “${params.search}” because that name showed up in Search Console. Email is enough if the matching cards are missing a listed price, photo, or Wi-Fi figure — we do not invent those values.` : "Most /workspaces sessions in the last 30 days ended on this index (GA4). Email plus an optional city is enough if the filters feel like too much first. We only write when a listed price or Wi-Fi value exists. No extra page, no invented numbers."} compact context={waitlistContext} />
+              <WaitlistInline source="workspaces-list-above-fold" askCity askGap heading={params.search ? `Looking for ${params.search}? Leave an email if this filter is empty or thin.` : "Leaving /workspaces without opening a card?"} description={params.search ? `This page filtered to “${params.search}” because that name showed up in Search Console. Email is enough if the matching cards are missing a listed price, photo, or Wi-Fi figure — we do not invent those values.` : "/workspaces is still a 100% bounce landing page in the current GA4 window (10 sessions, 24 Aug–20 Sep). Email plus an optional city is enough if you leave without opening a card. We only write when a listed price or Wi-Fi value exists. No extra page, no invented numbers."} compact context={waitlistContext} />
             </div>
             <IntentListingLinks className="mt-5" />
             {!params.search && (
