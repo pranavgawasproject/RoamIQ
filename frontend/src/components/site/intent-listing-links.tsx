@@ -39,10 +39,22 @@ export const INTENT_LISTINGS = [
 
 export const INTENT_LISTING_IDS = INTENT_LISTINGS.map((row) => row.id);
 
-/** Destination and site pages that already earned a GSC click in the same window. */
+/**
+ * Destination and site pages that already earned a GSC click, or that
+ * earned ≥5 impressions with 0 clicks in 2026-08-24–2026-09-22.
+ * Slugs are live routes — no invented cities.
+ */
 export const INTENT_PAGES = [
-  { href: "/destinations/tallinn", label: "Tallinn city guide", source: "gsc" },
-  { href: "/community", label: "Community", source: "gsc" },
+  { href: "/destinations/tallinn", label: "Tallinn city guide", source: "gsc-click" },
+  { href: "/community", label: "Community", source: "gsc-click" },
+  { href: "/about", label: "About RoamIQ", source: "gsc-impressions" },
+  { href: "/destinations", label: "All city guides", source: "gsc-impressions" },
+  { href: "/destinations/taipei", label: "Taipei city guide", source: "gsc-impressions" },
+  { href: "/destinations/prague", label: "Prague city guide", source: "gsc-impressions" },
+  { href: "/destinations/valencia", label: "Valencia city guide", source: "gsc-impressions" },
+  { href: "/destinations/bangkok", label: "Bangkok city guide", source: "gsc-impressions" },
+  { href: "/destinations/chiang-mai", label: "Chiang Mai city guide", source: "gsc-impressions" },
+  { href: "/destinations/oaxaca", label: "Oaxaca city guide", source: "gsc-impressions" },
 ] as const;
 
 
@@ -53,7 +65,7 @@ export function IntentListingLinks({ className }: { className?: string }) {
         Open a listing people already landed on
       </p>
       <p className="mt-1 max-w-2xl text-xs text-muted-foreground">
-        These pages already show up as homepage exits or Search clicks. Jump to the card instead of bouncing from the index.
+        Listings here already earned a Search click or a GA4 landing. Dashed chips are live city-guide and site pages that already get Search impressions — open one instead of bouncing from the homepage.
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         {INTENT_LISTINGS.map((row) => (
