@@ -1,3 +1,20 @@
+## 2026-09-23 ~04:20 UTC — extra gallery images in list JSON-LD + GSC-clicked site pages
+
+Track A (schema + conversion): About/images already render on cards and detail; admin auth is env-based; price/Wi-Fi empty states already have waitlist. This run:
+
+1. `workspaceListItemJsonLd` now emits up to 4 gallery URLs when extra venue photos are already visible on index cards (same `listingGalleryImages` gate as the UI). Single-image cards stay a string. No schema for photos that are not shown.
+2. Intent chips now include the two non-listing pages that already earned a GSC click in 2026-08-24–2026-09-21: `/destinations/tallinn` and `/community`. No invented destinations.
+
+GSC property https://nomads-travel-indol.vercel.app/ (2026-08-24–2026-09-21, query): cafe nenom 1/22 pos ~9.1; cafe nook 1/13 pos ~7.7; coliving zürich 1/1; durty nellys amsterdam 1/1; innapartment taipei 1/9 pos 7; ngb living 1/25 pos ~7.1; roam iq 1/34 pos ~8.3; urban place 1/2. Branded `roamiq` not in the top-25 query slice this pass. Query `4g-travel-tool.vercel.app` 0/12 pos ~3.3 — FLAG only; host is not on this GSC property; no redirect. Page clicks also include `/community` and `/destinations/tallinn`. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4 property `541610896` (2026-08-24–2026-09-21): `/` 63 sessions / 90.5% bounce; `/workspaces` 10 / 100%; `/workspaces/92952ead-...` 8 / 37.5%; `/workspaces/7f4cc6c5-...` 4 / 25%; `/workspaces/d3013dbe-...` 4 / 100%.
+
+Listings null-rates: reused prior n=10331 (SQL not re-run this pass): about empty 0; images empty 0; starting_price empty 5243 (50.7%); wifi_speed empty 2055 (19.9%); contact_phone empty 2178; logo_url empty 895; contact_email empty 4451.
+
+Sitemap not resubmitted (no new routes; destination and community URLs already live).
+
+---
+
 ## 2026-09-23 ~03:44 UTC — remaining GSC-clicked listing pages on intent links
 
 Track A (conversion): About/images already render; admin auth is already env-based; price/Wi-Fi empty states already have waitlist; detail JSON-LD already includes visible capacity/price units. GSC page dimension 2026-08-24–2026-09-21 still had 7 clicked listing URLs missing from `INTENT_LISTINGS`. Added from the listings table (no invented names): GoLiving GmbH (Berlin), A&o Hostel Berlin Mitte, Josephine'S Guesthouse For Women (Zurich), Sunflower Hostel Berlin, Zuerich Apartments Kurvenstrasse, Meccano Coworking Space (Cairo), Café Restaurant NOOK (Casablanca‑Settat). Sitemap already includes `INTENT_LISTING_IDS` — not resubmitted (no new routes; extra listing URLs already live).
