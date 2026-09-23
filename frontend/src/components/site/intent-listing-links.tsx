@@ -2,7 +2,7 @@ import Link from "next/link";
 
 /**
  * Listings that already earned a GSC click and/or a GA4 landing
- * (2026-08-22 to 2026-09-21). Names and IDs are from the listings table
+ * (2026-08-24 to 2026-09-20). Names and IDs are from the listings table
  * — no invented venues.
  *
  * Extra GSC rows are listing *pages* that received a click even when the
@@ -12,6 +12,7 @@ export const INTENT_LISTINGS = [
   { id: "92952ead-ba02-4514-a768-d8e768ab671c", name: "Atzomx Café Y Coworking", city: "Oaxaca", source: "ga4" },
   { id: "7f4cc6c5-a990-4fb9-b34d-6855c647005e", name: "City West Apartments", city: "Berlin", source: "ga4" },
   { id: "d3013dbe-cf9f-4c77-9061-b69a8ff35cda", name: "Milenaria Cafe", city: "Lima", source: "ga4" },
+  { id: "75a2fe92-79ac-4d29-af9d-d1f5a49dd639", name: "Combinata - Coworking Bologna Accessibile", city: "Bologna", source: "ga4" },
   { id: "77d5a817-365f-4625-8b70-272c971f4ba5", name: "Re-work Porto Cowork", city: "Porto", source: "ga4" },
   { id: "9f2a3805-808d-4aef-9126-a1a072c93c1d", name: "Café Nénom", city: "Berlin", source: "gsc" },
   { id: "7477259b-2d45-4353-a733-87db0ecb4005", name: "Durty Nellys", city: "Amsterdam", source: "gsc" },
