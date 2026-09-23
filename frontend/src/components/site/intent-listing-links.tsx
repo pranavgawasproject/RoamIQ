@@ -7,6 +7,9 @@ import Link from "next/link";
  *
  * Extra GSC rows are listing *pages* that received a click even when the
  * query was not a clean venue name (so the index chips stay query-based).
+ *
+ * High-impression 0-click listing pages from 2026-08-24–2026-09-23 are
+ * pinned only when the listings table has a real company_name + city.
  */
 export const INTENT_LISTINGS = [
   { id: "92952ead-ba02-4514-a768-d8e768ab671c", name: "Atzomx Café Y Coworking", city: "Oaxaca", source: "ga4" },
@@ -35,13 +38,18 @@ export const INTENT_LISTINGS = [
   { id: "c4685fae-34f6-4c30-9f13-827caca25b25", name: "Zuerich Apartments Kurvenstrasse", city: "Zurich", source: "gsc" },
   { id: "d7c64e22-3802-4976-945d-c6266fb84203", name: "Meccano Coworking Space", city: "Cairo", source: "gsc" },
   { id: "ea53ff4c-9ece-4e22-beec-7bddc54c0e36", name: "Café Restaurant NOOK", city: "Casablanca‑Settat", source: "gsc" },
+  { id: "05f30d06-726a-4dc4-b1c3-39bd19bdd9a8", name: "Vanmates Accommodation Toronto", city: "Toronto", source: "gsc-impressions" },
+  { id: "081be3b4-4d1f-4ab0-9c1b-657bc7ff8804", name: "Savi Coliving Valencia", city: "Valencia", source: "gsc-impressions" },
+  { id: "04f791e8-9a7f-4ac9-a67b-08e2ec772687", name: "Outsite Bali - Pererenan", city: "Canggu", source: "gsc-impressions" },
+  { id: "086556c8-f27a-4c00-92fd-e09b25c0cd26", name: "Folks Coliving Valencia", city: "Valencia", source: "gsc-impressions" },
+  { id: "00741bef-0bc8-4bf8-a248-4a0b6edcc9d7", name: "MQR - Park15", city: "Cairo", source: "gsc-impressions" },
 ] as const;
 
 export const INTENT_LISTING_IDS = INTENT_LISTINGS.map((row) => row.id);
 
 /**
  * Destination and site pages that already earned a GSC click, or that
- * earned impressions with 0 clicks in 2026-08-24–2026-09-22.
+ * earned impressions with 0 clicks in 2026-08-24–2026-09-23.
  * Slugs are live routes — no invented cities.
  */
 export const INTENT_PAGES = [
@@ -58,6 +66,11 @@ export const INTENT_PAGES = [
   { href: "/destinations/athens", label: "Athens city guide", source: "gsc-impressions" },
   { href: "/destinations/barcelona", label: "Barcelona city guide", source: "gsc-impressions" },
   { href: "/destinations/buenos-aires", label: "Buenos Aires city guide", source: "gsc-impressions" },
+  { href: "/destinations/lisbon", label: "Lisbon city guide", source: "gsc-impressions" },
+  { href: "/destinations/medellin", label: "Medellín city guide", source: "gsc-impressions" },
+  { href: "/destinations/tenerife", label: "Tenerife city guide", source: "gsc-impressions" },
+  { href: "/destinations/tbilisi", label: "Tbilisi city guide", source: "gsc-impressions" },
+  { href: "/destinations/cape-town", label: "Cape Town city guide", source: "gsc-impressions" },
 ] as const;
 
 export function IntentListingLinks({ className }: { className?: string }) {
@@ -67,7 +80,7 @@ export function IntentListingLinks({ className }: { className?: string }) {
         Open a listing people already landed on
       </p>
       <p className="mt-1 max-w-2xl text-xs text-muted-foreground">
-        Listings here already earned a Search click or a GA4 landing. Dashed chips are live city-guide and site pages that already get Search impressions — open one instead of bouncing from the homepage.
+        Listings here already earned a Search click, a GA4 landing, or a high Search impression count with no click yet. Dashed chips are live city-guide and site pages that already get Search impressions — open one instead of bouncing from the homepage.
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         {INTENT_LISTINGS.map((row) => (
