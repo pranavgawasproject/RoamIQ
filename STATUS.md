@@ -1,3 +1,17 @@
+## 2026-09-23 ~13:25 IST — GSC-impressed city guides on intent links
+
+Track A (conversion): About/images already render; admin auth is env-based; price/Wi-Fi empty states and listing JSON-LD already ship visible fields only. GSC page dimension 2026-08-24–2026-09-22 still shows 0-click impression demand on `/about` (21), `/destinations` (13), and city guides Taipei (11), Prague (8), Valencia (6), Bangkok (5), Chiang Mai (5), Oaxaca (5). Those live slugs are now on `INTENT_PAGES` next to the two pages that already earned a click (`/destinations/tallinn`, `/community`). No invented destinations.
+
+GSC property https://nomads-travel-indol.vercel.app/ (2026-08-24–2026-09-22): clicked listing pages unchanged vs prior pin set. Branded: `roam iq` 1/34 pos ~8.3; `roamiq` 0/6 pos 9.5; `roamiq price` 0/25 pos ~8.9. Query `4g-travel-tool.vercel.app` still FLAG only (0/12 earlier window); host is not on this GSC property; no redirect. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4: not re-run this pass (prior 24 Aug–21 Sep: `/` 63 sessions / 90.5% bounce; `/workspaces` 10 / 100%).
+
+Listings null-rates: reused prior n=10331: about empty 0; images empty 0; starting_price empty 5243 (50.7%); wifi_speed empty 2055 (19.9%); contact_phone empty 2178; logo_url empty 895; contact_email empty 4451.
+
+Sitemap not resubmitted (no new routes; destination and about URLs already live).
+
+---
+
 ## 2026-09-23 ~04:20 UTC — extra gallery images in list JSON-LD + GSC-clicked site pages
 
 Track A (schema + conversion): About/images already render on cards and detail; admin auth is env-based; price/Wi-Fi empty states already have waitlist. This run:
