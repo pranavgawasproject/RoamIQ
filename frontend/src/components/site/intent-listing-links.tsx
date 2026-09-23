@@ -39,6 +39,13 @@ export const INTENT_LISTINGS = [
 
 export const INTENT_LISTING_IDS = INTENT_LISTINGS.map((row) => row.id);
 
+/** Destination and site pages that already earned a GSC click in the same window. */
+export const INTENT_PAGES = [
+  { href: "/destinations/tallinn", label: "Tallinn city guide", source: "gsc" },
+  { href: "/community", label: "Community", source: "gsc" },
+] as const;
+
+
 export function IntentListingLinks({ className }: { className?: string }) {
   return (
     <div className={className}>
@@ -57,6 +64,15 @@ export function IntentListingLinks({ className }: { className?: string }) {
           >
             {row.name}
             <span className="ml-1 text-muted-foreground">· {row.city}</span>
+          </Link>
+        ))}
+        {INTENT_PAGES.map((row) => (
+          <Link
+            key={row.href}
+            href={row.href}
+            className="rounded-full border border-dashed border-border bg-card px-3 py-1 text-xs font-medium text-foreground/80 hover:border-accent hover:text-accent"
+          >
+            {row.label}
           </Link>
         ))}
       </div>
