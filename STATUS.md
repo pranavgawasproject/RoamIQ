@@ -1,3 +1,15 @@
+## 2026-09-23 ~03:44 UTC — remaining GSC-clicked listing pages on intent links
+
+Track A (conversion): About/images already render; admin auth is already env-based; price/Wi-Fi empty states already have waitlist; detail JSON-LD already includes visible capacity/price units. GSC page dimension 2026-08-24–2026-09-21 still had 7 clicked listing URLs missing from `INTENT_LISTINGS`. Added from the listings table (no invented names): GoLiving GmbH (Berlin), A&o Hostel Berlin Mitte, Josephine'S Guesthouse For Women (Zurich), Sunflower Hostel Berlin, Zuerich Apartments Kurvenstrasse, Meccano Coworking Space (Cairo), Café Restaurant NOOK (Casablanca‑Settat). Sitemap already includes `INTENT_LISTING_IDS` — not resubmitted (no new routes; extra listing URLs already live).
+
+GSC property https://nomads-travel-indol.vercel.app/ (2026-08-24–2026-09-21): 22 clicks / 6,272 impressions / CTR 0.35% / avg position ~11.1. Top queries: cafe nenom 1/22 pos ~9.1; cafe nook 1/13 pos ~7.7; coliving zürich 1/1; durty nellys amsterdam 1/1; innapartment taipei 1/9 pos 7. Branded: `roamiq` 0/6 pos 9.5; `roamiq price` 0/25 pos ~8.9; `roam iq` not re-sliced this pass. Query `4g-travel-tool.vercel.app` 0/12 pos ~3.3 — FLAG only; host is not on this GSC property; no redirect. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4: not re-run this pass (prior 24 Aug–20 Sep: `/` 63 sessions / 90.5% bounce; `/workspaces` 10 / 100%). Live host still returns Vercel “deployment paused” — not changed.
+
+Listings `davvpymbybvniexmkgcu` n=10331: about empty 0; images empty (cardinality=0) 2063 / usable-image treatment in app treats most as present; starting_price empty 5243 (50.7%); wifi_speed empty 2055 (19.9%); contact_phone empty 2178; logo_url empty 895; contact_email empty 4451.
+
+---
+
 ## 2026-09-23 ~03:40 UTC — GA4 bounce listing + visible capacity in detail JSON-LD
 
 Track A (conversion + schema): About/images already render; admin auth is already env-based; price/Wi-Fi empty states already have waitlist. Two remaining gaps this run:
