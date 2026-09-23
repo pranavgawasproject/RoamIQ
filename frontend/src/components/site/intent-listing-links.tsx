@@ -2,7 +2,7 @@ import Link from "next/link";
 
 /**
  * Listings that already earned a GSC click and/or a GA4 landing
- * (2026-08-24 to 2026-09-20). Names and IDs are from the listings table
+ * (2026-08-24 to 2026-09-21). Names and IDs are from the listings table
  * — no invented venues.
  *
  * Extra GSC rows are listing *pages* that received a click even when the
@@ -28,6 +28,13 @@ export const INTENT_LISTINGS = [
   { id: "5644ef1f-0afb-468e-966c-902cb2631f96", name: "COWORK at PARKLAND", city: "Colombo", source: "gsc" },
   { id: "6f36bfe2-aa2b-4d53-a90f-da29bb1ac371", name: "IRIE Location", city: "Montreal", source: "gsc" },
   { id: "847c1265-2b2c-43d9-aac4-4b37a3fb1bc5", name: "Home & Co Berlin Yard", city: "Berlin", source: "gsc" },
+  { id: "2c7df910-79b7-4b84-a087-2d657c7e5fc7", name: "GoLiving GmbH", city: "Berlin", source: "gsc" },
+  { id: "9f80821c-8d6e-4b0d-82f4-bfdfe7f9d22f", name: "A&o Hostel Berlin Mitte", city: "Berlin", source: "gsc" },
+  { id: "ae77f708-a2bb-4401-a8ea-345356c59ed7", name: "Josephine'S Guesthouse For Women", city: "Zurich", source: "gsc" },
+  { id: "b572a395-ba11-4db3-ba42-6a7868e8ee5f", name: "Sunflower Hostel Berlin", city: "Berlin", source: "gsc" },
+  { id: "c4685fae-34f6-4c30-9f13-827caca25b25", name: "Zuerich Apartments Kurvenstrasse", city: "Zurich", source: "gsc" },
+  { id: "d7c64e22-3802-4976-945d-c6266fb84203", name: "Meccano Coworking Space", city: "Cairo", source: "gsc" },
+  { id: "ea53ff4c-9ece-4e22-beec-7bddc54c0e36", name: "Café Restaurant NOOK", city: "Casablanca‑Settat", source: "gsc" },
 ] as const;
 
 export const INTENT_LISTING_IDS = INTENT_LISTINGS.map((row) => row.id);
