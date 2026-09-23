@@ -8,12 +8,12 @@ type WaitlistStickyProps = {
   context?: Record<string, string | null | undefined>;
   heading?: string;
   description?: string;
-  /** Scroll Y (px) before the bar appears. Default 480. */
+  /** Scroll Y (px) before the bar appears. Default 0 so high-bounce landings see the form without scrolling. */
   afterPx?: number;
 };
 
 /** Fixed bottom capture for high-exit listing and destination landings. No fabricated stats or urgency. */
-export function WaitlistSticky({ source, context, heading, description, afterPx = 480 }: WaitlistStickyProps) {
+export function WaitlistSticky({ source, context, heading, description, afterPx = 0 }: WaitlistStickyProps) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
