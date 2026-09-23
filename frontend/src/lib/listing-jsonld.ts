@@ -1,5 +1,6 @@
 import {
   firstVenueListingImage,
+  listingGalleryImages,
   isUsableImageUrl,
   usefulContactEmail,
   usefulContactPhone,
@@ -92,6 +93,9 @@ export function workspaceListItemJsonLd(
   const photoUrl = firstVenueListingImage(listing.images);
   const logoUrl = isUsableImageUrl(listing.logo_url) ? listing.logo_url!.trim() : null;
   const imageUrl = photoUrl || logoUrl;
+  // Cards already render extra venue photos; only repeat those URLs in schema.
+  const galleryImages = listingGalleryImages(listing.images, listing.logo_url).slice(0, 4);
+  const schemaImages = galleryImages.length > 1 ? galleryImages : imageUrl ? [imageUrl] : [];
   const place: Record<string, unknown> = {
     "@type": listingSchemaType(listing.company_type),
     "@id": `${baseUrl}/workspaces/${listing.id}#place`,
@@ -103,7 +107,8 @@ export function workspaceListItemJsonLd(
   const listedLegal = usefulListingRegisteredEntity(listing.registered_entity_name, listing.company_name);
   if (listedLegal) place.legalName = listedLegal;
   if (aboutSnippet) place.description = aboutSnippet;
-  if (imageUrl) place.image = imageUrl;
+  if (schemaImages.length > 1) place.image = schemaImages;
+  else if (schemaImages.length === 1) place.image = schemaImages[0];
   if (logoUrl) place.logo = logoUrl;
   const street = usefulStreetAddress(listing.address, listing.city, listing.country);
   const region = usefulListingRegion(listing.state, listing.city);
@@ -221,7 +226,8 @@ export function workspaceListItemJsonLd(
     item: place,
   };
   if (aboutSnippet) item.description = aboutSnippet;
-  if (imageUrl) item.image = imageUrl;
+  if (schemaImages.length > 1) item.image = schemaImages;
+  else if (schemaImages.length === 1) item.image = schemaImages[0];
   return item;
 }
 
