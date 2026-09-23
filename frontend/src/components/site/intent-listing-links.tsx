@@ -43,6 +43,13 @@ export const INTENT_LISTINGS = [
   { id: "04f791e8-9a7f-4ac9-a67b-08e2ec772687", name: "Outsite Bali - Pererenan", city: "Canggu", source: "gsc-impressions" },
   { id: "086556c8-f27a-4c00-92fd-e09b25c0cd26", name: "Folks Coliving Valencia", city: "Valencia", source: "gsc-impressions" },
   { id: "00741bef-0bc8-4bf8-a248-4a0b6edcc9d7", name: "MQR - Park15", city: "Cairo", source: "gsc-impressions" },
+  { id: "1c563e86-a530-4b84-8668-ccecf3703d6f", name: "AlDyafah Furnished Apartment", city: "Amman", source: "gsc-impressions" },
+  { id: "344bd7a7-6d75-497a-9f80-27a7c53d7046", name: "Banana Coliving", city: "Taipei", source: "gsc-impressions" },
+  { id: "467b4c25-5337-4d5b-a69a-785a60b69e23", name: "Amsterdam Congress Center", city: "Amsterdam", source: "gsc-impressions" },
+  { id: "2132ef3b-d127-4ac0-a59c-2bf58ad370ab", name: "Gesthab", city: "Montreal", source: "gsc-impressions" },
+  { id: "24a555ee-58c8-4c4c-a27e-7964aa5d8b2e", name: "One Workspace", city: "Chiang Mai", source: "gsc-impressions" },
+  { id: "20dcd193-bdb2-44c2-9da5-d58cccc1220d", name: "WFC Lofts (Holland2Stay)", city: "Amsterdam", source: "gsc-impressions" },
+  { id: "1d45354d-a023-4985-9a38-095b62361ce9", name: "MQR - Platz", city: "Cairo", source: "gsc-impressions" },
 ] as const;
 
 export const INTENT_LISTING_IDS = INTENT_LISTINGS.map((row) => row.id);
