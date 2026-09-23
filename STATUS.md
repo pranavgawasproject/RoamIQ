@@ -1,115 +1,17 @@
-## 2026-09-23 ~13:25 IST — GSC-impressed city guides on intent links
+## 2026-09-23 ~19:00 IST — show waitlist on bounce landings without scroll
 
-Track A (conversion): About/images already render; admin auth is env-based; price/Wi-Fi empty states and listing JSON-LD already ship visible fields only. GSC page dimension 2026-08-24–2026-09-22 still shows 0-click impression demand on `/about` (21), `/destinations` (13), and city guides Taipei (11), Prague (8), Valencia (6), Bangkok (5), Chiang Mai (5), Oaxaca (5). Those live slugs are now on `INTENT_PAGES` next to the two pages that already earned a click (`/destinations/tallinn`, `/community`). No invented destinations.
+Track A (conversion): About/images already render; admin auth is env-based; price/Wi-Fi empty states and listing JSON-LD already ship visible fields only. GA4 still treats `/workspaces` as a 100% bounce landing (10 sessions, 24 Aug–21 Sep prior window). The sticky waitlist previously waited for 480px of scroll, so bounce sessions never saw it. Default `afterPx` is now 0, so `/workspaces` and listing-detail sticky bars appear immediately (those pages already mount `WaitlistSticky`). Copy is unchanged and does not invent urgency.
 
-GSC property https://nomads-travel-indol.vercel.app/ (2026-08-24–2026-09-22): clicked listing pages unchanged vs prior pin set. Branded: `roam iq` 1/34 pos ~8.3; `roamiq` 0/6 pos 9.5; `roamiq price` 0/25 pos ~8.9. Query `4g-travel-tool.vercel.app` still FLAG only (0/12 earlier window); host is not on this GSC property; no redirect. Branded CTR capped until the custom domain is live (human-owned).
+Also added live GSC 0-click city guides still earning impressions in 2026-08-24–2026-09-22: Athens (3), Barcelona (1), Buenos Aires (3) on `INTENT_PAGES`. No invented destinations.
+
+GSC property https://nomads-travel-indol.vercel.app/ (2026-08-24–2026-09-22, query): cafe nenom 1/22 pos ~9.1; cafe nook 1/13 pos ~7.7; coliving zürich 1/1; durty nellys amsterdam 1/1; innapartment taipei 1/9 pos 7; ngb living 1/25 pos ~7.1; roam iq 1/34 pos ~8.3; urban place 1/2. Query `4g-travel-tool.vercel.app` 0/12 pos ~3.3 — FLAG only; host is not on this GSC property; no redirect. Branded CTR capped until the custom domain is live (human-owned).
 
 GA4: not re-run this pass (prior 24 Aug–21 Sep: `/` 63 sessions / 90.5% bounce; `/workspaces` 10 / 100%).
 
 Listings null-rates: reused prior n=10331: about empty 0; images empty 0; starting_price empty 5243 (50.7%); wifi_speed empty 2055 (19.9%); contact_phone empty 2178; logo_url empty 895; contact_email empty 4451.
 
-Sitemap not resubmitted (no new routes; destination and about URLs already live).
-
----
-
-## 2026-09-23 ~04:20 UTC — extra gallery images in list JSON-LD + GSC-clicked site pages
-
-Track A (schema + conversion): About/images already render on cards and detail; admin auth is env-based; price/Wi-Fi empty states already have waitlist. This run:
-
-1. `workspaceListItemJsonLd` now emits up to 4 gallery URLs when extra venue photos are already visible on index cards (same `listingGalleryImages` gate as the UI). Single-image cards stay a string. No schema for photos that are not shown.
-2. Intent chips now include the two non-listing pages that already earned a GSC click in 2026-08-24–2026-09-21: `/destinations/tallinn` and `/community`. No invented destinations.
-
-GSC property https://nomads-travel-indol.vercel.app/ (2026-08-24–2026-09-21, query): cafe nenom 1/22 pos ~9.1; cafe nook 1/13 pos ~7.7; coliving zürich 1/1; durty nellys amsterdam 1/1; innapartment taipei 1/9 pos 7; ngb living 1/25 pos ~7.1; roam iq 1/34 pos ~8.3; urban place 1/2. Branded `roamiq` not in the top-25 query slice this pass. Query `4g-travel-tool.vercel.app` 0/12 pos ~3.3 — FLAG only; host is not on this GSC property; no redirect. Page clicks also include `/community` and `/destinations/tallinn`. Branded CTR capped until the custom domain is live (human-owned).
-
-GA4 property `541610896` (2026-08-24–2026-09-21): `/` 63 sessions / 90.5% bounce; `/workspaces` 10 / 100%; `/workspaces/92952ead-...` 8 / 37.5%; `/workspaces/7f4cc6c5-...` 4 / 25%; `/workspaces/d3013dbe-...` 4 / 100%.
-
-Listings null-rates: reused prior n=10331 (SQL not re-run this pass): about empty 0; images empty 0; starting_price empty 5243 (50.7%); wifi_speed empty 2055 (19.9%); contact_phone empty 2178; logo_url empty 895; contact_email empty 4451.
-
-Sitemap not resubmitted (no new routes; destination and community URLs already live).
-
----
-
-## 2026-09-23 ~03:44 UTC — remaining GSC-clicked listing pages on intent links
-
-Track A (conversion): About/images already render; admin auth is already env-based; price/Wi-Fi empty states already have waitlist; detail JSON-LD already includes visible capacity/price units. GSC page dimension 2026-08-24–2026-09-21 still had 7 clicked listing URLs missing from `INTENT_LISTINGS`. Added from the listings table (no invented names): GoLiving GmbH (Berlin), A&o Hostel Berlin Mitte, Josephine'S Guesthouse For Women (Zurich), Sunflower Hostel Berlin, Zuerich Apartments Kurvenstrasse, Meccano Coworking Space (Cairo), Café Restaurant NOOK (Casablanca‑Settat). Sitemap already includes `INTENT_LISTING_IDS` — not resubmitted (no new routes; extra listing URLs already live).
-
-GSC property https://nomads-travel-indol.vercel.app/ (2026-08-24–2026-09-21): 22 clicks / 6,272 impressions / CTR 0.35% / avg position ~11.1. Top queries: cafe nenom 1/22 pos ~9.1; cafe nook 1/13 pos ~7.7; coliving zürich 1/1; durty nellys amsterdam 1/1; innapartment taipei 1/9 pos 7. Branded: `roamiq` 0/6 pos 9.5; `roamiq price` 0/25 pos ~8.9; `roam iq` not re-sliced this pass. Query `4g-travel-tool.vercel.app` 0/12 pos ~3.3 — FLAG only; host is not on this GSC property; no redirect. Branded CTR capped until the custom domain is live (human-owned).
-
-GA4: not re-run this pass (prior 24 Aug–20 Sep: `/` 63 sessions / 90.5% bounce; `/workspaces` 10 / 100%). Live host still returns Vercel “deployment paused” — not changed.
-
-Listings `davvpymbybvniexmkgcu` n=10331: about empty 0; images empty (cardinality=0) 2063 / usable-image treatment in app treats most as present; starting_price empty 5243 (50.7%); wifi_speed empty 2055 (19.9%); contact_phone empty 2178; logo_url empty 895; contact_email empty 4451.
-
----
-
-## 2026-09-23 ~03:40 UTC — GA4 bounce listing + visible capacity in detail JSON-LD
-
-Track A (conversion + schema): About/images already render; admin auth is already env-based; price/Wi-Fi empty states already have waitlist. Two remaining gaps this run:
-
-1. GA4 landing `/workspaces/75a2fe92-79ac-4d29-af9d-d1f5a49dd639` (Combinata - Coworking Bologna Accessibile, Bologna) had 2 sessions / 100% bounce in 24 Aug–20 Sep and was missing from `INTENT_LISTINGS`. Added from the listings table — no invented name.
-2. Workspace detail JSON-LD now emits `maximumAttendeeCapacity` and price `unitText` when those values are already visible on the page (same rules as related-row schema). No schema for empty capacity/price.
-
-GSC (query, 2026-08-24–2026-09-20): cafe nenom 1/22 pos ~9.1; cafe nook 1/13 pos ~7.7; coliving zürich 1/1; durty nellys amsterdam 1/1; innapartment taipei 1/9 pos 7; ngb living 1/25 pos ~7.1; roam iq 1/34 pos ~8.3; urban place 1/2. Query `4g-travel-tool.vercel.app` 0/12 pos ~3.3 — FLAG only; host is not on this GSC property; no redirect. Branded CTR capped until the custom domain is live (human-owned).
-
-GA4 property `541610896` (2026-08-24–2026-09-20): `/` 63 sessions / 90.5% bounce; `/workspaces` 10 / 100%; `/workspaces/92952ead-...` 8 / 37.5%; `/workspaces/7f4cc6c5-...` 4 / 25%; `/workspaces/d3013dbe-...` 4 / 100%; `/workspaces/75a2fe92-...` 2 / 100%. Live host still returns Vercel “deployment paused” — not changed.
-
-Listings `davvpymbybvniexmkgcu` n=10331: about empty 0; images empty 0; starting_price empty 5243 (50.7%); wifi_speed empty 2055 (19.9%); contact_phone empty 2178; logo_url empty 895; contact_email empty 4451.
-
-Sitemap not resubmitted (no new routes; existing listing URL already in catalog).
-
----
-
-## 2026-09-23 ~03:35 UTC — street address in listing SERP title/description
-
-Track A (SEO/conversion): GSC 2026-08-23 to 2026-09-21 still shows 0-click impressions on street-address queries (e.g. `301 brazos street austin`, `11801 domain blvd`, `1 university avenue toronto`, `4g-travel-tool.vercel.app` FLAG only). About/images already render; admin auth is already env-based. Listing pages now put the *stored* street address into `<title>`, meta description, and keywords when `usefulStreetAddress` returns a value. No invented addresses. Title extras cap raised to 3 so address can sit next to listed price/Wi-Fi.
-
-GSC (query, 2026-08-23–2026-09-21): cafe nenom 1/22 pos ~9.1; cafe nook 1/13 pos ~7.7; coliving zürich 1/1; durty nellys amsterdam 1/1; innapartment taipei 1/9 pos 7; ngb living 1/29 pos ~6.9; roam iq 1/34 pos ~8.3; urban place 1/2. Query `4g-travel-tool.vercel.app` 0/12 pos ~3.3 — FLAG only; host is not on this GSC property; no redirect. Branded CTR capped until the custom domain is live (human-owned).
-
-GA4: not re-run this pass (prior snapshot 24 Aug–20 Sep: `/` ~63 sessions / ~90% bounce; `/workspaces` 10 / 100%).
-
-Listings null-rates: reused prior n=10331 (SQL not re-run): about 0 empty, images 0 empty, starting_price 5243 empty (50.7%), wifi_speed 2055 empty (19.9%), contact_phone 2178, logo_url 895, contact_email 4451.
+Live Vercel host nomads-travel-indol.vercel.app is currently paused (deployment paused page). Code still lands on main.
 
 Sitemap not resubmitted (no new routes).
-
----
-
-## 2026-09-22 ~14:05 UTC — price/Wi-Fi transparency on /workspaces
-
-Track A (conversion): GSC still shows impression demand for price-shaped queries (`roamiq price` in the prior window) while GA4 keeps `/workspaces` at 100% bounce (10 sessions, 24 Aug–20 Sep). About/images already render. Added an above-the-fold note that price and Mbps only appear when stored, plus filters to `priced=1` and `wifiable=1`. No invented figures. Waitlist copy unchanged.
-
-GSC 2026-08-22 to 2026-09-21 (query): cafe nenom 1/22 pos ~9.1; cafe nook 1/12; coliving zürich 1/1; durty nellys amsterdam 1/1; innapartment taipei 1/8; ngb living 1/31; roam iq 1/35 pos ~8.2; urban place 1/2. Query `4g-travel-tool.vercel.app` 0 clicks / 12 impressions pos ~3.3 — FLAG only; that host is not on this GSC property so inspect is not possible here; no redirect. Branded CTR capped until the custom domain is live (human-owned).
-
-GA4: reused same-day snapshot — `/` ~63–67 sessions / ~90% bounce; `/workspaces` 10 / 100%. Live `nomads-travel-indol.vercel.app` and `roamiq-app.vercel.app` still return Vercel “deployment paused” — not changed (domain config is human-owned).
-
-Listings null-rates: reused prior n=10331 (Composio SQL 403 / PostgREST 401 this run): about 0 empty, images 0 empty, starting_price 5243 empty (50.7%), wifi_speed 2055 empty (19.9%), contact_phone 2178, logo_url 895, contact_email 4451.
-
-Sitemap not resubmitted (no new routes).
-
----
-
-## 2026-09-22 ~13:58 UTC — waitlist on thin /workspaces cards
-
-Track A (conversion): `/workspaces` remains a 100% bounce landing page (GA4 2026-08-24–2026-09-20, 10 sessions). About and images already render on cards. Listings that still have no listed price *and* no listed Wi-Fi *and* no venue email/phone now show an on-card waitlist (`source=workspaces-card-thin`) instead of a dead footer. Copy states we only write when a stored price or Wi-Fi figure exists — no invented numbers. Top-of-page waitlist description updated to the current bounce window.
-
-GSC 2026-08-24 to 2026-09-20 (query dimension, top rows): cafe nenom 1/22 pos ~9.1; cafe nook 1/12; coliving zürich 1/1; durty nellys amsterdam 1/1; innapartment taipei 1/8; ngb living 1/25; roam iq 1/34 pos ~8.3; urban place 1/2. Branded `roamiq` 0 clicks / 6 impressions pos ~9.5; `roamiq price` 0/21 pos ~8.8. Query `4g-travel-tool.vercel.app` FLAG only — inspect of that host is not on this GSC property; no redirect. Branded CTR capped until the custom domain is live (human-owned).
-
-GA4 property `541610896` (2026-08-24 to 2026-09-20): `/` 63 sessions / 90.5% bounce; `/workspaces` 10 / 100%; individual listing landings lower bounce (e.g. `/workspaces/92952ead-...` 8 / 37.5%).
-
-Listings null-rates: Composio SQL 403 / PostgREST 401 this run — reused prior snapshot n=10331: about 0 empty, images 0 empty, starting_price 5243 empty (50.7%), wifi_speed 2055 empty (19.9%), contact_phone 2178, logo_url 895, contact_email 4451.
-
-Sitemap not resubmitted (no new routes).
-
----
-
-## 2026-09-22 — Pin GSC-clicked listing pages into intent links + sitemap
-
-Track A: `/workspaces` still 100% bounce on the index. Added the listing *pages* that already earned a GSC click (page dimension, 2026-08-22–2026-09-21) to `IntentListingLinks` — Tomodomo Zurich, Athens Art Apartments, RezG Hub, Space2Work, Facts Coworking, PARKLAND Colombo, IRIE Montreal, Home & Co Berlin Yard — IDs resolved from the listings table. Sitemap now always includes those intent IDs so crawl budget is not limited to the ratings-capped 80-row slice. Refreshed index chips (dropped Izzy's; 0 clicks in this window). Sitemap routes unchanged except extra listing URLs already live.
-
-GSC 2026-08-22 to 2026-09-21: venue queries with 1 click each include cafe nenom, cafe nook, coliving zürich, durty nellys amsterdam, innapartment taipei, ngb living, urban place; branded `roam iq` 1 click / 35 impressions / pos ~8.2. Query `4g-travel-tool.vercel.app` FLAG only — no redirect. Branded CTR capped until custom domain is live (human-owned).
-
-GA4 (prior same-day snapshot): `/` 67 sessions / 89.6% bounce; `/workspaces` 10 sessions / 100% bounce.
-
-Listings null-rates (n=10331): about 0 empty, images 0 empty, starting_price 5243 empty (50.7%), wifi_speed 2055 empty (19.9%), contact_phone 2178, logo_url 895, contact_email 4451.
-
-Live site note: nomads-travel-indol.vercel.app still returns Vercel deployment paused — not changed this run.
 
 ---
