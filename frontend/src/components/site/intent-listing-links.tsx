@@ -41,7 +41,7 @@ export const INTENT_LISTING_IDS = INTENT_LISTINGS.map((row) => row.id);
 
 /**
  * Destination and site pages that already earned a GSC click, or that
- * earned ≥5 impressions with 0 clicks in 2026-08-24–2026-09-22.
+ * earned impressions with 0 clicks in 2026-08-24–2026-09-22.
  * Slugs are live routes — no invented cities.
  */
 export const INTENT_PAGES = [
@@ -55,8 +55,10 @@ export const INTENT_PAGES = [
   { href: "/destinations/bangkok", label: "Bangkok city guide", source: "gsc-impressions" },
   { href: "/destinations/chiang-mai", label: "Chiang Mai city guide", source: "gsc-impressions" },
   { href: "/destinations/oaxaca", label: "Oaxaca city guide", source: "gsc-impressions" },
+  { href: "/destinations/athens", label: "Athens city guide", source: "gsc-impressions" },
+  { href: "/destinations/barcelona", label: "Barcelona city guide", source: "gsc-impressions" },
+  { href: "/destinations/buenos-aires", label: "Buenos Aires city guide", source: "gsc-impressions" },
 ] as const;
-
 
 export function IntentListingLinks({ className }: { className?: string }) {
   return (
