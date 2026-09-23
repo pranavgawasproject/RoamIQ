@@ -131,13 +131,16 @@ export async function generateMetadata({
       titleCore = `${name} \u2014 ${typeLabel}`;
     }
     const extras: string[] = [];
+    const listedStreetMeta = usefulStreetAddress(listing.address, listing.city, listing.country);
+    // GSC still serves street-address queries (0 CTR). Put the stored address in the title when we have one — never invent one.
+    if (listedStreetMeta) extras.push(listedStreetMeta);
     const listedPrice = usefulListedPrice(listing.starting_price, listing.cost);
     if (listedPrice) extras.push(listedPrice);
     const listedWifiMeta = usefulWifiSpeed(listing.wifi_speed);
     if (listedWifiMeta) extras.push(`Wi-Fi ${listedWifiMeta}`);
     // Prefer clickable SERP titles; keep brand light (not the only differentiator).
     const title = extras.length
-      ? `${titleCore} \u00b7 ${extras.slice(0, 2).join(" \u00b7 ")}`
+      ? `${titleCore} \u00b7 ${extras.slice(0, 3).join(" \u00b7 ")}`
       : titleCore;
     const aboutSnippet = usefulListingAbout(listing.about || listing.description, listing.company_name, 140) || "";
     const audience =
@@ -150,8 +153,9 @@ export async function generateMetadata({
         : typeLabel === "hostel"
         ? "hostel stay with workspace options for digital nomads"
         : "coworking and workspace for digital nomads";
+    const addressNote = listedStreetMeta ? ` ${listedStreetMeta}.` : "";
     const description =
-      aboutSnippet ||
+      (aboutSnippet ? `${aboutSnippet}${addressNote}` : null) ||
       `${name}${cityCountry ? ` in ${cityCountry}` : ""} \u2014 ${audience} on RoamIQ.${extras.length ? ` ${extras.join(" \u00b7 ")}.` : ""}`;
     const url = `${BASE_URL}/workspaces/${listing.id}`;
     const image = firstUsableListingImage(listing.images, listing.logo_url) || undefined;
@@ -163,6 +167,7 @@ export async function generateMetadata({
         typeLabel || "workspace",
         `${listing.company_name} ${listing.city || ""}`.trim(),
         `${listing.city || ""} ${typeLabel || "coworking"}`.trim(),
+        usefulStreetAddress(listing.address, listing.city, listing.country) || "",
         "digital nomad workspace",
         "roamiq",
       ].filter(Boolean),

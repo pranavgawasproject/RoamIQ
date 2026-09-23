@@ -1,3 +1,17 @@
+## 2026-09-23 ~03:35 UTC — street address in listing SERP title/description
+
+Track A (SEO/conversion): GSC 2026-08-23 to 2026-09-21 still shows 0-click impressions on street-address queries (e.g. `301 brazos street austin`, `11801 domain blvd`, `1 university avenue toronto`, `4g-travel-tool.vercel.app` FLAG only). About/images already render; admin auth is already env-based. Listing pages now put the *stored* street address into `<title>`, meta description, and keywords when `usefulStreetAddress` returns a value. No invented addresses. Title extras cap raised to 3 so address can sit next to listed price/Wi-Fi.
+
+GSC (query, 2026-08-23–2026-09-21): cafe nenom 1/22 pos ~9.1; cafe nook 1/13 pos ~7.7; coliving zürich 1/1; durty nellys amsterdam 1/1; innapartment taipei 1/9 pos 7; ngb living 1/29 pos ~6.9; roam iq 1/34 pos ~8.3; urban place 1/2. Query `4g-travel-tool.vercel.app` 0/12 pos ~3.3 — FLAG only; host is not on this GSC property; no redirect. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4: not re-run this pass (prior snapshot 24 Aug–20 Sep: `/` ~63 sessions / ~90% bounce; `/workspaces` 10 / 100%).
+
+Listings null-rates: reused prior n=10331 (SQL not re-run): about 0 empty, images 0 empty, starting_price 5243 empty (50.7%), wifi_speed 2055 empty (19.9%), contact_phone 2178, logo_url 895, contact_email 4451.
+
+Sitemap not resubmitted (no new routes).
+
+---
+
 ## 2026-09-22 ~14:05 UTC — price/Wi-Fi transparency on /workspaces
 
 Track A (conversion): GSC still shows impression demand for price-shaped queries (`roamiq price` in the prior window) while GA4 keeps `/workspaces` at 100% bounce (10 sessions, 24 Aug–20 Sep). About/images already render. Added an above-the-fold note that price and Mbps only appear when stored, plus filters to `priced=1` and `wifiable=1`. No invented figures. Waitlist copy unchanged.
