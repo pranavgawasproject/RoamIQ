@@ -301,14 +301,27 @@ export default async function WorkspaceDetailPage({
     localBusinessJsonLd.hasMap = `https://maps.google.com/?q=${listing.latitude},${listing.longitude}`;
   }
   const listedPriceRange = usefulListedPrice(listing.starting_price, listing.cost);
+  const listedUnits = usefulListingUnits(listing.units);
+  const listedCapacity = usefulListingCapacity(listing.capacity);
+  const capacityNumber = listedCapacity
+    ? (() => {
+        const m = listedCapacity.match(/(\d{1,5})/);
+        return m ? Number(m[1]) : null;
+      })()
+    : null;
+  if (capacityNumber && Number.isFinite(capacityNumber) && capacityNumber > 0) {
+    localBusinessJsonLd.maximumAttendeeCapacity = capacityNumber;
+  }
   if (listedPriceRange) {
-    localBusinessJsonLd.priceRange = listedPriceRange;
+    const priceLabel = listedUnits ? `${listedPriceRange} ${listedUnits}` : listedPriceRange;
+    localBusinessJsonLd.priceRange = priceLabel;
     localBusinessJsonLd.makesOffer = {
       "@type": "Offer",
       url: pageUrl,
       priceSpecification: {
         "@type": "PriceSpecification",
-        description: listedPriceRange,
+        description: priceLabel,
+        ...(listedUnits ? { unitText: listedUnits } : {}),
       },
       availability: "https://schema.org/InStock",
     };

@@ -1,3 +1,20 @@
+## 2026-09-23 ~03:40 UTC — GA4 bounce listing + visible capacity in detail JSON-LD
+
+Track A (conversion + schema): About/images already render; admin auth is already env-based; price/Wi-Fi empty states already have waitlist. Two remaining gaps this run:
+
+1. GA4 landing `/workspaces/75a2fe92-79ac-4d29-af9d-d1f5a49dd639` (Combinata - Coworking Bologna Accessibile, Bologna) had 2 sessions / 100% bounce in 24 Aug–20 Sep and was missing from `INTENT_LISTINGS`. Added from the listings table — no invented name.
+2. Workspace detail JSON-LD now emits `maximumAttendeeCapacity` and price `unitText` when those values are already visible on the page (same rules as related-row schema). No schema for empty capacity/price.
+
+GSC (query, 2026-08-24–2026-09-20): cafe nenom 1/22 pos ~9.1; cafe nook 1/13 pos ~7.7; coliving zürich 1/1; durty nellys amsterdam 1/1; innapartment taipei 1/9 pos 7; ngb living 1/25 pos ~7.1; roam iq 1/34 pos ~8.3; urban place 1/2. Query `4g-travel-tool.vercel.app` 0/12 pos ~3.3 — FLAG only; host is not on this GSC property; no redirect. Branded CTR capped until the custom domain is live (human-owned).
+
+GA4 property `541610896` (2026-08-24–2026-09-20): `/` 63 sessions / 90.5% bounce; `/workspaces` 10 / 100%; `/workspaces/92952ead-...` 8 / 37.5%; `/workspaces/7f4cc6c5-...` 4 / 25%; `/workspaces/d3013dbe-...` 4 / 100%; `/workspaces/75a2fe92-...` 2 / 100%. Live host still returns Vercel “deployment paused” — not changed.
+
+Listings `davvpymbybvniexmkgcu` n=10331: about empty 0; images empty 0; starting_price empty 5243 (50.7%); wifi_speed empty 2055 (19.9%); contact_phone empty 2178; logo_url empty 895; contact_email empty 4451.
+
+Sitemap not resubmitted (no new routes; existing listing URL already in catalog).
+
+---
+
 ## 2026-09-23 ~03:35 UTC — street address in listing SERP title/description
 
 Track A (SEO/conversion): GSC 2026-08-23 to 2026-09-21 still shows 0-click impressions on street-address queries (e.g. `301 brazos street austin`, `11801 domain blvd`, `1 university avenue toronto`, `4g-travel-tool.vercel.app` FLAG only). About/images already render; admin auth is already env-based. Listing pages now put the *stored* street address into `<title>`, meta description, and keywords when `usefulStreetAddress` returns a value. No invented addresses. Title extras cap raised to 3 so address can sit next to listed price/Wi-Fi.
