@@ -170,16 +170,18 @@ export default function Page() {
       />
       <SiteNav />
       <main className="flex-1">
-        <Hero />
+        <Hero>
+          <WaitlistInline
+            source="homepage_hero"
+            askCity
+            compact
+            heading="Leaving the homepage without a city?"
+            description="GA4 still shows most sessions start and end on /. Email is enough; add a city if you have one. We only write when a listed workspace description, price, or photo exists for that place. No extra page, no fabricated urgency."
+          />
+        </Hero>
         <section className="border-y border-border bg-secondary/40">
           <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
-            <WaitlistInline
-              source="homepage_after_hero"
-              askCity
-              heading="Leaving after the homepage? Send the city you are considering."
-              description="Most sessions start and end here. Email is enough; add a city if you have one. We only write when a listed workspace description, price, or photo exists for that place. No extra page, no fabricated urgency."
-            />
-            <IntentListingLinks className="mt-6" />
+            <IntentListingLinks className="mt-0" />
           </div>
         </section>
         <Features />
