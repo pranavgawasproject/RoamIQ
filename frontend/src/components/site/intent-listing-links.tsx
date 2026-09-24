@@ -8,7 +8,7 @@ import Link from "next/link";
  * Extra GSC rows are listing *pages* that received a click even when the
  * query was not a clean venue name (so the index chips stay query-based).
  *
- * High-impression 0-click listing pages from 2026-08-24–2026-09-22 are
+ * High-impression 0-click listing pages from 2026-08-24–2026-09-23 are
  * pinned only when the listings table has a real company_name + city.
  */
 export const INTENT_LISTINGS = [
@@ -38,8 +38,6 @@ export const INTENT_LISTINGS = [
   { id: "c4685fae-34f6-4c30-9f13-827caca25b25", name: "Zuerich Apartments Kurvenstrasse", city: "Zurich", source: "gsc" },
   { id: "d7c64e22-3802-4976-945d-c6266fb84203", name: "Meccano Coworking Space", city: "Cairo", source: "gsc" },
   { id: "ea53ff4c-9ece-4e22-beec-7bddc54c0e36", name: "Café Restaurant NOOK", city: "Casablanca‑Settat", source: "gsc" },
-  { id: "2d5aada6-fb8c-41ef-9947-1d34c502af4d", name: "Tomodomo Coliving", city: "Zurich", source: "gsc" },
-  { id: "ce1965c3-4373-44d0-85cd-38aff9128c20", name: "Omiros Apartments Monastiraki", city: "Athens", source: "gsc" },
   { id: "05f30d06-726a-4dc4-b1c3-39bd19bdd9a8", name: "Vanmates Accommodation Toronto", city: "Toronto", source: "gsc-impressions" },
   { id: "081be3b4-4d1f-4ab0-9c1b-657bc7ff8804", name: "Savi Coliving Valencia", city: "Valencia", source: "gsc-impressions" },
   { id: "04f791e8-9a7f-4ac9-a67b-08e2ec772687", name: "Outsite Bali - Pererenan", city: "Canggu", source: "gsc-impressions" },
@@ -52,18 +50,19 @@ export const INTENT_LISTINGS = [
   { id: "24a555ee-58c8-4c4c-a27e-7964aa5d8b2e", name: "One Workspace", city: "Chiang Mai", source: "gsc-impressions" },
   { id: "20dcd193-bdb2-44c2-9da5-d58cccc1220d", name: "WFC Lofts (Holland2Stay)", city: "Amsterdam", source: "gsc-impressions" },
   { id: "1d45354d-a023-4985-9a38-095b62361ce9", name: "MQR - Platz", city: "Cairo", source: "gsc-impressions" },
-  { id: "05e80e0e-8bab-4b83-a21f-575c94008a49", name: "Mindspace Kurfürstendamm", city: "Berlin", source: "gsc-impressions" },
-  { id: "097b5bbc-5b75-4f3c-9d60-394da3542642", name: "WeWork - 1 University Ave", city: "Toronto", source: "gsc-impressions" },
-  { id: "0e0aa1fb-5b37-47c4-b255-b827bda4f63d", name: "The Greens - Coffee & Plants", city: "Berlin", source: "gsc-impressions" },
-  { id: "1078f945-8096-4ec2-8889-e66c627018ab", name: "Cilantro Tahrir", city: "Cairo", source: "gsc-impressions" },
-  { id: "1fbc7d07-185a-44dc-850b-a2ca94777a5f", name: "Coffee Bru Beukenplein", city: "Amsterdam", source: "gsc-impressions" },
+  { id: "2d5aada6-fb8c-41ef-9947-1d34c502af4d", name: "Tomodomo Coliving", city: "Zurich", source: "gsc" },
+  { id: "ce1965c3-4373-44d0-85cd-38aff9128c20", name: "Omiros Apartments Monastiraki", city: "Athens", source: "gsc" },
+  { id: "35b664d2-3bf7-4db4-a5b1-42465a3f314c", name: "Nabu Cafe", city: "Muscat", source: "gsc-impressions" },
+  { id: "4005468f-d5e4-4c57-990a-261fee78dd2c", name: "Ostool Albon", city: "Muscat", source: "gsc-impressions" },
+  { id: "2c7da9c8-0273-4d7e-99e0-5d2bcbe3f1ac", name: "Coffee Lab Kaiserhöfe", city: "Berlin", source: "gsc-impressions" },
+  { id: "347c3f75-ee46-4194-9089-116c9760c7a2", name: "Chillin' Coffee", city: "Casablanca‑Settat", source: "gsc-impressions" },
 ] as const;
 
 export const INTENT_LISTING_IDS = INTENT_LISTINGS.map((row) => row.id);
 
 /**
  * Destination and site pages that already earned a GSC click, or that
- * earned impressions with 0 clicks in 2026-08-24–2026-09-22.
+ * earned impressions with 0 clicks in 2026-08-24–2026-09-23.
  * Slugs are live routes — no invented cities.
  */
 export const INTENT_PAGES = [
