@@ -14,11 +14,13 @@ type WaitlistStickyProps = {
 
 /** Fixed bottom capture for high-exit listing and destination landings. No fabricated stats or urgency. */
 export function WaitlistSticky({ source, context, heading, description, afterPx = 0 }: WaitlistStickyProps) {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(afterPx <= 0);
 
   useEffect(() => {
     const onScroll = () => {
-      setVisible(window.scrollY > afterPx);
+      // >= so afterPx=0 landings (100% bounce /workspaces) see the bar
+      // without requiring a scroll that never happens.
+      setVisible(window.scrollY >= afterPx);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
