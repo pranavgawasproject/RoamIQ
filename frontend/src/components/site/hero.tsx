@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, MapPin, Wifi, Zap } from "lucide-react";
@@ -20,7 +20,7 @@ const stats = [
   { value: "8,200+", label: "Workspaces listed" },
 ];
 
-export function Hero() {
+export function Hero({ children }: { children?: ReactNode }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
 
@@ -197,6 +197,11 @@ export function Hero() {
             </Link>
           ))}
         </div>
+        {children ? (
+          <div className="mt-4 rounded-2xl border border-border bg-card/90 p-4 shadow-sm backdrop-blur">
+            {children}
+          </div>
+        ) : null}
       </motion.div>
     </section>
   );
