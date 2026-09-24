@@ -67,6 +67,18 @@ export const INTENT_LISTINGS = [
   { id: "04325649-3cd3-4aef-be77-a6d933ec4bf3", name: "The Malin East Austin", city: "Austin", source: "gsc-impressions" },
   { id: "0466fa2d-edf2-4f99-b889-917e16da6a1f", name: "YUSU", city: "Amsterdam", source: "gsc-impressions" },
   { id: "04730244-f323-441e-8110-2a44d684725e", name: "Desk Park Oman", city: "Muscat", source: "gsc-impressions" },
+  { id: "54ce4583-e639-4dda-8c60-9d985d9fc44d", name: "WeMeet Oman", city: "Muscat", source: "gsc-impressions" },
+  { id: "304eb5df-00cc-48b7-beb9-5b8d6d13ba95", name: "Owls Hostel Ribeiro", city: "Porto", source: "gsc-impressions" },
+  { id: "6263cd1b-fb15-4d76-a541-154552374836", name: "Travelers A Korea Hostel", city: "Seoul", source: "gsc-impressions" },
+  { id: "43af7f58-7eb2-44f1-82aa-2336de879c47", name: "Swedish Walls Co-Working", city: "Colombo", source: "gsc-impressions" },
+  { id: "5721e629-a08b-4eb6-a877-1993336367fd", name: "Banana Coliving East Dist.", city: "Taipei", source: "gsc-impressions" },
+  { id: "40df6ccf-4bb8-4867-a359-c2cd4447399d", name: "TNW City", city: "Amsterdam", source: "gsc-impressions" },
+  { id: "3f9e983a-548b-4711-a111-559ef5e2b3f5", name: "D'Abramo - Taste Italy", city: "Stockholm", source: "gsc-impressions" },
+  { id: "5e863565-fd50-41f6-83c7-a24929e604f9", name: "Homie Coliving", city: "Lisbon", source: "gsc-impressions" },
+  { id: "34d1e9dc-6122-40e1-9004-dd892d244f2c", name: "Sentral East Austin at 1630 E. Sixth | Austin Apartments", city: "Austin", source: "gsc-impressions" },
+  { id: "5f7b18c4-62a5-45ef-af73-c6361869d923", name: "WeWork Midosuji Frontier", city: "Osaka", source: "gsc-impressions" },
+  { id: "32fea2bc-a930-4983-afdd-7cedef69dd21", name: "OSMO X MARUSAN Café-Terrasse", city: "Montreal", source: "gsc-impressions" },
+  { id: "1fbc7d07-185a-44dc-850b-a2ca94777a5f", name: "Coffee Bru Beukenplein", city: "Amsterdam", source: "gsc-impressions" },
 ] as const;
 
 export const INTENT_LISTING_IDS = INTENT_LISTINGS.map((row) => row.id);
