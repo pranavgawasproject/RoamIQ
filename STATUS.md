@@ -1,3 +1,17 @@
+## 2026-09-25 — /workspaces waitlist GA4 window + GSC click chips
+
+Track A (conversion): About/images already render; admin auth is env-based (`ADMIN_ACCESS_KEY`); price/Wi-Fi empty states and listing JSON-LD already ship. `/workspaces` is still the thin high-exit index in GA4. First-paint waitlist copy now cites the current window: 8 sessions, 100% bounce (26 Aug–24 Sep, property 541610896) — not the prior 10-session 24 Aug–20 Sep line. Two venue-name queries that earned a GSC click in 26 Aug–24 Sep (`atzomx`, `tomodomo coliving`) were added to the index name chips. No invented stats. No new routes; sitemap not resubmitted.
+
+GSC property https://nomads-travel-indol.vercel.app/ (2026-08-26–2026-09-24, query): apartment 1/1 pos 1; atzomx 1/21 pos ~6.4; cafe nenom 1/22 pos ~9.1; cafe nook 1/13 pos ~7.7; coliving zürich 1/1; roam iq 1/32 pos ~8.1; tomodomo coliving 1/65 pos ~8.5. Query `4g-travel-tool.vercel.app` FLAG only — different live product, not a RoamIQ property. No redirect. Branded CTR capped until the custom domain is live (human-owned).
+
+Top GSC pages (same window, by clicks): `/workspaces/2d5aada6-…` 2/40; `/` 1/76; `/destinations/tallinn` 1/11; high-impression listings include `/workspaces/ce1965c3-…` 1/165 and `/workspaces/6c1f5162-…` 1/159. `/workspaces` index 0/20.
+
+GA4 property 541610896 last 30 days: `/` 59 sessions / 89.8% bounce; `/workspaces` 8 / 100%; `/workspaces/92952ead-…` 8 / 37.5%; `/workspaces/d3013dbe-…` 4 / 100%.
+
+Listings null-rate on `davvpymbybvniexmkgcu` n=10331: about empty 0; images null 0; starting_price empty 5243 (50.8%); wifi_speed empty 2055 (19.9%); contact_phone empty 2178 (21.1%); logo_url empty 895 (8.7%); contact_email empty 4451 (43.1%). Project `uogdeyumztfbwxctilxi` remains INACTIVE.
+
+Next: unpause Vercel so this copy can ship; keep pinning remaining 0-click listing URLs only when company_name + city exist.
+
 ## 2026-09-25 â pin next 0-click GSC listing pages
 
 Track A (conversion): About/images already render on `/workspaces` and `/workspaces/[id]`; admin auth is env-based (`ADMIN_ACCESS_KEY`); price/Wi-Fi empty states and listing JSON-LD already ship. Next gap: six listing URLs with Search impressions and 0 clicks (2026-08-25â2026-09-24) were not on the homepage intent chips. Names and cities are from `listings` on `davvpymbybvniexmkgcu` â no invented venues: de Werkplek (Amsterdam, 7 imp), CafÃ© Don TomÃ¡s (Tulum, 5), CAFE TALES (Osaka, 5), E6 Apartments (Austin, 5), Prana CafÃ© (Austin, 4), Nao Good Vibes (Tirana, 3). No new routes; sitemap not resubmitted.
