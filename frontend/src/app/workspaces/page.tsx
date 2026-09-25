@@ -553,7 +553,7 @@ function ListingCard({ listing, destination }: { listing: Listing; destination?:
           <div className="grid grid-cols-3 gap-px bg-border">
             {extras.map((src) => (
               <Link key={src} href={`/workspaces/${listing.id}`} className="relative aspect-[16/10] overflow-hidden bg-secondary">
-                <Image src={src} alt="" fill className="object-cover" sizes="120px" unoptimized />
+                <Image src={src} alt={`${listing.company_name} photo`} fill className="object-cover" sizes="120px" unoptimized />
               </Link>
             ))}
           </div>

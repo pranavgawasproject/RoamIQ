@@ -33,7 +33,7 @@ export function RelatedListingExtras({ item }: { item: Listing }) {
               href={`/workspaces/${item.id}`}
               className="relative h-8 w-10 shrink-0 overflow-hidden rounded bg-secondary"
             >
-              <Image src={url} alt="" fill className="object-cover" sizes="40px" unoptimized />
+              <Image src={url} alt={`${item.company_name} photo`} fill className="object-cover" sizes="40px" unoptimized />
             </Link>
           ))}
           {photoCount > 1 ? (
