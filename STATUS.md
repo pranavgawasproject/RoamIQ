@@ -1,3 +1,15 @@
+## 2026-09-25 — listing-detail waitlist above gallery
+
+Track A (conversion): About/images, admin env auth, price/Wi-Fi empty states, and listing JSON-LD already ship. GA4 last 30d still shows 100% bounce on `/workspaces` (8 sessions) and on several listing landings. The listing page rendered a tall photo gallery before any waitlist, so bounce sessions never reached workspace_detail_after_about. Compact WaitlistInline (source=workspace_detail_above_gallery) now sits after the breadcrumb and before the gallery. No new routes; sitemap not resubmitted. Vercel live remains DEPLOYMENT_DISABLED.
+
+GSC https://nomads-travel-indol.vercel.app/ 2026-08-25 to 2026-09-23: 26 clicks / 6504 impressions / CTR 0.40% / avg position 10.91. Query 4g-travel-tool.vercel.app 0 clicks / 11 imp — FLAG only, inspect 403, no redirect.
+
+GA4 541610896 last 30d: / 59 sessions 89.8% bounce; /workspaces 8 / 100%; Atzomx listing 8 / 37.5%.
+
+Listings davvpymbybvniexmkgcu n=10331: about empty 0; images empty 0; starting_price null 50.7%; wifi_speed null 19.9%.
+
+Next: unpause Vercel so first-paint waitlists can ship.
+
 ## 2026-09-24 ~13:20 UTC — homepage waitlist in hero
 
 Track A (conversion): About/images already render; admin auth is env-based; price/Wi-Fi empty states and listing JSON-LD already ship; `/workspaces` sticky already shows on first paint. GA4 still has `/` as the largest landing (61 sessions / 90.2% bounce last 30d). The first waitlist sat *below* a tall hero, so bounce sessions never reached it. Hero now accepts a children slot; `WaitlistInline` (`source=homepage_hero`) renders in a card under the destination/workspace/visa chips. No new routes; sitemap not resubmitted. Vercel live remains `DEPLOYMENT_DISABLED` — code is on main only until deploy is unpaused (human-owned).

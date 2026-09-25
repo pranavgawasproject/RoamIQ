@@ -580,6 +580,20 @@ export default async function WorkspaceDetailPage({
             <span aria-hidden="true">/</span>
             <span className="line-clamp-1 text-foreground/80">{listing.company_name}</span>
           </nav>
+          <div className="mt-4 rounded-2xl border border-border bg-secondary/30 p-4">
+            <WaitlistInline
+              source="workspace_detail_above_gallery"
+              compact
+              askCity={!listing.city}
+              heading={listing.city ? `Leaving ${listing.company_name} without a shortlist?` : "Leaving this listing without a shortlist?"}
+              description={
+                listing.city
+                  ? `Some listing landings bounce before the photos. Email is enough if you want other live ${listing.city} workspaces when a listed price or Wi-Fi value exists. No invented numbers.`
+                  : "Some listing landings bounce before the photos. Email is enough if you want similar live workspaces when a listed price or Wi-Fi value exists. No invented numbers."
+              }
+              context={{ city: listing.city, type: listing.company_type, listing: listing.company_name }}
+            />
+          </div>
         </div>
         <section className="mt-6">
           <div className="mx-auto max-w-6xl px-5 sm:px-8">
