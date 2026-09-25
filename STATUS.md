@@ -1,14 +1,14 @@
-## 2026-09-25 — listing-detail waitlist above gallery
+## 2026-09-25 ~03:30 UTC — about first-paint waitlist + visible FAQ
 
-Track A (conversion): About/images, admin env auth, price/Wi-Fi empty states, and listing JSON-LD already ship. GA4 last 30d still shows 100% bounce on `/workspaces` (8 sessions) and on several listing landings. The listing page rendered a tall photo gallery before any waitlist, so bounce sessions never reached workspace_detail_after_about. Compact WaitlistInline (source=workspace_detail_above_gallery) now sits after the breadcrumb and before the gallery. No new routes; sitemap not resubmitted. Vercel live remains DEPLOYMENT_DISABLED.
+Track A (conversion + schema integrity): `/about` had 21 impressions and 0 clicks in GSC (2026-08-25–2026-09-24) and shipped FAQ JSON-LD with no matching on-page Q&A. Hero now includes `WaitlistInline` (`source=about_hero`). The four FAQ answers already in `faqJsonLd` render as visible `<dl>` cards so schema matches the page. No new routes; sitemap not resubmitted.
 
-GSC https://nomads-travel-indol.vercel.app/ 2026-08-25 to 2026-09-23: 26 clicks / 6504 impressions / CTR 0.40% / avg position 10.91. Query 4g-travel-tool.vercel.app 0 clicks / 11 imp — FLAG only, inspect 403, no redirect.
+GSC property https://nomads-travel-indol.vercel.app/ (2026-08-25–2026-09-24, query): apartment 1/1 pos 1; atzomx 1/21 pos ~6.4; cafe nenom 1/22 pos ~9.1; cafe nook 1/13 pos ~7.7; roam iq 1/34 pos ~8.3; tomodomo coliving 1/65 pos ~8.5. Query `4g-travel-tool.vercel.app` 0/11 pos ~3.3 — FLAG only; not a RoamIQ property. Branded CTR capped until the custom domain is live (human-owned).
 
-GA4 541610896 last 30d: / 59 sessions 89.8% bounce; /workspaces 8 / 100%; Atzomx listing 8 / 37.5%.
+Top GSC pages same window: `/workspaces/2d5aada6-…` 2 clicks / 40 impr; `/` 1/81; `/community` 1/7; `/destinations/tallinn` 1/11; `/workspaces/6c1f5162-…` 1/159; `/workspaces/ce1965c3-…` 1/165. `/about` 0/21; `/workspaces` 0/20.
 
-Listings davvpymbybvniexmkgcu n=10331: about empty 0; images empty 0; starting_price null 50.7%; wifi_speed null 19.9%.
+GA4 not re-queried this run (no GA4 Composio tool in this session). Prior STATUS: `/` 61 sessions / 90.2% bounce; `/workspaces` 10 / 100%.
 
-Next: unpause Vercel so first-paint waitlists can ship.
+Next: unpause Vercel so about hero waitlist and FAQ can ship; keep listing pins current as 0-click high-impression pages appear.
 
 ## 2026-09-24 ~13:20 UTC — homepage waitlist in hero
 

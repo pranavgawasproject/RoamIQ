@@ -161,6 +161,15 @@ export default function AboutPage() {
               full of conflicting advice. Here&apos;s what we believe, and where
               we&apos;re headed.
             </p>
+            <div className="mt-6 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
+              <WaitlistInline
+                source="about_hero"
+                compact
+                askCity
+                heading="Leaving About without opening a workspace?"
+                description="/about earned Search impressions last month and no clicks in the current GSC window. Email plus an optional city is enough. We only write when a listed workspace already has a description, price, or photo — no invented numbers."
+              />
+            </div>
           </div>
         </section>
 
