@@ -79,6 +79,12 @@ export const INTENT_LISTINGS = [
   { id: "5f7b18c4-62a5-45ef-af73-c6361869d923", name: "WeWork Midosuji Frontier", city: "Osaka", source: "gsc-impressions" },
   { id: "32fea2bc-a930-4983-afdd-7cedef69dd21", name: "OSMO X MARUSAN Café-Terrasse", city: "Montreal", source: "gsc-impressions" },
   { id: "1fbc7d07-185a-44dc-850b-a2ca94777a5f", name: "Coffee Bru Beukenplein", city: "Amsterdam", source: "gsc-impressions" },
+  { id: "0a6060fe-caf3-4c1b-8c2f-83e68fad09dd", name: "de Werkplek", city: "Amsterdam", source: "gsc-impressions" },
+  { id: "01b4b96f-c9e4-43d1-9445-6238589f5337", name: "CafÃ© Don TomÃ¡s", city: "Tulum", source: "gsc-impressions" },
+  { id: "01e1709b-ae6f-4d76-ad13-241231521050", name: "CAFE TALES", city: "Osaka", source: "gsc-impressions" },
+  { id: "03fa2625-3a11-4444-be63-ce2175dc5136", name: "E6 Apartments", city: "Austin", source: "gsc-impressions" },
+  { id: "00815618-c878-4585-9fdc-a782261fa10e", name: "Prana CafÃ©", city: "Austin", source: "gsc-impressions" },
+  { id: "0045ff58-73da-4399-8715-23cc2949557c", name: "Nao Good Vibes", city: "Tirana", source: "gsc-impressions" },
 ] as const;
 
 export const INTENT_LISTING_IDS = INTENT_LISTINGS.map((row) => row.id);

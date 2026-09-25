@@ -1,3 +1,17 @@
+## 2026-09-25 â pin next 0-click GSC listing pages
+
+Track A (conversion): About/images already render on `/workspaces` and `/workspaces/[id]`; admin auth is env-based (`ADMIN_ACCESS_KEY`); price/Wi-Fi empty states and listing JSON-LD already ship. Next gap: six listing URLs with Search impressions and 0 clicks (2026-08-25â2026-09-24) were not on the homepage intent chips. Names and cities are from `listings` on `davvpymbybvniexmkgcu` â no invented venues: de Werkplek (Amsterdam, 7 imp), CafÃ© Don TomÃ¡s (Tulum, 5), CAFE TALES (Osaka, 5), E6 Apartments (Austin, 5), Prana CafÃ© (Austin, 4), Nao Good Vibes (Tirana, 3). No new routes; sitemap not resubmitted.
+
+GSC property https://nomads-travel-indol.vercel.app/ (2026-08-25â2026-09-24, query): apartment 1/1 pos 1; atzomx 1/21 pos ~6.4; cafe nenom 1/22 pos ~9.1; cafe nook 1/13 pos ~7.7; coliving zÃ¼rich 1/1; roam iq 1/34 pos ~8.3; tomodomo coliving 1/65 pos ~8.5. Query `4g-travel-tool.vercel.app` 0/11 pos ~3.3 â FLAG only. That host is a different live product, not a RoamIQ property. No redirect, no sameAs. Branded: roamiq 0/5 pos 10.2; roamiq price 0/27 pos ~8.9; roam iq 1/34. Branded CTR capped until the custom domain is live (human-owned).
+
+Top GSC pages (same window): `/workspaces/ce1965c3-â¦` 1 click / 165 imp; `/workspaces/6c1f5162-â¦` 1/159; homepage 1/81; `/workspaces/ea53ff4c-â¦` 1/65; `/about` 0/21; `/workspaces` index 0/20.
+
+GA4: not re-queried this run. Prior STATUS: `/` 61 sessions / 90.2% bounce; `/workspaces` 10 / 100%.
+
+Listings null-rate on `davvpymbybvniexmkgcu` n=10331: about empty 0; images empty 2063 (20.0%); starting_price empty 5243 (50.8%); wifi_speed empty 2055 (19.9%); contact_phone empty 2178 (21.1%); logo_url empty 895 (8.7%); contact_email empty 4451 (43.1%). Project `uogdeyumztfbwxctilxi` remains INACTIVE.
+
+Next: unpause Vercel so hero waitlist and these chips can ship; keep pinning remaining 0-click listing URLs only when company_name + city exist.
+
 ## 2026-09-25 ~03:30 UTC — about first-paint waitlist + visible FAQ
 
 Track A (conversion + schema integrity): `/about` had 21 impressions and 0 clicks in GSC (2026-08-25–2026-09-24) and shipped FAQ JSON-LD with no matching on-page Q&A. Hero now includes `WaitlistInline` (`source=about_hero`). The four FAQ answers already in `faqJsonLd` render as visible `<dl>` cards so schema matches the page. No new routes; sitemap not resubmitted.
