@@ -25,7 +25,7 @@ import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { WaitlistSticky } from "@/components/site/waitlist-sticky";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
-import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulListedPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed, usefulListingTitle, usefulListingUnits, usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl, usefulListingCapacity, usefulListingContinent, usefulListingRegion, isVenuePhotoUrl } from "@/lib/listing-media";
+import { firstUsableListingImage, firstVenueListingImage, isUsableImageUrl, usefulContactEmail, usefulContactPhone, usefulListingAbout, usefulListingTags, usefulListingWebsite, usefulStartingPrice, usefulListedPrice, usefulStreetAddress, usefulOpenHours, usefulWifiSpeed, usefulListingTitle, usefulListingUnits, usefulListingInclusions, usefulListingServices, usefulListingSocialLinks, usefulListingMapUrl, usefulListingCapacity, usefulListingContinent, usefulListingRegion, isVenuePhotoUrl, usefulListingProductName, usefulListingContactPerson, usefulListingRegisteredEntity } from "@/lib/listing-media";
 import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
@@ -170,7 +170,7 @@ export default async function CityDetailPage({
           .maybeSingle(),
         supabase
           .from("listings")
-          .select("id, company_name, company_title, company_type, address, city, state, country, continent, starting_price, cost, units, capacity, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, website, tags, contact_phone, contact_email, inclusions, services, social_links, google_map, latitude, longitude")
+          .select("id, company_name, company_title, company_type, address, city, state, country, continent, starting_price, cost, units, capacity, wifi_speed, open_hours, ratings, total_reviews, images, logo_url, about, description, product_name, registered_entity_name, contact_name, contact_designation, website, tags, contact_phone, contact_email, inclusions, services, social_links, google_map, latitude, longitude")
           .eq("city", city.name)
           .eq("is_public", true)
           .eq("is_active", true)
@@ -915,7 +915,7 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
         <div className="grid grid-cols-3 gap-px bg-border">
           {extraPhotos.map((src) => (
             <Link key={src} href={`/workspaces/${listing.id}`} className="relative aspect-[16/10] overflow-hidden bg-secondary">
-              <Image src={src} alt="" fill className="object-cover" sizes="120px" unoptimized />
+              <Image src={src} alt={`${listing.company_name} photo`} fill className="object-cover" sizes="120px" unoptimized />
             </Link>
           ))}
         </div>
@@ -948,6 +948,15 @@ function DestinationListingCard({ listing }: { listing: Listing }) {
           </div>
           {listedTitle ? (
             <p className="mt-1 text-xs text-muted-foreground line-clamp-1">{listedTitle}</p>
+          ) : null}
+          {usefulListingProductName(listing.product_name, listing.company_name) ? (
+            <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">Plan: {usefulListingProductName(listing.product_name, listing.company_name)}</p>
+          ) : null}
+          {usefulListingRegisteredEntity(listing.registered_entity_name, listing.company_name) ? (
+            <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">Legal name: {usefulListingRegisteredEntity(listing.registered_entity_name, listing.company_name)}</p>
+          ) : null}
+          {usefulListingContactPerson(listing.contact_name, listing.contact_designation) ? (
+            <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">Host: {usefulListingContactPerson(listing.contact_name, listing.contact_designation)}</p>
           ) : null}
           <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
             {listedStreet ? `${listedStreet} · ` : ""}
