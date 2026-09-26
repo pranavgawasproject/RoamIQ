@@ -956,7 +956,7 @@ export default async function WorkspacesPage({
             <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{headlineCount.toLocaleString()} workspaces & stays, live from the database.</h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">Coworking desks, coliving houses, workations, hostels, cafes, and meeting rooms — filter by location, category, and Wi-Fi speed.{catalogCount > 0 && count !== catalogCount ? ` This view lists ${count.toLocaleString()} matching rows from that catalog.` : ""}</p>
             <div className="mt-6 max-w-xl rounded-2xl border border-border bg-card/80 p-4 sm:p-5">
-              <WaitlistInline source="workspaces-list-above-fold" askCity askGap heading={params.search ? `Looking for ${params.search}? Leave an email if this filter is empty or thin.` : "Leaving /workspaces without opening a card?"} description={params.search ? `This page filtered to “${params.search}” because that name showed up in Search Console. Email is enough if the matching cards are missing a listed price, photo, or Wi-Fi figure — we do not invent those values.` : "/workspaces is still a 100% bounce landing page in the current GA4 window (8 sessions, 26 Aug–24 Sep). Email plus an optional city is enough if you leave without opening a card. We only write when a listed price or Wi-Fi value exists. No extra page, no invented numbers."} compact context={waitlistContext} />
+              <WaitlistInline source="workspaces-list-above-fold" askCity askGap heading={params.search ? `Looking for ${params.search}? Leave an email if this filter is empty or thin.` : "Open a workspace card, or leave an email if you are exiting"} description={params.search ? `This page filtered to “${params.search}” because that name showed up in Search Console. Email is enough if the matching cards are missing a listed price, photo, or Wi-Fi figure — we do not invent those values.` : "This index is a high-exit landing page; individual workspace pages keep people reading. Open a card below for listed photos and about text, or leave an email and optional city if you are leaving. We only write when a listed price or Wi-Fi value exists. No extra page, no invented numbers."} compact context={waitlistContext} />
             </div>
             <IntentListingLinks className="mt-5" />
             <div className="mt-5 max-w-2xl rounded-2xl border border-border bg-secondary/30 p-4 text-sm leading-relaxed text-muted-foreground">
@@ -1380,10 +1380,10 @@ export default async function WorkspacesPage({
       <section id="waitlist" className="border-t border-border bg-secondary/40">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-5 py-10 sm:flex-row sm:items-center sm:px-8">
           <div className="max-w-xl">
-            <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">Found a workspace you like — or still deciding where to go?</h2>
-            <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">Leave your email on this page. We send destination shortlists matched to budget, visa window, and listed Wi-Fi speeds. No fabricated urgency, no spam.</p>
+            <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">Open a listing card first — then leave an email if you still need a shortlist</h2>
+            <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">Workspace detail pages are where listed photos, about text, and contact fields live. If the index is enough, email plus an optional city is fine. We only follow up when a listed price or Wi-Fi value exists. No fabricated urgency, no spam.</p>
           </div>
-          <WaitlistInline source="workspaces-list" askCity askGap heading="Leave with a shortlist, not a blank tab" description="No extra page. Add a city if the filters above did not stick. We email workspace picks only when listed price or Wi-Fi exists. No fabricated urgency." compact={false} context={waitlistContext} />
+          <WaitlistInline source="workspaces-list" askCity askGap heading="Leave with a shortlist, not a blank tab" description="No extra page. Add a city if filters did not stick. We email picks only when a listed price or Wi-Fi value exists. No fabricated urgency." compact={false} context={waitlistContext} />
         </div>
       </section>
       <WaitlistSticky source="workspaces-list-sticky" context={waitlistContext} />
