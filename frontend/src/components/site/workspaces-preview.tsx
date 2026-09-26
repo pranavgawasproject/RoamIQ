@@ -4,6 +4,7 @@ import { ArrowUpRight, Building2, Wifi } from "lucide-react";
 import { supabase, type Listing } from "@/lib/supabase";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { ListingAbout } from "@/components/site/listing-about";
+import { workspaceListItemJsonLd } from "@/lib/listing-jsonld";
 import {
   firstVenueListingImage,
   isUsableImageUrl,
@@ -12,6 +13,8 @@ import {
   usefulListingAbout,
   usefulWifiSpeed,
 } from "@/lib/listing-media";
+
+const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 function getCardImage(listing: Listing) {
   const photo = firstVenueListingImage(listing.images);
@@ -35,8 +38,22 @@ export async function WorkspacesPreview() {
 
   if (listings.length === 0) return null;
 
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Featured workspaces on RoamIQ",
+    numberOfItems: listings.length,
+    itemListElement: listings.map((listing, index) =>
+      workspaceListItemJsonLd(listing, index + 1, BASE_URL),
+    ),
+  };
+
   return (
     <section id="workspaces-preview" className="relative scroll-mt-24 py-20 sm:py-28">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
+      />
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
