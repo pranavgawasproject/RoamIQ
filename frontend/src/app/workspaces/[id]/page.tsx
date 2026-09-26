@@ -364,6 +364,9 @@ export default async function WorkspaceDetailPage({
   const listedPlan = usefulListingProductName(listing.product_name, listing.company_name);
   const listedHost = usefulListingContactPerson(listing.contact_name, listing.contact_designation);
   const listedLegal = usefulListingRegisteredEntity(listing.registered_entity_name, listing.company_name);
+  const listedTitle = usefulListingTitle(listing.company_title, listing.company_name);
+  if (listedTitle) localBusinessJsonLd.alternateName = listedTitle;
+  if (listedLegal) localBusinessJsonLd.legalName = listedLegal;
   if (listedPlan) {
     localBusinessJsonLd.additionalProperty = [
       { "@type": "PropertyValue", name: "Listed plan", value: listedPlan },
