@@ -1,10 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, Building2 } from "lucide-react";
+import { ArrowUpRight, Building2, Wifi } from "lucide-react";
 import { supabase, type Listing } from "@/lib/supabase";
 import { WaitlistInline } from "@/components/site/waitlist-inline";
 import { ListingAbout } from "@/components/site/listing-about";
-import { firstVenueListingImage, isUsableImageUrl, isVenuePhotoUrl, usefulListingAbout } from "@/lib/listing-media";
+import {
+  firstVenueListingImage,
+  isUsableImageUrl,
+  isVenuePhotoUrl,
+  usefulListedPrice,
+  usefulListingAbout,
+  usefulWifiSpeed,
+} from "@/lib/listing-media";
 
 function getCardImage(listing: Listing) {
   const photo = firstVenueListingImage(listing.images);
@@ -16,7 +23,7 @@ function getCardImage(listing: Listing) {
 export async function WorkspacesPreview() {
   const { data } = await supabase
     .from("listings")
-    .select("id, company_name, company_type, city, country, images, logo_url, about, description")
+    .select("id, company_name, company_type, city, country, images, logo_url, about, description, starting_price, cost, wifi_speed")
     .eq("is_public", true)
     .eq("is_active", true)
     .order("ratings", { ascending: false, nullsFirst: false })
@@ -35,7 +42,7 @@ export async function WorkspacesPreview() {
           <div className="max-w-2xl">
             <div className="text-sm font-medium uppercase tracking-widest text-accent">Live from the listings table</div>
             <h2 className="mt-3 font-serif text-4xl font-semibold tracking-tight sm:text-5xl">Workspaces with a real description or photo.</h2>
-            <p className="mt-4 text-muted-foreground leading-relaxed">These rows already have stored about text or a usable image. Missing copy stays pending — we do not invent descriptions.</p>
+            <p className="mt-4 text-muted-foreground leading-relaxed">These rows already have stored about text or a usable image. Price and Wi-Fi appear only when stored — missing figures stay pending.</p>
           </div>
           <Link href="/workspaces" className="inline-flex items-center gap-1.5 text-sm font-medium text-forest hover:text-forest/80">Browse all workspaces<ArrowUpRight className="h-4 w-4" /></Link>
         </div>
@@ -47,6 +54,10 @@ export async function WorkspacesPreview() {
               ? listing.images.filter((u) => isVenuePhotoUrl(u) && u !== imageUrl).slice(0, 3)
               : [];
             const about = usefulListingAbout(listing.about || listing.description, listing.company_name, 0, 12);
+            const listedPrice = usefulListedPrice(listing.starting_price, listing.cost);
+            const listedWifi = usefulWifiSpeed(listing.wifi_speed);
+            const place =
+              [listing.city, listing.country].filter(Boolean).join(", ") || null;
             return (
               <article key={listing.id} className="flex flex-col overflow-hidden rounded-3xl border border-border bg-card">
                 <Link href={`/workspaces/${listing.id}`} className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
@@ -73,7 +84,22 @@ export async function WorkspacesPreview() {
                   <h3 className="font-serif text-base font-semibold tracking-tight line-clamp-1">
                     <Link href={`/workspaces/${listing.id}`} className="hover:text-accent">{listing.company_name}</Link>
                   </h3>
+                  {place ? <p className="mt-0.5 text-xs text-muted-foreground">{place}</p> : null}
                   <ListingAbout text={about} />
+                  <div className="mt-3 space-y-1 border-t border-border pt-3 text-xs">
+                    <div className={listedPrice ? "font-semibold text-forest" : "text-muted-foreground"}>
+                      {listedPrice || "Price not listed yet"}
+                    </div>
+                    {listedWifi ? (
+                      <div className="flex items-center gap-1 text-muted-foreground">
+                        <Wifi className="h-3 w-3" /> {listedWifi}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1 text-muted-foreground/70">
+                        <Wifi className="h-3 w-3" /> Wi-Fi speed pending
+                      </div>
+                    )}
+                  </div>
                 </div>
               </article>
             );
