@@ -11,6 +11,10 @@ import {
   isVenuePhotoUrl,
   usefulListedPrice,
   usefulListingAbout,
+  usefulListingContactPerson,
+  usefulListingProductName,
+  usefulListingRegisteredEntity,
+  usefulListingTitle,
   usefulWifiSpeed,
 } from "@/lib/listing-media";
 
@@ -26,7 +30,7 @@ function getCardImage(listing: Listing) {
 export async function WorkspacesPreview() {
   const { data } = await supabase
     .from("listings")
-    .select("id, company_name, company_type, city, country, images, logo_url, about, description, starting_price, cost, wifi_speed")
+    .select("id, company_name, company_title, company_type, city, country, images, logo_url, about, description, starting_price, cost, wifi_speed, product_name, registered_entity_name, contact_name, contact_designation")
     .eq("is_public", true)
     .eq("is_active", true)
     .order("ratings", { ascending: false, nullsFirst: false })
@@ -73,6 +77,10 @@ export async function WorkspacesPreview() {
             const about = usefulListingAbout(listing.about || listing.description, listing.company_name, 0, 12);
             const listedPrice = usefulListedPrice(listing.starting_price, listing.cost);
             const listedWifi = usefulWifiSpeed(listing.wifi_speed);
+            const listedTitle = usefulListingTitle(listing.company_title, listing.company_name);
+            const listedProduct = usefulListingProductName(listing.product_name, listing.company_name);
+            const listedLegal = usefulListingRegisteredEntity(listing.registered_entity_name, listing.company_name);
+            const listedContact = usefulListingContactPerson(listing.contact_name, listing.contact_designation);
             const place =
               [listing.city, listing.country].filter(Boolean).join(", ") || null;
             return (
@@ -102,6 +110,10 @@ export async function WorkspacesPreview() {
                     <Link href={`/workspaces/${listing.id}`} className="hover:text-accent">{listing.company_name}</Link>
                   </h3>
                   {place ? <p className="mt-0.5 text-xs text-muted-foreground">{place}</p> : null}
+                  {listedTitle ? <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{listedTitle}</p> : null}
+                  {listedProduct ? <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">Plan: {listedProduct}</p> : null}
+                  {listedLegal ? <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">Legal name: {listedLegal}</p> : null}
+                  {listedContact ? <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">Contact: {listedContact}</p> : null}
                   <ListingAbout text={about} />
                   <div className="mt-3 space-y-1 border-t border-border pt-3 text-xs">
                     <div className={listedPrice ? "font-semibold text-forest" : "text-muted-foreground"}>
