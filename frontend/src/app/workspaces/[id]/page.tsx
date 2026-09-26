@@ -419,7 +419,7 @@ export default async function WorkspaceDetailPage({
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteNav />
-      <main className="flex-1 pt-28 sm:pt-32">
+      <main className="flex-1 pt-28 pb-36 sm:pt-32">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
         {faqJsonLd ? (
